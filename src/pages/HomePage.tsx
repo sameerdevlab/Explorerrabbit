@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Navigate } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import ModeToggle from '../components/layout/ModeToggle';
 import PromptInput from '../components/content/PromptInput';
@@ -14,6 +15,11 @@ const HomePage: React.FC = () => {
   const { user, loading } = useAuthStore();
   const [showResults, setShowResults] = useState(false);
   
+  // Redirect to auth page if not logged in
+  if (!loading && !user) {
+    return <Navigate to="/auth" replace />;
+  }
+  
   useEffect(() => {
     setShowResults(!!result);
   }, [result]);
@@ -22,6 +28,14 @@ const HomePage: React.FC = () => {
     clearContent();
     setShowResults(false);
   };
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-pink-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">

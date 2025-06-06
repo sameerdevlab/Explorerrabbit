@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { ContentState, ContentGenerationResult } from '../types';
 import { callEdgeFunction } from '../lib/supabase';
-import { splitTextForImages } from '../lib/utils';
+import useAuthStore from './authStore';
 
 const useContentStore = create<ContentState & {
   setMode: (mode: 'generate' | 'paste') => void;
@@ -29,6 +29,13 @@ const useContentStore = create<ContentState & {
   
   generateContent: async () => {
     const { prompt } = get();
+    
+    // Check if user is authenticated
+    const { user } = useAuthStore.getState();
+    if (!user) {
+      set({ error: 'Please sign in to generate content' });
+      return;
+    }
     
     if (!prompt.trim()) {
       set({ error: 'Please enter a prompt to generate content' });
@@ -59,6 +66,13 @@ const useContentStore = create<ContentState & {
   
   processExistingText: async () => {
     const { pastedText } = get();
+    
+    // Check if user is authenticated
+    const { user } = useAuthStore.getState();
+    if (!user) {
+      set({ error: 'Please sign in to process text' });
+      return;
+    }
     
     if (!pastedText.trim()) {
       set({ error: 'Please paste some text to process' });
