@@ -42,7 +42,31 @@ export async function callEdgeFunction(
     });
     
     if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
+      // Try to parse the error response as JSON to get detailed error message
+      let errorMessage = `Error: ${response.statusText}`;
+      
+      try {
+        const errorData = await response.json();
+        if (errorData.error) {
+          errorMessage = errorData.error;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (typeof errorData === 'string') {
+          errorMessage = errorData;
+        }
+      } catch (parseError) {
+        // If JSON parsing fails, fall back to response text
+        try {
+          const errorText = await response.text();
+          if (errorText) {
+            errorMessage = errorText;
+          }
+        } catch (textError) {
+          // Keep the default error message if both JSON and text parsing fail
+        }
+      }
+      
+      throw new Error(errorMessage);
     }
     
     return await response.json();
