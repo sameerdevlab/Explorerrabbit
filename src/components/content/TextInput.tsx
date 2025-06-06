@@ -1,0 +1,92 @@
+import React, { useRef } from 'react';
+import { FileText } from 'lucide-react';
+import { motion } from 'framer-motion';
+import TextArea from '../ui/TextArea';
+import Button from '../ui/Button';
+import { Card } from '../ui/Card';
+import useContentStore from '../../store/contentStore';
+
+interface TextInputProps {
+  minimized?: boolean;
+}
+
+const TextInput: React.FC<TextInputProps> = ({ minimized = false }) => {
+  const { pastedText, setPastedText, processExistingText, loading } = useContentStore();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    processExistingText();
+  };
+  
+  if (minimized) {
+    return (
+      <motion.div
+        layout
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full sticky bottom-4 px-4"
+      >
+        <Card variant="glass" className="p-2 max-w-2xl mx-auto">
+          <form onSubmit={handleSubmit} className="flex gap-2">
+            <TextArea
+              ref={textareaRef}
+              variant="glass"
+              placeholder="Paste different text..."
+              value={pastedText}
+              onChange={(e) => setPastedText(e.target.value)}
+              className="flex-grow h-10 min-h-0 resize-none py-2"
+              rows={1}
+            />
+            <Button type="submit" isLoading={loading}>
+              Process
+            </Button>
+          </form>
+        </Card>
+      </motion.div>
+    );
+  }
+  
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="w-full max-w-3xl mx-auto px-4"
+    >
+      <Card variant="glass" className="overflow-hidden shadow-lg">
+        <div className="p-6">
+          <h2 className="text-2xl font-bold mb-2 text-slate-800">Process Your Text</h2>
+          <p className="text-slate-600 mb-6">
+            Paste your own text and we'll generate images and questions from it
+          </p>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <TextArea
+                ref={textareaRef}
+                variant="glass"
+                placeholder="Paste your text here..."
+                value={pastedText}
+                onChange={(e) => setPastedText(e.target.value)}
+                className="w-full p-3 text-lg min-h-[200px]"
+                rows={8}
+              />
+              
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full"
+                isLoading={loading}
+              >
+                {loading ? 'Processing...' : 'Process Text'}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </Card>
+    </motion.div>
+  );
+};
+
+export default TextInput;
