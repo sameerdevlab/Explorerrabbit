@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import toast from 'react-hot-toast';
 import { ContentState, ContentGenerationResult } from '../types';
 import { callEdgeFunction } from '../lib/supabase';
-import { generatePlaceholderImages } from '../lib/utils';
+import { generatePlaceholderImages, generateInitialPlaceholderImages } from '../lib/utils';
 import useAuthStore from './authStore';
 
 const useContentStore = create<ContentState & {
@@ -67,6 +67,7 @@ const useContentStore = create<ContentState & {
     }
     
     try {
+      // Set initial loading state with empty content and loading flags
       set({ 
         loading: true, 
         error: null,
@@ -74,8 +75,8 @@ const useContentStore = create<ContentState & {
         isGeneratingImages: true,
         isGeneratingMcqs: true,
         isProcessingPastedText: false,
-        currentText: 'Text is getting generated...',
-        currentImages: [generatePlaceholderImages(1, 10)[0]], // Single placeholder image
+        currentText: '', // Start with empty text to show blinking lines
+        currentImages: [], // Start with empty images to show placeholder loading
         currentMcqs: [],
       });
       

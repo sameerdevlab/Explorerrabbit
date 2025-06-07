@@ -48,6 +48,21 @@ export function generatePlaceholderImages(numImages: number, textLines: number):
   return images;
 }
 
+// Generate initial placeholder images for loading state (without needing text lines)
+export function generateInitialPlaceholderImages(numImages: number = 3): ImageData[] {
+  const images: ImageData[] = [];
+  
+  for (let i = 0; i < numImages; i++) {
+    images.push({
+      url: PLACEHOLDER_IMAGE_URL,
+      alt: 'Loading image...',
+      position: (i + 1) * 3 // Place images every 3 lines during loading
+    });
+  }
+  
+  return images;
+}
+
 export function splitTextForImages(text: string, numImages: number): { text: string, positions: number[] } {
   const lines = text.split('\n');
   const positions: number[] = [];
