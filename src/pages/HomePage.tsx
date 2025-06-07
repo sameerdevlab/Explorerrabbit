@@ -34,7 +34,7 @@ const HomePage: React.FC = () => {
   
   useEffect(() => {
     // Show results if we have any current content, any generation is in progress, or content is loading
-    const hasContent = currentText || currentImages.length > 0 || currentMcqs.length > 0;
+    const hasContent = currentText.length > 0 || currentImages.length > 0 || currentMcqs.length > 0;
     const isGenerating = isGeneratingText || isGeneratingImages || isGeneratingMcqs || isProcessingPastedText;
     
     console.log('🔍 HomePage useEffect - checking conditions:');
