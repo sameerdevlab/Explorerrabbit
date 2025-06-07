@@ -36,7 +36,20 @@ const HomePage: React.FC = () => {
     // Show results if we have any current content, any generation is in progress, or content is loading
     const hasContent = currentText || currentImages.length > 0 || currentMcqs.length > 0;
     const isGenerating = isGeneratingText || isGeneratingImages || isGeneratingMcqs || isProcessingPastedText;
-    setShowResults(isGenerating || contentLoading || isProcessingPastedText);
+    
+    console.log('🔍 HomePage useEffect - checking conditions:');
+    console.log('  - hasContent:', hasContent);
+    console.log('  - isGenerating:', isGenerating);
+    console.log('  - contentLoading:', contentLoading);
+    console.log('  - currentText length:', currentText.length);
+    console.log('  - currentImages length:', currentImages.length);
+    console.log('  - currentMcqs length:', currentMcqs.length);
+    console.log('  - isProcessingPastedText:', isProcessingPastedText);
+    
+    const shouldShowResults = hasContent || isGenerating || contentLoading;
+    console.log('  - shouldShowResults:', shouldShowResults);
+    
+    setShowResults(shouldShowResults);
   }, [currentText, currentImages, currentMcqs, isGeneratingText, isGeneratingImages, isGeneratingMcqs, isProcessingPastedText, contentLoading]);
   
   const handleNewContent = () => {
@@ -91,7 +104,6 @@ const HomePage: React.FC = () => {
             >
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full md:w-3/5">
-                  {console.log("show result in HomePage.tsx:  ",showResults)}
                   <ContentDisplay />
                 </div>
                 <div className="w-full md:w-2/5">
