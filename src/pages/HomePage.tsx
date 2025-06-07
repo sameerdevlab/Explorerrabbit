@@ -20,29 +20,30 @@ const HomePage: React.FC = () => {
     currentMcqs,
     isGeneratingText,
     isGeneratingImages,
-    isGeneratingMcqs 
+    isGeneratingMcqs,
+    loading: contentLoading
   } = useContentStore();
-  const { user, loading } = useAuthStore();
+  const { user, loading: authLoading } = useAuthStore();
   const [showResults, setShowResults] = useState(false);
   
   // Redirect to auth page if not logged in
-  if (!loading && !user) {
+  if (!authLoading && !user) {
     return <Navigate to="/auth" replace />;
   }
   
   useEffect(() => {
-    // Show results if we have any current content or any generation is in progress
+    // Show results if we have any current content, any generation is in progress, or content is loading
     const hasContent = currentText || currentImages.length > 0 || currentMcqs.length > 0;
     const isGenerating = isGeneratingText || isGeneratingImages || isGeneratingMcqs;
-    setShowResults(hasContent || isGenerating);
-  }, [currentText, currentImages, currentMcqs, isGeneratingText, isGeneratingImages, isGeneratingMcqs]);
+    setShowResults(hasContent || isGenerating || contentLoading);
+  }, [currentText, currentImages, currentMcqs, isGeneratingText, isGeneratingImages, isGeneratingMcqs, contentLoading]);
   
   const handleNewContent = () => {
     clearContent();
     setShowResults(false);
   };
   
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-pink-50">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600"></div>
