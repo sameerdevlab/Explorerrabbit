@@ -69,7 +69,7 @@ const useContentStore = create<ContentState & {
         isGeneratingText: true,
         isGeneratingImages: true,
         isGeneratingMcqs: true,
-        currentText: 'Text is getting generated...',
+        currentText: '',
         currentImages: [generatePlaceholderImages(1, 10)[0]], // Single placeholder image
         currentMcqs: [],
       });
@@ -96,10 +96,12 @@ const useContentStore = create<ContentState & {
       set({
         error: errorMessage,
         loading: false,
-        // Keep loading indicators active to show persistent loading state
-        // isGeneratingText: false,
-        // isGeneratingImages: false,
-        // isGeneratingMcqs: false,
+        isGeneratingText: false,
+        isGeneratingImages: false,
+        isGeneratingMcqs: false,
+        currentText: '',
+        currentImages: [],
+        currentMcqs: [],
       });
       toast.error(errorMessage);
     }
@@ -125,14 +127,21 @@ const useContentStore = create<ContentState & {
     try {
       const textLines = pastedText.split('\n').filter(line => line.trim().length > 0);
       
+      // Create a placeholder image that will be positioned after the first paragraph
+      const placeholderImage = {
+        url: '/ExplorerPlaceHolderImage.png',
+        alt: 'Loading image...',
+        position: Math.min(2, textLines.length - 1) // Position after 2nd line or at the end if text is short
+      };
+      
       set({ 
         loading: true, 
         error: null,
-        isGeneratingText: false, // Text is already available
+        isGeneratingText: false, // Text is already available (pasted)
         isGeneratingImages: true,
         isGeneratingMcqs: true,
         currentText: pastedText,
-        currentImages: [generatePlaceholderImages(1, textLines.length)[0]], // Single placeholder image
+        currentImages: [placeholderImage],
         currentMcqs: [],
       });
       
@@ -143,9 +152,9 @@ const useContentStore = create<ContentState & {
       ]);
       
       // Handle image generation result
-      let finalImages = get().currentImages; // Keep placeholders as fallback
+      let finalImages = [placeholderImage]; // Keep placeholder as fallback
       if (imageResponse.status === 'fulfilled') {
-        finalImages = imageResponse.value.images || [];
+        finalImages = imageResponse.value.images || [placeholderImage];
       }
       
       // Handle MCQ generation result
@@ -177,9 +186,8 @@ const useContentStore = create<ContentState & {
       set({
         error: errorMessage,
         loading: false,
-        // Keep loading indicators active to show persistent loading state
-        // isGeneratingImages: false,
-        // isGeneratingMcqs: false,
+        isGeneratingImages: false,
+        isGeneratingMcqs: false,
       });
       toast.error(errorMessage);
     }
