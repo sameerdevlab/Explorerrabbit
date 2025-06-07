@@ -121,7 +121,7 @@ const HomePage: React.FC = () => {
               </div>
               
               {/* Minimized input at the bottom */}
-              {mode === 'generate' ? (
+        {/* {mode === 'generate' ? (
                 <PromptInput minimized />
               ) : (
                 <TextInput minimized />
