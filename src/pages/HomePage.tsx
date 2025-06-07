@@ -81,7 +81,7 @@ const HomePage: React.FC = () => {
         
         <ModeToggle />
         
-        <AnimatePresence mode="wait">
+        {/* <AnimatePresence mode="wait">
           {!showResults ? (
             <motion.div
               key="input"
@@ -128,7 +128,33 @@ const HomePage: React.FC = () => {
               )}
             </motion.div>
           )}
-        </AnimatePresence>
+        </AnimatePresence> */}
+    {!showResults ? (
+  <>
+    {mode === 'generate' ? (<PromptInput />) : (<TextInput />)}
+  </>
+) : (
+  <>
+    <div className="flex flex-col md:flex-row gap-6">
+                <div className="w-full md:w-3/5">
+                  <ContentDisplay />
+                </div>
+                <div className="w-full md:w-2/5">
+                  <MCQDisplay />
+                </div>
+              </div>
+              
+              <div className="mt-8 text-center">
+                <button
+                  onClick={handleNewContent}
+                  className="text-purple-600 underline hover:text-purple-800 transition-colors"
+                >
+                  Start Over
+                </button>
+              </div>
+  </>
+)}
+
       </main>
     </div>
   );
