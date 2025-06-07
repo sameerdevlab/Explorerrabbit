@@ -33,6 +33,7 @@ export interface ContentState {
   isGeneratingText: boolean;
   isGeneratingImages: boolean;
   isGeneratingMcqs: boolean;
+  isProcessingPastedText: boolean;
   
   // Current content being displayed
   currentText: string;

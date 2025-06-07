@@ -24,6 +24,7 @@ const useContentStore = create<ContentState & {
   isGeneratingText: false,
   isGeneratingImages: false,
   isGeneratingMcqs: false,
+  isProcessingPastedText: false,
   
   // Current content being displayed
   currentText: '',
@@ -43,6 +44,7 @@ const useContentStore = create<ContentState & {
     isGeneratingText: false,
     isGeneratingImages: false,
     isGeneratingMcqs: false,
+    isProcessingPastedText: false,
     currentText: '',
     currentImages: [],
     currentMcqs: [],
@@ -72,6 +74,7 @@ const useContentStore = create<ContentState & {
         isGeneratingText: true,
         isGeneratingImages: true,
         isGeneratingMcqs: true,
+        isProcessingPastedText: false,
         currentText: 'Text is getting generated...',
         currentImages: [generatePlaceholderImages(1, 10)[0]], // Single placeholder image
         currentMcqs: [],
@@ -92,6 +95,7 @@ const useContentStore = create<ContentState & {
         isGeneratingText: false,
         isGeneratingImages: false,
         isGeneratingMcqs: false,
+        isProcessingPastedText: false,
       });
     } catch (error) {
       console.error('Error generating content:', error);
@@ -99,6 +103,7 @@ const useContentStore = create<ContentState & {
       set({
         error: errorMessage,
         loading: false,
+        isProcessingPastedText: false,
         // Keep loading indicators active to show persistent loading state
         // isGeneratingText: false,
         // isGeneratingImages: false,
@@ -147,6 +152,7 @@ const useContentStore = create<ContentState & {
         isGeneratingText: false, // Text is already available
         isGeneratingImages: true,
         isGeneratingMcqs: true,
+        isProcessingPastedText: true,
         currentText: pastedText,
         currentImages: [generatePlaceholderImages(1, textLines.length)[0]], // Single placeholder image
         currentMcqs: [],
@@ -158,6 +164,7 @@ const useContentStore = create<ContentState & {
       console.log('  - loading:', currentState.loading);
       console.log('  - isGeneratingImages:', currentState.isGeneratingImages);
       console.log('  - isGeneratingMcqs:', currentState.isGeneratingMcqs);
+      console.log('  - isProcessingPastedText:', currentState.isProcessingPastedText);
       console.log('  - currentText length:', currentState.currentText.length);
       console.log('  - currentImages length:', currentState.currentImages.length);
       
@@ -206,6 +213,7 @@ const useContentStore = create<ContentState & {
         loading: false,
         isGeneratingImages: false,
         isGeneratingMcqs: false,
+        isProcessingPastedText: false,
       });
       
       console.log('✅ processExistingText completed successfully');
@@ -215,6 +223,7 @@ const useContentStore = create<ContentState & {
       set({
         error: errorMessage,
         loading: false,
+        isProcessingPastedText: false,
         // Keep loading indicators active to show persistent loading state
         // isGeneratingImages: false,
         // isGeneratingMcqs: false,

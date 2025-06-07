@@ -21,6 +21,7 @@ const HomePage: React.FC = () => {
     isGeneratingText,
     isGeneratingImages,
     isGeneratingMcqs,
+    isProcessingPastedText,
     loading: contentLoading
   } = useContentStore();
   const { user, loading: authLoading } = useAuthStore();
@@ -34,9 +35,9 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     // Show results if we have any current content, any generation is in progress, or content is loading
     const hasContent = currentText || currentImages.length > 0 || currentMcqs.length > 0;
-    const isGenerating = isGeneratingText || isGeneratingImages || isGeneratingMcqs;
+    const isGenerating = isGeneratingText || isGeneratingImages || isGeneratingMcqs || isProcessingPastedText;
     setShowResults(hasContent || isGenerating || contentLoading);
-  }, [currentText, currentImages, currentMcqs, isGeneratingText, isGeneratingImages, isGeneratingMcqs, contentLoading]);
+  }, [currentText, currentImages, currentMcqs, isGeneratingText, isGeneratingImages, isGeneratingMcqs, isProcessingPastedText, contentLoading]);
   
   const handleNewContent = () => {
     clearContent();
