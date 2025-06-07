@@ -32,7 +32,10 @@ const useContentStore = create<ContentState & {
   
   setMode: (mode) => set({ mode }),
   setPrompt: (prompt) => set({ prompt }),
-  setPastedText: (text) => set({ pastedText: text }),
+  setPastedText: (text) => {
+    console.log('📝 setPastedText called with:', text);
+    set({ pastedText: text });
+  },
   
   clearContent: () => set({
     result: null,
@@ -106,25 +109,38 @@ const useContentStore = create<ContentState & {
   },
   
   processExistingText: async () => {
+    console.log('🚀 processExistingText function called');
     const { pastedText } = get();
+    
+    console.log('📝 pastedText in processExistingText:', pastedText);
+    console.log('📏 pastedText length:', pastedText.length);
+    console.log('🧹 pastedText trimmed:', pastedText.trim());
+    console.log('📏 pastedText trimmed length:', pastedText.trim().length);
     
     // Check if user is authenticated
     const { user } = useAuthStore.getState();
+    console.log('👤 User authentication status:', !!user);
     if (!user) {
+      console.log('❌ User not authenticated, returning early');
       set({ error: 'Please sign in to process text' });
       toast.error('Please sign in to process text');
       return;
     }
     
     if (!pastedText.trim()) {
+      console.log('❌ No text provided, returning early');
       set({ error: 'Please paste some text to process' });
       toast.error('Please paste some text to process');
       return;
     }
     
+    console.log('✅ Validation passed, proceeding with text processing');
+    
     try {
       const textLines = pastedText.split('\n').filter(line => line.trim().length > 0);
+      console.log('📄 Text lines count:', textLines.length);
       
+      console.log('🔄 Setting loading states...');
       set({ 
         loading: true, 
         error: null,
@@ -136,22 +152,41 @@ const useContentStore = create<ContentState & {
         currentMcqs: [],
       });
       
+      console.log('✅ Loading states set successfully');
+      console.log('🔍 Current store state after setting loading:');
+      const currentState = get();
+      console.log('  - loading:', currentState.loading);
+      console.log('  - isGeneratingImages:', currentState.isGeneratingImages);
+      console.log('  - isGeneratingMcqs:', currentState.isGeneratingMcqs);
+      console.log('  - currentText length:', currentState.currentText.length);
+      console.log('  - currentImages length:', currentState.currentImages.length);
+      
       // Process images and MCQs in parallel
+      console.log('🔄 Starting parallel API calls...');
       const [imageResponse, mcqResponse] = await Promise.allSettled([
         callEdgeFunction('generate-images', { text: pastedText }),
         callEdgeFunction('generate-mcqs', { text: pastedText })
       ]);
       
+      console.log('📸 Image response status:', imageResponse.status);
+      console.log('❓ MCQ response status:', mcqResponse.status);
+      
       // Handle image generation result
       let finalImages = get().currentImages; // Keep placeholders as fallback
       if (imageResponse.status === 'fulfilled') {
+        console.log('✅ Images generated successfully');
         finalImages = imageResponse.value.images || [];
+      } else {
+        console.log('❌ Image generation failed:', imageResponse.reason);
       }
       
       // Handle MCQ generation result
       let finalMcqs: any[] = [];
       if (mcqResponse.status === 'fulfilled') {
+        console.log('✅ MCQs generated successfully');
         finalMcqs = mcqResponse.value.mcqs || [];
+      } else {
+        console.log('❌ MCQ generation failed:', mcqResponse.reason);
       }
       
       // Combine the results
@@ -161,6 +196,7 @@ const useContentStore = create<ContentState & {
         mcqs: finalMcqs,
       };
       
+      console.log('🎯 Setting final results...');
       // Set the final result
       set({
         result,
@@ -171,8 +207,10 @@ const useContentStore = create<ContentState & {
         isGeneratingImages: false,
         isGeneratingMcqs: false,
       });
+      
+      console.log('✅ processExistingText completed successfully');
     } catch (error) {
-      console.error('Error processing text:', error);
+      console.error('❌ Error processing text:', error);
       const errorMessage = error instanceof Error ? error.message : 'An error occurred while processing your text';
       set({
         error: errorMessage,
