@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import toast from 'react-hot-toast';
 import { ContentState, ContentGenerationResult } from '../types';
 import { callEdgeFunction } from '../lib/supabase';
 import { generatePlaceholderImages } from '../lib/utils';
@@ -51,11 +52,13 @@ const useContentStore = create<ContentState & {
     const { user } = useAuthStore.getState();
     if (!user) {
       set({ error: 'Please sign in to generate content' });
+      toast.error('Please sign in to generate content');
       return;
     }
     
     if (!prompt.trim()) {
       set({ error: 'Please enter a prompt to generate content' });
+      toast.error('Please enter a prompt to generate content');
       return;
     }
     
@@ -66,8 +69,8 @@ const useContentStore = create<ContentState & {
         isGeneratingText: true,
         isGeneratingImages: true,
         isGeneratingMcqs: true,
-        currentText: 'Generating content...',
-        currentImages: generatePlaceholderImages(3, 10), // 3 placeholder images
+        currentText: 'Text is getting generated...',
+        currentImages: [generatePlaceholderImages(1, 10)[0]], // Single placeholder image
         currentMcqs: [],
       });
       
@@ -89,13 +92,16 @@ const useContentStore = create<ContentState & {
       });
     } catch (error) {
       console.error('Error generating content:', error);
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while generating content';
       set({
-        error: error instanceof Error ? error.message : 'An error occurred while generating content',
+        error: errorMessage,
         loading: false,
-        isGeneratingText: false,
-        isGeneratingImages: false,
-        isGeneratingMcqs: false,
+        // Keep loading indicators active to show persistent loading state
+        // isGeneratingText: false,
+        // isGeneratingImages: false,
+        // isGeneratingMcqs: false,
       });
+      toast.error(errorMessage);
     }
   },
   
@@ -106,11 +112,13 @@ const useContentStore = create<ContentState & {
     const { user } = useAuthStore.getState();
     if (!user) {
       set({ error: 'Please sign in to process text' });
+      toast.error('Please sign in to process text');
       return;
     }
     
     if (!pastedText.trim()) {
       set({ error: 'Please paste some text to process' });
+      toast.error('Please paste some text to process');
       return;
     }
     
@@ -124,7 +132,7 @@ const useContentStore = create<ContentState & {
         isGeneratingImages: true,
         isGeneratingMcqs: true,
         currentText: pastedText,
-        currentImages: generatePlaceholderImages(3, textLines.length),
+        currentImages: [generatePlaceholderImages(1, textLines.length)[0]], // Single placeholder image
         currentMcqs: [],
       });
       
@@ -165,12 +173,15 @@ const useContentStore = create<ContentState & {
       });
     } catch (error) {
       console.error('Error processing text:', error);
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while processing your text';
       set({
-        error: error instanceof Error ? error.message : 'An error occurred while processing your text',
+        error: errorMessage,
         loading: false,
-        isGeneratingImages: false,
-        isGeneratingMcqs: false,
+        // Keep loading indicators active to show persistent loading state
+        // isGeneratingImages: false,
+        // isGeneratingMcqs: false,
       });
+      toast.error(errorMessage);
     }
   },
 }));
