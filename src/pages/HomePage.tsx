@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Navigate } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import ModeToggle from '../components/layout/ModeToggle';
@@ -81,54 +81,48 @@ const HomePage: React.FC = () => {
         
         <ModeToggle />
         
-        <AnimatePresence mode="wait">
-          {!showResults ? (
-            <motion.div
-              key="input"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {mode === 'generate' ? (
-                <PromptInput />
-              ) : (
-                <TextInput />
-              )}
-            </motion.div>
-          ) : (
-            <motion.div 
-              key="results"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="w-full md:w-3/5">
-                  <ContentDisplay />
-                </div>
-                <div className="w-full md:w-2/5">
-                  <MCQDisplay />
-                </div>
+        {!showResults ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {mode === 'generate' ? (
+              <PromptInput />
+            ) : (
+              <TextInput />
+            )}
+          </motion.div>
+        ) : (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="w-full md:w-3/5">
+                <ContentDisplay />
               </div>
-              
-              <div className="mt-8 text-center">
-                <button
-                  onClick={handleNewContent}
-                  className="text-purple-600 underline hover:text-purple-800 transition-colors"
-                >
-                  Start Over
-                </button>
+              <div className="w-full md:w-2/5">
+                <MCQDisplay />
               </div>
-              
-              {/* Minimized input at the bottom */}
-        {mode === 'generate' ? (
-                <PromptInput minimized />
-              ) : (
-                <TextInput minimized />
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+            
+            <div className="mt-8 text-center">
+              <button
+                onClick={handleNewContent}
+                className="text-purple-600 underline hover:text-purple-800 transition-colors"
+              >
+                Start Over
+              </button>
+            </div>
+            
+            {/* Minimized input at the bottom */}
+            {mode === 'generate' ? (
+              <PromptInput minimized />
+            ) : (
+              <TextInput minimized />
+            )}
+          </motion.div>
+        )}
       </main>
     </div>
   );
