@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { ImageData } from '../types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -12,6 +13,39 @@ export function delay(ms: number): Promise<void> {
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return String(error);
+}
+
+// Placeholder image URL from Pexels
+export const PLACEHOLDER_IMAGE_URL = 'https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?auto=compress&cs=tinysrgb&w=1024&h=1024&fit=crop';
+
+export function generatePlaceholderImages(numImages: number, textLines: number): ImageData[] {
+  const images: ImageData[] = [];
+  
+  if (textLines <= 5) {
+    // If text is very short, place one image after all text
+    images.push({
+      url: PLACEHOLDER_IMAGE_URL,
+      alt: 'Loading image...',
+      position: textLines
+    });
+    return images;
+  }
+  
+  // Place images roughly every 5-6 lines
+  const interval = Math.max(Math.floor(textLines / (numImages + 1)), 5);
+  
+  for (let i = 1; i <= numImages; i++) {
+    const position = i * interval;
+    if (position < textLines) {
+      images.push({
+        url: PLACEHOLDER_IMAGE_URL,
+        alt: 'Loading image...',
+        position
+      });
+    }
+  }
+  
+  return images;
 }
 
 export function splitTextForImages(text: string, numImages: number): { text: string, positions: number[] } {

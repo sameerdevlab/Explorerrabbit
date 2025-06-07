@@ -28,6 +28,16 @@ export interface ContentState {
   result: ContentGenerationResult | null;
   loading: boolean;
   error: string | null;
+  
+  // Progressive loading states
+  isGeneratingText: boolean;
+  isGeneratingImages: boolean;
+  isGeneratingMcqs: boolean;
+  
+  // Current content being displayed
+  currentText: string;
+  currentImages: ImageData[];
+  currentMcqs: MCQuestion[];
 }
 
 export interface AuthState {

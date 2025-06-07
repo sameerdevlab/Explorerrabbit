@@ -1,21 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
 import { Card } from '../ui/Card';
 import useContentStore from '../../store/contentStore';
 
 const ContentDisplay: React.FC = () => {
-  const { result, mode } = useContentStore();
+  const { currentText, currentImages, mode, isGeneratingText, isGeneratingImages } = useContentStore();
 
-  if (!result) return null;
+  if (!currentText && !isGeneratingText) return null;
 
   // Split the text by newline characters
-  const lines = result.text.split('\n');
+  const lines = currentText.split('\n');
   
   // Create an array to store the content (text and images)
   const content: JSX.Element[] = [];
   
   // Find image positions
-  const imagePositions = new Set(result.images.map(img => img.position));
+  const imagePositions = new Set(currentImages.map(img => img.position));
   
   // Create the content array with text and images
   lines.forEach((line, index) => {
@@ -32,16 +33,24 @@ const ContentDisplay: React.FC = () => {
     
     // Check if we should insert an image after this line
     if (imagePositions.has(index)) {
-      const image = result.images.find(img => img.position === index);
+      const image = currentImages.find(img => img.position === index);
       if (image) {
         content.push(
-          <div key={`img-${index}`} className="my-6">
+          <div key={`img-${index}`} className="my-6 relative">
             <img
               src={image.url}
               alt={image.alt}
               className="rounded-lg shadow-lg w-full object-cover max-h-80"
               loading="lazy"
             />
+            {isGeneratingImages && image.alt === 'Loading image...' && (
+              <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
+                <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3 flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-purple-600" />
+                  <span className="text-sm text-gray-700">Images are getting generated...</span>
+                </div>
+              </div>
+            )}
           </div>
         );
       }
@@ -60,9 +69,17 @@ const ContentDisplay: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4 text-purple-700">
             {mode === 'generate' ? 'Generated Content' : 'Your Text with Images'}
           </h2>
-          <div className="prose prose-slate max-w-none">
-            {content}
-          </div>
+          
+          {isGeneratingText ? (
+            <div className="flex items-center gap-3 p-8 text-center justify-center">
+              <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
+              <span className="text-gray-600">Generating content...</span>
+            </div>
+          ) : (
+            <div className="prose prose-slate max-w-none">
+              {content}
+            </div>
+          )}
         </div>
       </Card>
     </motion.div>

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { ContentState, ContentGenerationResult } from '../types';
 import { callEdgeFunction } from '../lib/supabase';
+import { generatePlaceholderImages } from '../lib/utils';
 import useAuthStore from './authStore';
 
 const useContentStore = create<ContentState & {
@@ -18,6 +19,16 @@ const useContentStore = create<ContentState & {
   loading: false,
   error: null,
   
+  // Progressive loading states
+  isGeneratingText: false,
+  isGeneratingImages: false,
+  isGeneratingMcqs: false,
+  
+  // Current content being displayed
+  currentText: '',
+  currentImages: [],
+  currentMcqs: [],
+  
   setMode: (mode) => set({ mode }),
   setPrompt: (prompt) => set({ prompt }),
   setPastedText: (text) => set({ pastedText: text }),
@@ -25,6 +36,12 @@ const useContentStore = create<ContentState & {
   clearContent: () => set({
     result: null,
     error: null,
+    isGeneratingText: false,
+    isGeneratingImages: false,
+    isGeneratingMcqs: false,
+    currentText: '',
+    currentImages: [],
+    currentMcqs: [],
   }),
   
   generateContent: async () => {
@@ -43,23 +60,41 @@ const useContentStore = create<ContentState & {
     }
     
     try {
-      set({ loading: true, error: null });
+      set({ 
+        loading: true, 
+        error: null,
+        isGeneratingText: true,
+        isGeneratingImages: true,
+        isGeneratingMcqs: true,
+        currentText: 'Generating content...',
+        currentImages: generatePlaceholderImages(3, 10), // 3 placeholder images
+        currentMcqs: [],
+      });
       
       // Call the Supabase Edge Function for content generation
       const data = await callEdgeFunction('generate-content', {
         prompt,
       });
       
-      // Set the result
+      // Set the final result
       set({
         result: data as ContentGenerationResult,
+        currentText: data.text,
+        currentImages: data.images,
+        currentMcqs: data.mcqs,
         loading: false,
+        isGeneratingText: false,
+        isGeneratingImages: false,
+        isGeneratingMcqs: false,
       });
     } catch (error) {
       console.error('Error generating content:', error);
       set({
         error: error instanceof Error ? error.message : 'An error occurred while generating content',
         loading: false,
+        isGeneratingText: false,
+        isGeneratingImages: false,
+        isGeneratingMcqs: false,
       });
     }
   },
@@ -80,36 +115,61 @@ const useContentStore = create<ContentState & {
     }
     
     try {
-      set({ loading: true, error: null });
+      const textLines = pastedText.split('\n').filter(line => line.trim().length > 0);
       
-      // Process the user's pasted text
-      // 1. Generate images based on the text
-      const imageResponse = await callEdgeFunction('generate-images', {
-        text: pastedText,
+      set({ 
+        loading: true, 
+        error: null,
+        isGeneratingText: false, // Text is already available
+        isGeneratingImages: true,
+        isGeneratingMcqs: true,
+        currentText: pastedText,
+        currentImages: generatePlaceholderImages(3, textLines.length),
+        currentMcqs: [],
       });
       
-      // 2. Generate MCQs from the text
-      const mcqResponse = await callEdgeFunction('generate-mcqs', {
-        text: pastedText,
-      });
+      // Process images and MCQs in parallel
+      const [imageResponse, mcqResponse] = await Promise.allSettled([
+        callEdgeFunction('generate-images', { text: pastedText }),
+        callEdgeFunction('generate-mcqs', { text: pastedText })
+      ]);
       
-      // 3. Combine the results
+      // Handle image generation result
+      let finalImages = get().currentImages; // Keep placeholders as fallback
+      if (imageResponse.status === 'fulfilled') {
+        finalImages = imageResponse.value.images || [];
+      }
+      
+      // Handle MCQ generation result
+      let finalMcqs: any[] = [];
+      if (mcqResponse.status === 'fulfilled') {
+        finalMcqs = mcqResponse.value.mcqs || [];
+      }
+      
+      // Combine the results
       const result: ContentGenerationResult = {
         text: pastedText,
-        images: imageResponse.images || [],
-        mcqs: mcqResponse.mcqs || [],
+        images: finalImages,
+        mcqs: finalMcqs,
       };
       
-      // Set the result
+      // Set the final result
       set({
         result,
+        currentText: pastedText,
+        currentImages: finalImages,
+        currentMcqs: finalMcqs,
         loading: false,
+        isGeneratingImages: false,
+        isGeneratingMcqs: false,
       });
     } catch (error) {
       console.error('Error processing text:', error);
       set({
         error: error instanceof Error ? error.message : 'An error occurred while processing your text',
         loading: false,
+        isGeneratingImages: false,
+        isGeneratingMcqs: false,
       });
     }
   },

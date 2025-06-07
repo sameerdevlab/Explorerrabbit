@@ -11,7 +11,17 @@ import useContentStore from '../store/contentStore';
 import useAuthStore from '../store/authStore';
 
 const HomePage: React.FC = () => {
-  const { mode, result, clearContent } = useContentStore();
+  const { 
+    mode, 
+    result, 
+    clearContent, 
+    currentText, 
+    currentImages, 
+    currentMcqs,
+    isGeneratingText,
+    isGeneratingImages,
+    isGeneratingMcqs 
+  } = useContentStore();
   const { user, loading } = useAuthStore();
   const [showResults, setShowResults] = useState(false);
   
@@ -21,8 +31,11 @@ const HomePage: React.FC = () => {
   }
   
   useEffect(() => {
-    setShowResults(!!result);
-  }, [result]);
+    // Show results if we have any current content or any generation is in progress
+    const hasContent = currentText || currentImages.length > 0 || currentMcqs.length > 0;
+    const isGenerating = isGeneratingText || isGeneratingImages || isGeneratingMcqs;
+    setShowResults(hasContent || isGenerating);
+  }, [currentText, currentImages, currentMcqs, isGeneratingText, isGeneratingImages, isGeneratingMcqs]);
   
   const handleNewContent = () => {
     clearContent();
