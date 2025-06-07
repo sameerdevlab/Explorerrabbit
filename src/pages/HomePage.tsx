@@ -37,17 +37,7 @@ const HomePage: React.FC = () => {
     const hasContent = currentText.length > 0 || currentImages.length > 0 || currentMcqs.length > 0;
     const isGenerating = isGeneratingText || isGeneratingImages || isGeneratingMcqs || isProcessingPastedText;
     
-    console.log('🔍 HomePage useEffect - checking conditions:');
-    console.log('  - hasContent:', hasContent);
-    console.log('  - isGenerating:', isGenerating);
-    console.log('  - contentLoading:', contentLoading);
-    console.log('  - currentText length:', currentText.length);
-    console.log('  - currentImages length:', currentImages.length);
-    console.log('  - currentMcqs length:', currentMcqs.length);
-    console.log('  - isProcessingPastedText:', isProcessingPastedText);
-    
     const shouldShowResults = hasContent || isGenerating || contentLoading;
-    console.log('  - shouldShowResults:', shouldShowResults);
     
     setShowResults(shouldShowResults);
   }, [currentText, currentImages, currentMcqs, isGeneratingText, isGeneratingImages, isGeneratingMcqs, isProcessingPastedText, contentLoading]);
