@@ -15,8 +15,8 @@ export function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
-// Placeholder image URL from Pexels
-export const PLACEHOLDER_IMAGE_URL = 'https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?auto=compress&cs=tinysrgb&w=1024&h=1024&fit=crop';
+// Local placeholder image
+export const PLACEHOLDER_IMAGE_URL = '/ExplorerPlaceHolderImage.png';
 
 export function generatePlaceholderImages(numImages: number, textLines: number): ImageData[] {
   const images: ImageData[] = [];

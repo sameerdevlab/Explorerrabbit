@@ -44,10 +44,10 @@ const ContentDisplay: React.FC = () => {
               loading="lazy"
             />
             {isGeneratingImages && image.alt === 'Loading image...' && (
-              <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
-                <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3 flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin text-purple-600" />
-                  <span className="text-sm text-gray-700">Images are getting generated...</span>
+              <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                <div className="bg-white/95 backdrop-blur-sm rounded-lg p-4 flex items-center gap-3 shadow-lg">
+                  <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
+                  <span className="text-sm font-medium text-gray-700">Images are getting generated...</span>
                 </div>
               </div>
             )}
@@ -73,7 +73,7 @@ const ContentDisplay: React.FC = () => {
           {isGeneratingText ? (
             <div className="flex items-center gap-3 p-8 text-center justify-center">
               <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
-              <span className="text-gray-600">Generating content...</span>
+              <span className="text-gray-600">Text is getting generated...</span>
             </div>
           ) : (
             <div className="prose prose-slate max-w-none">
