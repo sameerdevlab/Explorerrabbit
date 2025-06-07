@@ -189,11 +189,13 @@ const useContentStore = create<ContentState & {
       
       // Handle MCQ generation result
       let finalMcqs: any[] = [];
+      let shouldKeepMcqLoading = false;
       if (mcqResponse.status === 'fulfilled') {
         console.log('✅ MCQs generated successfully');
         finalMcqs = mcqResponse.value.mcqs || [];
       } else {
         console.log('❌ MCQ generation failed:', mcqResponse.reason);
+        shouldKeepMcqLoading = true; // Keep loading indicator active when MCQ generation fails
       }
       
       // Combine the results
@@ -211,8 +213,8 @@ const useContentStore = create<ContentState & {
         currentImages: finalImages,
         currentMcqs: finalMcqs,
         loading: false,
-        isGeneratingImages: false,
-        isGeneratingMcqs: false,
+        isGeneratingImages: false, // Always hide image loading, even if failed (placeholder remains)
+        isGeneratingMcqs: shouldKeepMcqLoading, // Keep MCQ loading active if generation failed
         isProcessingPastedText: false,
       });
       
@@ -224,9 +226,8 @@ const useContentStore = create<ContentState & {
         error: errorMessage,
         loading: false,
         isProcessingPastedText: false,
-        // Keep loading indicators active to show persistent loading state
-        // isGeneratingImages: false,
-        // isGeneratingMcqs: false,
+        isGeneratingImages: false, // Hide image loading on general error
+        isGeneratingMcqs: true, // Keep MCQ loading active on general error
       });
       toast.error(errorMessage);
     }
