@@ -36,7 +36,7 @@ const HomePage: React.FC = () => {
     // Show results if we have any current content, any generation is in progress, or content is loading
     const hasContent = currentText || currentImages.length > 0 || currentMcqs.length > 0;
     const isGenerating = isGeneratingText || isGeneratingImages || isGeneratingMcqs || isProcessingPastedText;
-    setShowResults(hasContent || isGenerating || contentLoading);
+    setShowResults(hasContent || isGenerating || contentLoading || isProcessingPastedText);
   }, [currentText, currentImages, currentMcqs, isGeneratingText, isGeneratingImages, isGeneratingMcqs, isProcessingPastedText, contentLoading]);
   
   const handleNewContent = () => {
