@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, AlertCircle, CheckCircle, Trophy, Star } from 'lucide-react';
+import { Loader2, AlertCircle, CheckCircle, Trophy, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
 import useContentStore from '../../store/contentStore';
@@ -10,6 +10,8 @@ const MCQDisplay: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [reviewMode, setReviewMode] = useState(false);
+  const [reviewQuestionIndex, setReviewQuestionIndex] = useState(0);
   
   console.log('🔍 MCQDisplay render:', { 
     currentMcqs, 
@@ -39,6 +41,29 @@ const MCQDisplay: React.FC = () => {
     setSelectedAnswers({});
     setCurrentQuestionIndex(0);
     setQuizCompleted(false);
+    setReviewMode(false);
+    setReviewQuestionIndex(0);
+  };
+  
+  const startReview = () => {
+    setReviewMode(true);
+    setReviewQuestionIndex(0);
+  };
+  
+  const backToResults = () => {
+    setReviewMode(false);
+  };
+  
+  const handleReviewPrevious = () => {
+    if (reviewQuestionIndex > 0) {
+      setReviewQuestionIndex(prev => prev - 1);
+    }
+  };
+  
+  const handleReviewNext = () => {
+    if (reviewQuestionIndex < currentMcqs.length - 1) {
+      setReviewQuestionIndex(prev => prev + 1);
+    }
   };
   
   const getScore = () => {
@@ -73,16 +98,21 @@ const MCQDisplay: React.FC = () => {
   const score = getScore();
   const scoreMessage = getScoreMessage(score, currentMcqs?.length || 0);
   
+  // Don't render if no MCQs and not generating
+  if (!isGeneratingMcqs && (!currentMcqs || currentMcqs.length === 0) && !error) {
+    return null;
+  }
+  
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.3 }}
-      className="w-full h-full"
+      className="w-full"
     >
-      <Card className="h-full flex flex-col bg-white shadow-md">
-        <CardContent className="flex-grow overflow-y-auto">
-          <h2 className="text-xl font-semibold mb-4 text-purple-700 sticky top-0 bg-white z-10 pb-2">
+      <Card className="bg-white shadow-md">
+        <CardContent>
+          <h2 className="text-xl font-semibold mb-4 text-purple-700">
             Test Your Knowledge
           </h2>
           
@@ -93,7 +123,115 @@ const MCQDisplay: React.FC = () => {
             </div>
           ) : currentMcqs && currentMcqs.length > 0 ? (
             <>
-              {quizCompleted ? (
+              {reviewMode ? (
+                // Review Mode
+                <div className="space-y-6">
+                  {/* Review Progress */}
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-sm font-medium text-purple-600">
+                      Review {reviewQuestionIndex + 1}/{currentMcqs.length}
+                    </span>
+                    <Button
+                      onClick={backToResults}
+                      variant="outline"
+                      size="sm"
+                    >
+                      Back to Results
+                    </Button>
+                  </div>
+                  
+                  {/* Review Question */}
+                  <motion.div
+                    key={reviewQuestionIndex}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="border border-gray-200 rounded-md p-6"
+                  >
+                    <h3 className="text-lg font-medium mb-4 text-gray-800">
+                      {currentMcqs[reviewQuestionIndex].question}
+                    </h3>
+                    
+                    <div className="space-y-3">
+                      {currentMcqs[reviewQuestionIndex].options.map((option, optionIndex) => {
+                        const isUserAnswer = selectedAnswers[reviewQuestionIndex] === optionIndex;
+                        const isCorrectAnswer = currentMcqs[reviewQuestionIndex].correctAnswer === optionIndex;
+                        const isWrongUserAnswer = isUserAnswer && !isCorrectAnswer;
+                        
+                        let optionClass = 'border rounded-md p-4 transition-all';
+                        let iconColor = 'border-gray-300';
+                        let icon = String.fromCharCode(65 + optionIndex);
+                        
+                        if (isCorrectAnswer) {
+                          optionClass += ' border-green-500 bg-green-50';
+                          iconColor = 'border-green-500 bg-green-500 text-white';
+                          icon = '✓';
+                        } else if (isWrongUserAnswer) {
+                          optionClass += ' border-red-500 bg-red-50';
+                          iconColor = 'border-red-500 bg-red-500 text-white';
+                          icon = '✗';
+                        } else {
+                          optionClass += ' border-gray-300 bg-gray-50';
+                        }
+                        
+                        return (
+                          <div key={optionIndex} className={optionClass}>
+                            <div className="flex items-start">
+                              <span className={`flex items-center justify-center w-6 h-6 rounded-full text-xs mr-3 ${iconColor}`}>
+                                {icon}
+                              </span>
+                              <div className="flex-1">
+                                <span className="text-gray-700">{option}</span>
+                                {isCorrectAnswer && (
+                                  <div className="text-sm text-green-600 font-medium mt-1">
+                                    ✓ Correct Answer
+                                  </div>
+                                )}
+                                {isWrongUserAnswer && (
+                                  <div className="text-sm text-red-600 font-medium mt-1">
+                                    ✗ Your Answer (Incorrect)
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* Explanation for wrong answers */}
+                    {selectedAnswers[reviewQuestionIndex] !== currentMcqs[reviewQuestionIndex].correctAnswer && (
+                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                        <p className="text-sm text-blue-800">
+                          <strong>Correct Answer:</strong> {currentMcqs[reviewQuestionIndex].options[currentMcqs[reviewQuestionIndex].correctAnswer]}
+                        </p>
+                      </div>
+                    )}
+                  </motion.div>
+                  
+                  {/* Review Navigation */}
+                  <div className="flex gap-4">
+                    <Button
+                      onClick={handleReviewPrevious}
+                      disabled={reviewQuestionIndex === 0}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-2" />
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={handleReviewNext}
+                      disabled={reviewQuestionIndex === currentMcqs.length - 1}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </div>
+                </div>
+              ) : quizCompleted ? (
                 // Completion Screen
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -150,12 +288,16 @@ const MCQDisplay: React.FC = () => {
                     </p>
                   </motion.div>
                   
-                  {/* Try Again Button */}
+                  {/* Action Buttons */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8 }}
+                    className="space-y-3"
                   >
+                    <Button onClick={startReview} variant="outline" className="w-full">
+                      Review Answers
+                    </Button>
                     <Button onClick={resetQuiz} className="w-full">
                       Try Again
                     </Button>
@@ -238,7 +380,7 @@ const MCQDisplay: React.FC = () => {
                   </motion.div>
                   
                   {/* Navigation Buttons */}
-                  <div className="mt-6 flex gap-4 sticky bottom-0 bg-white pt-4">
+                  <div className="mt-6 flex gap-4">
                     {currentQuestionIndex < currentMcqs.length - 1 ? (
                       <Button 
                         onClick={handleNext}
@@ -261,7 +403,7 @@ const MCQDisplay: React.FC = () => {
               )}
             </>
           ) : error ? (
-            <div className="p-8 text-center">
+            <div className="p-6 text-center">
               <div className="flex items-center justify-center gap-2 text-red-600 mb-2">
                 <AlertCircle size={20} />
                 <span className="font-medium">MCQ Generation Failed</span>
@@ -271,7 +413,7 @@ const MCQDisplay: React.FC = () => {
               </p>
             </div>
           ) : (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-6 text-center text-gray-500">
               <p>No questions could be generated from this content.</p>
             </div>
           )}
