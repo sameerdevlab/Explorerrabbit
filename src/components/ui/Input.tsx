@@ -11,14 +11,9 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, icon, variant = 'default', error, glowing = false, ...props }, ref) => {
     return (
-      <div className={cn(
-        "relative w-full",
-        {
-          'glowing-input-border': glowing,
-        }
-      )}>
+      <div className="relative w-full">
         {icon && (
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 z-20">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 z-10">
             {icon}
           </div>
         )}
@@ -30,6 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               'bg-white border-gray-300': variant === 'default',
               'bg-white/40 backdrop-blur-md border-white/20': variant === 'glass',
               'border-red-500 focus:ring-red-500': error,
+              'glowing-input-border': glowing,
             },
             className
           )}
