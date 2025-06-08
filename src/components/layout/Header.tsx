@@ -14,9 +14,9 @@ const Header: React.FC = () => {
           <h1 className="text-xl font-bold">AI Content Generator</h1>
         </div>
         
-        <div>
+        <div className= "group">
           {user ? (
-            <div className="relative group">
+            <div className="relative">
               <div className="flex items-center gap-4">
                 {/* User Initial Circle */}
                 <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white font-bold text-lg cursor-pointer hover:bg-white/30 transition-all duration-200">
