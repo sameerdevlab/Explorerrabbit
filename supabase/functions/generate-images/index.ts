@@ -100,12 +100,12 @@ Deno.serve(async (req) => {
     }
 
     // Generate image prompts based on the text
-    const imageApiKey = Deno.env.get("DEEPAI_API_KEY");
+    const textApiKey = Deno.env.get("GROQ_API_KEY");
 const imagePromptResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "Authorization": `Bearer ${imageApiKey}`, // this is Groq API key now
+    "Authorization": `Bearer ${textApiKey}`, // this is Groq API key now
   },
   body: JSON.stringify({
     model: "llama-3.3-70b-versatile",
@@ -145,7 +145,7 @@ for (let i = 0; i < imagePrompts.length && i < 3; i++) {
     const imageResponse = await fetch("https://api.deepai.org/api/text2img", {
       method: "POST",
       headers: {
-        "Api-Key": deepAiApiKey, // You must define this elsewhere (DeepAI key)
+        "Api-Key": apiKey, // You must define this elsewhere (DeepAI key)
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams({ text: imagePrompts[i] }),
