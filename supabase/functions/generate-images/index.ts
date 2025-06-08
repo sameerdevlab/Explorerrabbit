@@ -67,11 +67,26 @@ Deno.serve(async (req) => {
       );
     }
 
-    const apiKey = Deno.env.get("DEEPAI_API_KEY");
+    // Get API keys
+    const groqApiKey = Deno.env.get("GROQ_API_KEY");
+    const deepAiApiKey = Deno.env.get("DEEPAI_API_KEY");
     
-    if (!apiKey) {
+    if (!groqApiKey) {
       return new Response(
-        JSON.stringify({ error: "OpenAI API key is not configured" }),
+        JSON.stringify({ error: "Groq API key is not configured" }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            ...corsHeaders,
+          },
+        }
+      );
+    }
+
+    if (!deepAiApiKey) {
+      return new Response(
+        JSON.stringify({ error: "DeepAI API key is not configured" }),
         {
           status: 500,
           headers: {
@@ -99,74 +114,75 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Generate image prompts based on the text
-    const textApiKey = Deno.env.get("GROQ_API_KEY");
-const imagePromptResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${textApiKey}`, // this is Groq API key now
-  },
-  body: JSON.stringify({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      {
-        role: "system",
-        content: "Create 3 detailed image prompts for fantasy or realistic visuals based on this text. Return only a JSON array of 3 strings."
-      },
-      {
-        role: "user",
-        content: generatedText
-      }
-    ],
-    temperature: 0.7,
-    max_tokens: 500,
-  }),
-});
-
-const imagePromptData = await imagePromptResponse.json();
-
-let imagePrompts;
-try {
-  imagePrompts = JSON.parse(imagePromptData.choices[0].message.content);
-  if (!Array.isArray(imagePrompts)) throw new Error("Invalid prompt format");
-} catch (error) {
-  console.error("Error parsing image prompts:", error);
-  imagePrompts = ["A visual representation related to " + prompt];
-}
-
-// Step 2: Generate images with DeepAI
-const images = [];
-const textLines = generatedText.split('\n').filter(line => line.trim().length > 0);
-const interval = Math.max(Math.floor(textLines.length / (imagePrompts.length + 1)), 5);
-
-for (let i = 0; i < imagePrompts.length && i < 3; i++) {
-  try {
-    const imageResponse = await fetch("https://api.deepai.org/api/text2img", {
+    // Generate image prompts using Groq
+    const imagePromptResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Api-Key": apiKey, // You must define this elsewhere (DeepAI key)
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${groqApiKey}`,
       },
-      body: new URLSearchParams({ text: imagePrompts[i] }),
+      body: JSON.stringify({
+        model: "llama-3.1-70b-versatile",
+        messages: [
+          {
+            role: "system",
+            content: "Create 3 detailed image prompts for fantasy or realistic visuals based on this text. Return only a JSON array of 3 strings."
+          },
+          {
+            role: "user",
+            content: text
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+      }),
     });
 
-    const imageData = await imageResponse.json();
+    const imagePromptData = await imagePromptResponse.json();
 
-    if (!imageResponse.ok || !imageData.output_url) {
-      console.error("DeepAI API error:", imageData);
-      continue;
-}
+    let imagePrompts;
+    try {
+      imagePrompts = JSON.parse(imagePromptData.choices[0].message.content);
+      if (!Array.isArray(imagePrompts)) throw new Error("Invalid prompt format");
+    } catch (error) {
+      console.error("Error parsing image prompts:", error);
+      imagePrompts = ["A visual representation related to the provided text"];
+    }
 
-    images.push({
-      url: imageData.output_url,
-      alt: imagePrompts[i].substring(0, 100),
-      position: (i + 1) * interval,
-    });
-  } catch (error) {
-    console.error("Error generating image:", error);
-  }
-}
+    // Generate images with DeepAI
+    const images = [];
+    const textLines = text.split('\n').filter(line => line.trim().length > 0);
+    
+    // Calculate positions to place images (roughly every 5-6 lines)
+    const interval = Math.max(Math.floor(textLines.length / (imagePrompts.length + 1)), 5);
+    
+    for (let i = 0; i < imagePrompts.length && i < 3; i++) {
+      try {
+        const imageResponse = await fetch("https://api.deepai.org/api/text2img", {
+          method: "POST",
+          headers: {
+            "Api-Key": deepAiApiKey,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({ text: imagePrompts[i] }),
+        });
+
+        const imageData = await imageResponse.json();
+
+        if (!imageResponse.ok || !imageData.output_url) {
+          console.error("DeepAI API error:", imageData);
+          continue;
+        }
+
+        images.push({
+          url: imageData.output_url,
+          alt: imagePrompts[i].substring(0, 100),
+          position: (i + 1) * interval
+        });
+      } catch (error) {
+        console.error("Error generating image:", error);
+      }
+    }
 
     return new Response(
       JSON.stringify({ images }),

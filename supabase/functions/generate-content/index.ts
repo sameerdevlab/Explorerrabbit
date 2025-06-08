@@ -67,11 +67,26 @@ Deno.serve(async (req) => {
       );
     }
 
-    const apiKey = Deno.env.get("OPENAI_API_KEY");
+    // Get API keys
+    const groqApiKey = Deno.env.get("GROQ_API_KEY");
+    const deepAiApiKey = Deno.env.get("DEEPAI_API_KEY");
     
-    if (!apiKey) {
+    if (!groqApiKey) {
       return new Response(
-        JSON.stringify({ error: "OpenAI API key is not configured" }),
+        JSON.stringify({ error: "Groq API key is not configured" }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            ...corsHeaders,
+          },
+        }
+      );
+    }
+
+    if (!deepAiApiKey) {
+      return new Response(
+        JSON.stringify({ error: "DeepAI API key is not configured" }),
         {
           status: 500,
           headers: {
@@ -100,182 +115,140 @@ Deno.serve(async (req) => {
     }
 
     // Generate text content with Groq
-    const textApiKey = Deno.env.get("GROQ_API_KEY");
-const textResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${textApiKey}`,
-  },
-  body: JSON.stringify({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      {
-        role: "system",
-        content: "You are a helpful assistant who provides informative and educational content."
-      },
-      {
-        role: "user",
-        content: prompt
-      }
-    ],
-    max_tokens: 500,
-    temperature: 0.7,
-  }),
-});
-
-const textData = await textResponse.json();
-
-if (!textResponse.ok) {
-  console.error("Groq API error:", textData);
-  throw new Error(textData.error?.message || "Failed to generate text");
-}
-
-const generatedText = textData.choices[0].message.content;
-    
-
-    // Generate image prompts based on the text
-
-    // Step 1: Generate image prompts using Groq (fallback if needed)
-    const imageApiKey = Deno.env.get("DEEPAI_API_KEY");
-const imagePromptResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${imageApiKey}`, // this is Groq API key now
-  },
-  body: JSON.stringify({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      {
-        role: "system",
-        content: "Create 3 detailed image prompts for fantasy or realistic visuals based on this text. Return only a JSON array of 3 strings."
-      },
-      {
-        role: "user",
-        content: generatedText
-      }
-    ],
-    temperature: 0.7,
-    max_tokens: 500,
-  }),
-});
-
-const imagePromptData = await imagePromptResponse.json();
-
-let imagePrompts;
-try {
-  imagePrompts = JSON.parse(imagePromptData.choices[0].message.content);
-  if (!Array.isArray(imagePrompts)) throw new Error("Invalid prompt format");
-} catch (error) {
-  console.error("Error parsing image prompts:", error);
-  imagePrompts = ["A visual representation related to " + prompt];
-}
-
-// Step 2: Generate images with DeepAI
-const images = [];
-const textLines = generatedText.split('\n').filter(line => line.trim().length > 0);
-const interval = Math.max(Math.floor(textLines.length / (imagePrompts.length + 1)), 5);
-
-for (let i = 0; i < imagePrompts.length && i < 3; i++) {
-  try {
-    const imageResponse = await fetch("https://api.deepai.org/api/text2img", {
+    const textResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Api-Key": deepAiApiKey, // You must define this elsewhere (DeepAI key)
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${groqApiKey}`,
       },
-      body: new URLSearchParams({ text: imagePrompts[i] }),
+      body: JSON.stringify({
+        model: "llama-3.1-70b-versatile",
+        messages: [
+          {
+            role: "system",
+            content: "You are a helpful assistant who provides informative and educational content."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: 1000,
+        temperature: 0.7,
+      }),
     });
 
-    const imageData = await imageResponse.json();
+    const textData = await textResponse.json();
 
-    if (!imageResponse.ok || !imageData.output_url) {
-      console.error("DeepAI API error:", imageData);
-      continue;
-}
+    if (!textResponse.ok) {
+      console.error("Groq API error:", textData);
+      throw new Error(textData.error?.message || "Failed to generate text");
+    }
 
-    images.push({
-      url: imageData.output_url,
-      alt: imagePrompts[i].substring(0, 100),
-      position: (i + 1) * interval,
-    });
-  } catch (error) {
-    console.error("Error generating image:", error);
-  }
-}
-      
+    const generatedText = textData.choices[0].message.content;
 
-    // Generate MCQs based on the text
-
-    const mcqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${textApiKey}`, // This should be your Groq API key
-  },
-  body: JSON.stringify({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      {
-        role: "system",
-        content:
-          "Create 5 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Format the response as a JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3)."
+    // Generate image prompts using Groq
+    const imagePromptResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${groqApiKey}`,
       },
-      {
-        role: "user",
-        content: generatedText
+      body: JSON.stringify({
+        model: "llama-3.1-70b-versatile",
+        messages: [
+          {
+            role: "system",
+            content: "Create 3 detailed image prompts for fantasy or realistic visuals based on this text. Return only a JSON array of 3 strings."
+          },
+          {
+            role: "user",
+            content: generatedText
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+      }),
+    });
+
+    const imagePromptData = await imagePromptResponse.json();
+
+    let imagePrompts;
+    try {
+      imagePrompts = JSON.parse(imagePromptData.choices[0].message.content);
+      if (!Array.isArray(imagePrompts)) throw new Error("Invalid prompt format");
+    } catch (error) {
+      console.error("Error parsing image prompts:", error);
+      imagePrompts = ["A visual representation related to " + prompt];
+    }
+
+    // Generate images with DeepAI
+    const images = [];
+    const textLines = generatedText.split('\n').filter(line => line.trim().length > 0);
+    const interval = Math.max(Math.floor(textLines.length / (imagePrompts.length + 1)), 5);
+
+    for (let i = 0; i < imagePrompts.length && i < 3; i++) {
+      try {
+        const imageResponse = await fetch("https://api.deepai.org/api/text2img", {
+          method: "POST",
+          headers: {
+            "Api-Key": deepAiApiKey,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({ text: imagePrompts[i] }),
+        });
+
+        const imageData = await imageResponse.json();
+
+        if (!imageResponse.ok || !imageData.output_url) {
+          console.error("DeepAI API error:", imageData);
+          continue;
+        }
+
+        images.push({
+          url: imageData.output_url,
+          alt: imagePrompts[i].substring(0, 100),
+          position: (i + 1) * interval,
+        });
+      } catch (error) {
+        console.error("Error generating image:", error);
       }
-    ],
-    max_tokens: 800,
-    temperature: 0.7,
-  }),
-});
+    }
 
-const mcqData = await mcqResponse.json();
-let mcqs;
-try {
-  const parsedContent = JSON.parse(mcqData.choices[0].message.content);
-  mcqs = parsedContent.questions || parsedContent || [];
-} catch (error) {
-  console.error("Error parsing MCQs:", error);
-  mcqs = [];
-}
+    // Generate MCQs using Groq
+    const mcqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${groqApiKey}`,
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-70b-versatile",
+        messages: [
+          {
+            role: "system",
+            content: "Create 5 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Format the response as a JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3)."
+          },
+          {
+            role: "user",
+            content: generatedText
+          }
+        ],
+        max_tokens: 800,
+        temperature: 0.7,
+      }),
+    });
 
-      
-    // const mcqResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "Authorization": `Bearer ${apiKey}`,
-    //   },
-    //   body: JSON.stringify({
-    //     model: "gpt-3.5-turbo",
-    //     messages: [
-    //       {
-    //         role: "system",
-    //         content: "Create 5 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Format as a JSON array of objects with 'question', 'options' (array of strings), and 'correctAnswer' (index of correct option)."
-    //       },
-    //       {
-    //         role: "user",
-    //         content: generatedText
-    //       }
-    //     ],
-    //     max_tokens: 800,
-    //     temperature: 0.7,
-    //     response_format: { type: "json_object" }
-    //   }),
-    // });
-
-    // const mcqData = await mcqResponse.json();
-    // let mcqs;
-    // try {
-    //   const parsedContent = JSON.parse(mcqData.choices[0].message.content);
-    //   mcqs = parsedContent.questions || [];
-    // } catch (error) {
-    //   console.error("Error parsing MCQs:", error);
-    //   mcqs = [];
-    // }
+    const mcqData = await mcqResponse.json();
+    let mcqs;
+    try {
+      const parsedContent = JSON.parse(mcqData.choices[0].message.content);
+      // Handle both array format and object with questions property
+      mcqs = Array.isArray(parsedContent) ? parsedContent : (parsedContent.questions || []);
+    } catch (error) {
+      console.error("Error parsing MCQs:", error);
+      mcqs = [];
+    }
 
     // Combine everything into a response
     const result = {
