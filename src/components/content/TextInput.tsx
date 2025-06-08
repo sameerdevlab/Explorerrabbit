@@ -42,6 +42,7 @@ const TextInput: React.FC<TextInputProps> = ({ minimized = false }) => {
               onChange={(e) => setPastedText(e.target.value)}
               className="flex-grow h-10 min-h-0 resize-none py-2"
               rows={1}
+              glowing={true}
             />
             <Button type="submit" isLoading={loading}>
               Process
@@ -76,6 +77,7 @@ const TextInput: React.FC<TextInputProps> = ({ minimized = false }) => {
                 onChange={(e) => setPastedText(e.target.value)}
                 className="w-full p-3 text-lg min-h-[200px]"
                 rows={8}
+                glowing={true}
               />
               
               <Button

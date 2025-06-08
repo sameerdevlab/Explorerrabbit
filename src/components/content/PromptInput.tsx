@@ -37,6 +37,7 @@ const PromptInput: React.FC<PromptInputProps> = ({ minimized = false }) => {
               onChange={(e) => setPrompt(e.target.value)}
               icon={<Search size={16} />}
               className="flex-grow"
+              glowing={true}
             />
             <Button type="submit" isLoading={loading}>
               Generate
@@ -71,6 +72,7 @@ const PromptInput: React.FC<PromptInputProps> = ({ minimized = false }) => {
                 onChange={(e) => setPrompt(e.target.value)}
                 icon={<Search size={18} />}
                 className="w-full p-3 text-lg"
+                glowing={true}
               />
               
               <Button

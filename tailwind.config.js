@@ -47,6 +47,7 @@ export default {
       animation: {
         'gradient': 'gradient 8s ease infinite',
         'shimmer': 'shimmer 2s linear infinite',
+        'glowing-border': 'glowing-border 20s linear infinite',
       },
       keyframes: {
         gradient: {
@@ -63,6 +64,17 @@ export default {
           },
           '100%': {
             'background-position': '1000px 0',
+          },
+        },
+        'glowing-border': {
+          '0%': {
+            'background-position': '0% 50%',
+          },
+          '50%': {
+            'background-position': '100% 50%',
+          },
+          '100%': {
+            'background-position': '0% 50%',
           },
         },
       },
