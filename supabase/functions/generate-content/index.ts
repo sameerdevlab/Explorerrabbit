@@ -240,11 +240,49 @@ Deno.serve(async (req) => {
     });
 
     const mcqData = await mcqResponse.json();
+    
+    if (!mcqResponse.ok) {
+      console.error("Groq API error:", mcqData);
+      throw new Error(mcqData.error?.message || "Failed to generate MCQs");
+    }
+
     let mcqs;
     try {
-      const parsedContent = JSON.parse(mcqData.choices[0].message.content);
+      const responseContent = mcqData.choices[0].message.content;
+      console.log('🔍 Raw MCQ content:', responseContent);
+      
+      // Clean the response content to extract JSON
+      let cleanContent = responseContent.trim();
+      
+      // Remove any markdown code blocks
+      if (cleanContent.startsWith('```json')) {
+        cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (cleanContent.startsWith('```')) {
+        cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      
+      const parsedContent = JSON.parse(cleanContent);
+      console.log('🔍 Parsed MCQ content:', parsedContent);
+      
       // Handle both array format and object with questions property
       mcqs = Array.isArray(parsedContent) ? parsedContent : (parsedContent.questions || []);
+      
+      console.log('🔍 Final MCQs:', mcqs);
+      
+      // Validate MCQ structure
+      if (mcqs.length > 0) {
+        mcqs = mcqs.filter(mcq => 
+          mcq.question && 
+          Array.isArray(mcq.options) && 
+          mcq.options.length === 4 && 
+          typeof mcq.correctAnswer === 'number' &&
+          mcq.correctAnswer >= 0 && 
+          mcq.correctAnswer < 4
+        );
+      }
+      
+      console.log('🔍 Validated MCQs:', mcqs);
+      
     } catch (error) {
       console.error("Error parsing MCQs:", error);
       mcqs = [];
