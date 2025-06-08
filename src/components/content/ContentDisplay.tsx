@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
-import { Card } from '../ui/Card';
+import { Card, CardContent } from '../ui/Card';
 import useContentStore from '../../store/contentStore';
 import { generateInitialPlaceholderImages, PLACEHOLDER_IMAGE_URL } from '../../lib/utils';
 
@@ -117,11 +117,11 @@ const ContentDisplay: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.2 }}
-      className="w-full"
+      className="w-full h-full"
     >
-      <Card className="overflow-hidden bg-white shadow-md">
-        <div className="p-6">
-          <h2 className="text-xl font-semibold mb-4 text-purple-700">
+      <Card className="h-full flex flex-col bg-white shadow-md">
+        <CardContent className="flex-grow overflow-y-auto">
+          <h2 className="text-xl font-semibold mb-4 text-purple-700 sticky top-0 bg-white z-10 pb-2">
             {mode === 'generate' ? 'Generated Content' : 'Your Text with Images'}
           </h2>
           
@@ -154,7 +154,7 @@ const ContentDisplay: React.FC = () => {
               <span className="text-gray-600">Loading content...</span>
             </div>
           )}
-        </div>
+        </CardContent>
       </Card>
     </motion.div>
   );

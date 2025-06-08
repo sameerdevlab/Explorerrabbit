@@ -7,6 +7,7 @@ import PromptInput from '../components/content/PromptInput';
 import TextInput from '../components/content/TextInput';
 import ContentDisplay from '../components/content/ContentDisplay';
 import MCQDisplay from '../components/content/MCQDisplay';
+import SocialMediaPostGenerator from '../components/content/SocialMediaPostGenerator';
 import useContentStore from '../store/contentStore';
 import useAuthStore from '../store/authStore';
 
@@ -56,10 +57,10 @@ const HomePage: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-pink-50">
       <Header />
       
-      <main className="container mx-auto py-8 px-4">
+      <main className="container mx-auto py-8 px-4 flex-grow flex flex-col">
         <div className="mb-6 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600">
             AI Content Generator
@@ -86,17 +87,26 @@ const HomePage: React.FC = () => {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            className="flex-grow flex flex-col"
           >
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="w-full md:w-3/5">
-                <ContentDisplay />
+            <div className="flex flex-col md:flex-row gap-6 flex-grow overflow-hidden">
+              <div className="w-full md:w-3/5 flex flex-col">
+                <div className="flex-grow overflow-y-auto">
+                  <ContentDisplay />
+                </div>
               </div>
-              <div className="w-full md:w-2/5">
-                <MCQDisplay />
+              <div className="w-full md:w-2/5 flex flex-col mb-6">
+                <div className="flex-grow overflow-y-auto">
+                  <MCQDisplay />
+                </div>
               </div>
             </div>
             
-            <div className="mt-8 text-center">
+            <div className="mt-6">
+              <SocialMediaPostGenerator />
+            </div>
+            
+            <div className="mt-6 text-center">
               <button
                 onClick={handleNewContent}
                 className="text-purple-600 underline hover:text-purple-800 transition-colors"

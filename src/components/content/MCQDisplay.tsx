@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2, AlertCircle } from 'lucide-react';
-import { Card } from '../ui/Card';
+import { Card, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
 import useContentStore from '../../store/contentStore';
 
@@ -53,11 +53,13 @@ const MCQDisplay: React.FC = () => {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.3 }}
-      className="w-full"
+      className="w-full h-full"
     >
-      <Card className="overflow-hidden bg-white shadow-md">
-        <div className="p-6">
-          <h2 className="text-xl font-semibold mb-4 text-purple-700">Test Your Knowledge</h2>
+      <Card className="h-full flex flex-col bg-white shadow-md">
+        <CardContent className="flex-grow overflow-y-auto">
+          <h2 className="text-xl font-semibold mb-4 text-purple-700 sticky top-0 bg-white z-10 pb-2">
+            Test Your Knowledge
+          </h2>
           
           {isGeneratingMcqs ? (
             <div className="flex items-center gap-3 p-8 text-center justify-center">
@@ -126,7 +128,7 @@ const MCQDisplay: React.FC = () => {
                 ))}
               </div>
               
-              <div className="mt-6 flex gap-4">
+              <div className="mt-6 flex gap-4 sticky bottom-0 bg-white pt-4">
                 {showResults ? (
                   <Button onClick={resetAnswers} className="w-full">Try Again</Button>
                 ) : (
@@ -155,7 +157,7 @@ const MCQDisplay: React.FC = () => {
               <p>No questions could be generated from this content.</p>
             </div>
           )}
-        </div>
+        </CardContent>
       </Card>
     </motion.div>
   );

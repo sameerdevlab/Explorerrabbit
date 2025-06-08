@@ -34,11 +34,13 @@ export interface ContentState {
   isGeneratingImages: boolean;
   isGeneratingMcqs: boolean;
   isProcessingPastedText: boolean;
+  isGeneratingSocialMediaPost: boolean;
   
   // Current content being displayed
   currentText: string;
   currentImages: ImageData[];
   currentMcqs: MCQuestion[];
+  socialMediaPost: string | null;
 }
 
 export interface AuthState {

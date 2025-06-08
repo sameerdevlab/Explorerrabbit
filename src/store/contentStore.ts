@@ -12,6 +12,7 @@ const useContentStore = create<ContentState & {
   clearContent: () => void;
   generateContent: () => Promise<void>;
   processExistingText: () => Promise<void>;
+  generateSocialMediaPost: () => Promise<void>;
 }>((set, get) => ({
   mode: 'generate',
   prompt: '',
@@ -25,11 +26,13 @@ const useContentStore = create<ContentState & {
   isGeneratingImages: false,
   isGeneratingMcqs: false,
   isProcessingPastedText: false,
+  isGeneratingSocialMediaPost: false,
   
   // Current content being displayed
   currentText: '',
   currentImages: [],
   currentMcqs: [],
+  socialMediaPost: null,
   
   setMode: (mode) => set({ mode }),
   setPrompt: (prompt) => set({ prompt }),
@@ -44,9 +47,11 @@ const useContentStore = create<ContentState & {
     isGeneratingImages: false,
     isGeneratingMcqs: false,
     isProcessingPastedText: false,
+    isGeneratingSocialMediaPost: false,
     currentText: '',
     currentImages: [],
     currentMcqs: [],
+    socialMediaPost: null,
   }),
   
   generateContent: async () => {
@@ -78,6 +83,7 @@ const useContentStore = create<ContentState & {
         currentText: '', // Start with empty text to show blinking lines
         currentImages: [], // Start with empty images to show placeholder loading
         currentMcqs: [],
+        socialMediaPost: null,
       });
       
       // Call the Supabase Edge Function for content generation
@@ -144,6 +150,7 @@ const useContentStore = create<ContentState & {
         currentText: pastedText,
         currentImages: placeholderImages,
         currentMcqs: [],
+        socialMediaPost: null,
       });
       
       // Process images and MCQs in parallel
@@ -220,6 +227,51 @@ const useContentStore = create<ContentState & {
         currentMcqs: [], // Ensure MCQs are empty on error
       });
       
+      toast.error(errorMessage);
+    }
+  },
+  
+  generateSocialMediaPost: async () => {
+    const { currentText } = get();
+    
+    // Check if user is authenticated
+    const { user } = useAuthStore.getState();
+    if (!user) {
+      set({ error: 'Please sign in to generate social media post' });
+      toast.error('Please sign in to generate social media post');
+      return;
+    }
+    
+    if (!currentText.trim()) {
+      set({ error: 'No content available to generate social media post' });
+      toast.error('No content available to generate social media post');
+      return;
+    }
+    
+    try {
+      set({ 
+        isGeneratingSocialMediaPost: true,
+        error: null,
+      });
+      
+      // Call the Supabase Edge Function for social media post generation
+      const data = await callEdgeFunction('generate-social-media-post', {
+        text: currentText,
+      });
+      
+      set({
+        socialMediaPost: data.post,
+        isGeneratingSocialMediaPost: false,
+      });
+      
+      toast.success('Social media post generated successfully!');
+    } catch (error) {
+      console.error('Error generating social media post:', error);
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while generating social media post';
+      set({
+        error: errorMessage,
+        isGeneratingSocialMediaPost: false,
+      });
       toast.error(errorMessage);
     }
   },
