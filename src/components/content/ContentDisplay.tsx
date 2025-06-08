@@ -117,10 +117,10 @@ const ContentDisplay: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.2 }}
-      className="w-full h-full"
+      className="w-full h-full flex flex-com min-h-0"
     >
-      <Card className="h-full flex flex-col bg-white shadow-md">
-        <CardContent className="flex-grow overflow-y-auto">
+      <Card className="h-full flex flex-col bg-white shadow-md min-h-0">
+        <CardContent className="flex-grow overflow-y-auto min-h-0">
           <h2 className="text-xl font-semibold mb-4 text-purple-700 sticky top-0 bg-white z-10 pb-2">
             {mode === 'generate' ? 'Generated Content' : 'Your Text with Images'}
           </h2>
