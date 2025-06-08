@@ -68,6 +68,7 @@ Deno.serve(async (req) => {
     }
 
     const apiKey = Deno.env.get("OPENAI_API_KEY");
+    const apiKey2 = Deno.env.get("GROQ_API_KEY");  //// USING GROQ API FOR TESTING
     
     if (!apiKey) {
       return new Response(
@@ -99,38 +100,73 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Generate text content with OpenAI
-    const textResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
+    //Groq text content
+    // Generate text content with Groq
+const textResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${apiKey2}`,
+  },
+  body: JSON.stringify({
+    model: "mixtral-8x7b-32768",
+    messages: [
+      {
+        role: "system",
+        content: "You are a helpful assistant who provides informative and educational content."
       },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "system",
-            content: "You are a helpful assistant who provides informative and educational content."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        max_tokens: 1000,
-        temperature: 0.7,
-      }),
-    });
+      {
+        role: "user",
+        content: prompt
+      }
+    ],
+    max_tokens: 1000,
+    temperature: 0.7,
+  }),
+});
 
-    const textData = await textResponse.json();
+const textData = await textResponse.json();
+
+if (!textResponse.ok) {
+  console.error("Groq API error:", textData);
+  throw new Error(textData.error?.message || "Failed to generate text");
+}
+
+const generatedText = textData.choices[0].message.content;
+
+
+    // Generate text content with OpenAI
+    // const textResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Authorization": `Bearer ${apiKey}`,
+    //   },
+    //   body: JSON.stringify({
+    //     model: "gpt-3.5-turbo",
+    //     messages: [
+    //       {
+    //         role: "system",
+    //         content: "You are a helpful assistant who provides informative and educational content."
+    //       },
+    //       {
+    //         role: "user",
+    //         content: prompt
+    //       }
+    //     ],
+    //     max_tokens: 1000,
+    //     temperature: 0.7,
+    //   }),
+    // });
+
+    // const textData = await textResponse.json();
     
-    if (!textResponse.ok) {
-      console.error("OpenAI API error:", textData);
-      throw new Error(textData.error?.message || "Failed to generate text");
-    }
+    // if (!textResponse.ok) {
+    //   console.error("OpenAI API error:", textData);
+    //   throw new Error(textData.error?.message || "Failed to generate text");
+    // }
 
-    const generatedText = textData.choices[0].message.content;
+    // const generatedText = textData.choices[0].message.content;
 
     // Generate image prompts based on the text
     const imagePromptResponse = await fetch("https://api.openai.com/v1/chat/completions", {
