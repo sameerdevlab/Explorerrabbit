@@ -94,6 +94,7 @@ const HomePage: React.FC = () => {
               <div className="w-full md:w-1/2 flex flex-col">
                 <div className="flex-grow overflow-y-auto">
                   <ContentDisplay />
+                  <p>Answer Completed</p>
                 </div>
               </div>
               
