@@ -88,7 +88,7 @@ const HomePage: React.FC = () => {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex-grow flex flex-col overflow-y-auto min-h-0"
+            className="flex-grow flex flex-col overflow-y-auto"
           >
             <div className="flex flex-col md:flex-row gap-6 flex-grow min-h-0">
               {/* Content Display - Left side with independent scrolling */}
