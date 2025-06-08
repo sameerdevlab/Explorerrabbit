@@ -56,7 +56,7 @@ const MCQDisplay: React.FC = () => {
       className="w-full h-full"
     >
       <Card className="h-full flex flex-col bg-white shadow-md">
-        <CardContent className="overflow-y-auto">
+        <CardContent className="flex-grow overflow-y-auto">
           <h2 className="text-xl font-semibold mb-4 text-purple-700 sticky top-0 bg-white z-10 pb-2">
             Test Your Knowledge
           </h2>
