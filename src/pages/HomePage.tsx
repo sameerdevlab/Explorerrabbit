@@ -107,7 +107,21 @@ const HomePage: React.FC = () => {
               </div>
             </div>
             
+            <div className="mt-6 text-center pb-4">
+              <button
+                onClick={handleNewContent}
+                className="text-purple-600 underline hover:text-purple-800 transition-colors"
+              >
+                Start Over
+              </button>
+            </div>
             
+            {/* Minimized input at the bottom */}
+            {mode === 'generate' ? (
+              <PromptInput minimized />
+            ) : (
+              <TextInput minimized />
+            )}
           </motion.div>
         )}
       </main>
