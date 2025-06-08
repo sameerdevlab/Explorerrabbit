@@ -100,7 +100,7 @@ const HomePage: React.FC = () => {
               
               {/* MCQ and Social Media Post - Right side with combined scrolling */}
               <div className="w-full md:w-1/2 flex flex-col min-h-0">
-                <div className="flex-grow overflow-y-auto space-y-6 pr-2">
+                <div className="overflow-y-auto space-y-6 pr-2">
                   <MCQDisplay />
                   <SocialMediaPostGenerator />
                 </div>
