@@ -4,21 +4,19 @@ import { cn } from '../../lib/utils';
 interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   variant?: 'default' | 'glass';
   error?: string;
-  glowing?: boolean;
 }
 
 const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
-  ({ className, variant = 'default', error, glowing = false, ...props }, ref) => {
+  ({ className, variant = 'default', error, ...props }, ref) => {
     return (
       <div className="w-full">
         <textarea
           className={cn(
-            'w-full px-4 py-2 text-gray-700 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all relative z-10',
+            'w-full px-4 py-2 text-gray-700 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all',
             {
               'bg-white border-gray-300': variant === 'default',
               'bg-white/40 backdrop-blur-md border-white/20': variant === 'glass',
               'border-red-500 focus:ring-red-500': error,
-              'glowing-textarea-border': glowing,
             },
             className
           )}

@@ -47,7 +47,7 @@ export default {
       animation: {
         'gradient': 'gradient 8s ease infinite',
         'shimmer': 'shimmer 2s linear infinite',
-        'glowing-border': 'glowing-border 20s linear infinite',
+        'glowing-border': 'glowing-border 4s linear infinite',
       },
       keyframes: {
         gradient: {
