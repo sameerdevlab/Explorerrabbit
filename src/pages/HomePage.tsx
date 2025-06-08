@@ -60,7 +60,7 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-pink-50">
       <Header />
       
-      <main className="container mx-auto py-8 px-4 flex-grow flex flex-col">
+      <main className="container mx-auto py-8 px-4 flex-grow flex flex-col overflow-hidden">
         <div className="mb-6 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600">
             AI Content Generator
@@ -76,6 +76,7 @@ const HomePage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            className="flex-grow flex flex-col items-center justify-center"
           >
             {mode === 'generate' ? (
               <PromptInput />
@@ -87,26 +88,26 @@ const HomePage: React.FC = () => {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex-grow flex flex-col"
+            className="flex-grow flex flex-col overflow-y-auto"
           >
-            <div className="flex flex-col md:flex-row gap-6 flex-grow overflow-hidden">
+            <div className="flex flex-col md:flex-row gap-6 flex-grow min-h-0">
               {/* Content Display - Left side with independent scrolling */}
-              <div className="w-full md:w-1/2 flex flex-col">
+              <div className="w-full md:w-1/2 flex flex-col min-h-0">
                 <div className="flex-grow overflow-y-auto">
                   <ContentDisplay />
                 </div>
               </div>
               
               {/* MCQ and Social Media Post - Right side with combined scrolling */}
-              <div className="w-full md:w-1/2 flex flex-col">
-                <div className="flex-grow overflow-y-auto space-y-6">
+              <div className="w-full md:w-1/2 flex flex-col min-h-0">
+                <div className="flex-grow overflow-y-auto space-y-6 pr-2">
                   <MCQDisplay />
                   <SocialMediaPostGenerator />
                 </div>
               </div>
             </div>
             
-            <div className="mt-6 text-center">
+            <div className="mt-6 text-center pb-4">
               <button
                 onClick={handleNewContent}
                 className="text-purple-600 underline hover:text-purple-800 transition-colors"
