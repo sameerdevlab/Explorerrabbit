@@ -92,10 +92,7 @@ const HomePage: React.FC = () => {
             <div className="flex flex-col md:flex-row gap-6 flex-grow overflow-hidden">
               {/* Content Display - Left side with independent scrolling */}
               <div className="w-full md:w-1/2 flex flex-col">
-                <div className="flex-grow overflow-y-auto">
                   <ContentDisplay />
-                  <p>Answer Completed</p>
-                </div>
               </div>
               
               {/* MCQ and Social Media Post - Right side with combined scrolling */}
