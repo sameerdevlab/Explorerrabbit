@@ -111,14 +111,14 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "Create 5 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Format the response as a JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3)."
+            content: "Create 3 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Format the response as a JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3)."
           },
           {
             role: "user",
             content: text
           }
         ],
-        max_tokens: 800,
+        max_tokens: 600,
         temperature: 0.7,
       }),
     });
