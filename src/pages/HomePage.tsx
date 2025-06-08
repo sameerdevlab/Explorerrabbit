@@ -90,20 +90,20 @@ const HomePage: React.FC = () => {
             className="flex-grow flex flex-col"
           >
             <div className="flex flex-col md:flex-row gap-6 flex-grow overflow-hidden">
-              <div className="w-full md:w-3/5 flex flex-col">
+              {/* Content Display - Left side with independent scrolling */}
+              <div className="w-full md:w-1/2 flex flex-col">
                 <div className="flex-grow overflow-y-auto">
                   <ContentDisplay />
                 </div>
               </div>
-              <div className="w-full md:w-2/5 flex flex-col mb-6">
-                <div className="flex-grow overflow-y-auto">
+              
+              {/* MCQ and Social Media Post - Right side with combined scrolling */}
+              <div className="w-full md:w-1/2 flex flex-col">
+                <div className="flex-grow overflow-y-auto space-y-6">
                   <MCQDisplay />
+                  <SocialMediaPostGenerator />
                 </div>
               </div>
-            </div>
-            
-            <div className="mt-6">
-              <SocialMediaPostGenerator />
             </div>
             
             <div className="mt-6 text-center">
