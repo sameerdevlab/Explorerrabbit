@@ -119,7 +119,7 @@ const textResponse = await fetch("https://api.groq.com/openai/v1/chat/completion
         content: prompt
       }
     ],
-    max_tokens: 1000,
+    max_tokens: 500,
     temperature: 0.7,
   }),
 });
@@ -193,7 +193,17 @@ for (let i = 0; i < imagePrompts.length && i < 3; i++) {
     if (!imageResponse.ok || !imageData.output_url) {
       console.error("DeepAI API error:", imageData);
       continue;
+}
 
+    images.push({
+      url: imageData.output_url,
+      alt: imagePrompts[i].substring(0, 100),
+      position: (i + 1) * interval,
+    });
+  } catch (error) {
+    console.error("Error generating image:", error);
+  }
+}
     
     // const imagePromptResponse = await fetch("https://api.openai.com/v1/chat/completions", {
     //   method: "POST",
