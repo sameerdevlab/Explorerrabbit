@@ -55,7 +55,7 @@ const PromptInput: React.FC<PromptInputProps> = ({ minimized = false }) => {
       animate={{ opacity: 1, y: 0 }}
       className="w-full max-w-3xl mx-auto px-4"
     >
-      <Card variant="glass" className="overflow-hidden bg-green-400 shadow-lg">
+      <Card variant="glass" className="overflow-hidden bg-transparent shadow-lg">
         <div className="p-6 ">
           <h2 className="text-2xl font-bold mb-2 text-slate-800">Generate AI Content</h2>
           <p className="text-slate-600 mb-6">
