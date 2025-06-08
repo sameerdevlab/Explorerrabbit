@@ -109,7 +109,7 @@ const textResponse = await fetch("https://api.groq.com/openai/v1/chat/completion
     "Authorization": `Bearer ${apiKey2}`,
   },
   body: JSON.stringify({
-    model: "mistral-saba-24b",
+    model: "llama-3.3-70b-versatile",
     messages: [
       {
         role: "system",
