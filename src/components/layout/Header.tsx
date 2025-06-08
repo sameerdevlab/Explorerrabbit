@@ -24,7 +24,7 @@ const Header: React.FC = () => {
                 </div>
                 
                 {/* Logout Button - Hidden by default, shown on hover */}
-                <div className="absolute right-0 top-12 opacity-0 group-hover:opacity-100 transition-all duration-800 transform translate-y-2 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto">
+                <div className="absolute right-0 top-12 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto">
                   <Button
                     variant="outline"
                     size="sm"
