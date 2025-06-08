@@ -142,7 +142,7 @@ const imagePromptResponse = await fetch("https://api.groq.com/openai/v1/chat/com
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "Authorization": `Bearer ${apiKey}`, // this is Groq API key now
+    "Authorization": `Bearer ${imageApiKey}`, // this is Groq API key now
   },
   body: JSON.stringify({
     model: "llama-3.3-70b-versatile",
@@ -228,8 +228,9 @@ for (let i = 0; i < imagePrompts.length && i < 3; i++) {
     //   console.error("Error parsing image prompts:", error);
     //   imagePrompts = ["A visual representation related to " + prompt];
     // }
-
+      
     // // Generate images with DALL-E
+      
     // const images = [];
     // const textLines = generatedText.split('\n').filter(line => line.trim().length > 0);
     
@@ -268,41 +269,78 @@ for (let i = 0; i < imagePrompts.length && i < 3; i++) {
     //     console.error("Error generating image:", error);
     //   }
     // }
+      
 
     // Generate MCQs based on the text
-    const mcqResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "system",
-            content: "Create 5 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Format as a JSON array of objects with 'question', 'options' (array of strings), and 'correctAnswer' (index of correct option)."
-          },
-          {
-            role: "user",
-            content: generatedText
-          }
-        ],
-        max_tokens: 800,
-        temperature: 0.7,
-        response_format: { type: "json_object" }
-      }),
-    });
 
-    const mcqData = await mcqResponse.json();
-    let mcqs;
-    try {
-      const parsedContent = JSON.parse(mcqData.choices[0].message.content);
-      mcqs = parsedContent.questions || [];
-    } catch (error) {
-      console.error("Error parsing MCQs:", error);
-      mcqs = [];
-    }
+    const mcqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${textApiKey}`, // This should be your Groq API key
+  },
+  body: JSON.stringify({
+    model: "llama-3.3-70b-versatile",
+    messages: [
+      {
+        role: "system",
+        content:
+          "Create 5 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Format the response as a JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3)."
+      },
+      {
+        role: "user",
+        content: generatedText
+      }
+    ],
+    max_tokens: 800,
+    temperature: 0.7,
+  }),
+});
+
+const mcqData = await mcqResponse.json();
+let mcqs;
+try {
+  const parsedContent = JSON.parse(mcqData.choices[0].message.content);
+  mcqs = parsedContent.questions || parsedContent || [];
+} catch (error) {
+  console.error("Error parsing MCQs:", error);
+  mcqs = [];
+}
+
+      
+    // const mcqResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Authorization": `Bearer ${apiKey}`,
+    //   },
+    //   body: JSON.stringify({
+    //     model: "gpt-3.5-turbo",
+    //     messages: [
+    //       {
+    //         role: "system",
+    //         content: "Create 5 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Format as a JSON array of objects with 'question', 'options' (array of strings), and 'correctAnswer' (index of correct option)."
+    //       },
+    //       {
+    //         role: "user",
+    //         content: generatedText
+    //       }
+    //     ],
+    //     max_tokens: 800,
+    //     temperature: 0.7,
+    //     response_format: { type: "json_object" }
+    //   }),
+    // });
+
+    // const mcqData = await mcqResponse.json();
+    // let mcqs;
+    // try {
+    //   const parsedContent = JSON.parse(mcqData.choices[0].message.content);
+    //   mcqs = parsedContent.questions || [];
+    // } catch (error) {
+    //   console.error("Error parsing MCQs:", error);
+    //   mcqs = [];
+    // }
 
     // Combine everything into a response
     const result = {
