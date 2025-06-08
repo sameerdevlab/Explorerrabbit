@@ -8,10 +8,10 @@ const ModeToggle: React.FC = () => {
   
   return (
     <div className="flex justify-center mb-8">
-      <div className="relative bg-white/20 backdrop-blur-md p-1 rounded-lg flex shadow-lg">
+      <div className="relative bg-white/20 dark:bg-gray-800/20 backdrop-blur-md p-1 rounded-lg flex shadow-lg">
         <button
           className={`relative z-10 flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-colors ${
-            mode === 'generate' ? 'text-purple-900' : 'text-gray-500'
+            mode === 'generate' ? 'text-purple-900 dark:text-purple-100' : 'text-gray-500 dark:text-gray-400'
           }`}
           onClick={() => setMode('generate')}
         >
@@ -20,7 +20,7 @@ const ModeToggle: React.FC = () => {
           
           {mode === 'generate' && (
             <motion.div
-              className="absolute inset-0 bg-white rounded-md shadow-sm"
+              className="absolute inset-0 bg-white dark:bg-gray-700 rounded-md shadow-sm"
               layoutId="pill"
               initial={false}
               transition={{ type: "spring", duration: 0.5 }}
@@ -30,7 +30,7 @@ const ModeToggle: React.FC = () => {
         
         <button
           className={`relative z-10 flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-colors ${
-            mode === 'paste' ? 'text-purple-900' : 'text-gray-500'
+            mode === 'paste' ? 'text-purple-900 dark:text-purple-100' : 'text-gray-500 dark:text-gray-400'
           }`}
           onClick={() => setMode('paste')}
         >
@@ -39,7 +39,7 @@ const ModeToggle: React.FC = () => {
           
           {mode === 'paste' && (
             <motion.div
-              className="absolute inset-0 bg-white rounded-md shadow-sm"
+              className="absolute inset-0 bg-white dark:bg-gray-700 rounded-md shadow-sm"
               layoutId="pill"
               initial={false}
               transition={{ type: "spring", duration: 0.5 }}

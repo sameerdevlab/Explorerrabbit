@@ -64,8 +64,8 @@ const TextInput: React.FC<TextInputProps> = ({ minimized = false }) => {
       <div className="glowing-wrapper">
         <Card variant="glass" className="overflow-hidden shadow-lg">
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-2 text-slate-800">Process Your Text</h2>
-            <p className="text-slate-600 mb-6">
+            <h2 className="text-2xl font-bold mb-2 text-slate-800 dark:text-slate-200">Process Your Text</h2>
+            <p className="text-slate-600 dark:text-slate-400 mb-6">
               Paste your own text and we'll generate images and questions from it
             </p>
             

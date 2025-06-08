@@ -12,10 +12,10 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
       <div className="w-full">
         <textarea
           className={cn(
-            'w-full px-4 py-2 text-gray-700 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all',
+            'w-full px-4 py-2 text-gray-700 dark:text-gray-200 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all',
             {
-              'bg-white border-gray-300': variant === 'default',
-              'bg-white/40 backdrop-blur-md border-white/20': variant === 'glass',
+              'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600': variant === 'default',
+              'bg-white/40 dark:bg-gray-800/40 backdrop-blur-md border-white/20 dark:border-gray-700/20': variant === 'glass',
               'border-red-500 focus:ring-red-500': error,
             },
             className

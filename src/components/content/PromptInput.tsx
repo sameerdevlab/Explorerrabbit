@@ -59,8 +59,8 @@ const PromptInput: React.FC<PromptInputProps> = ({ minimized = false }) => {
       <div className="glowing-wrapper">
         <Card variant="glass" className="overflow-hidden shadow-lg">
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-2 text-slate-800">Generate AI Content</h2>
-            <p className="text-slate-600 mb-6">
+            <h2 className="text-2xl font-bold mb-2 text-slate-800 dark:text-slate-200">Generate AI Content</h2>
+            <p className="text-slate-600 dark:text-slate-400 mb-6">
               Enter a prompt, and we'll generate content with images and questions
             </p>
             

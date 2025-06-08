@@ -83,15 +83,15 @@ const MCQDisplay: React.FC = () => {
     const percentage = (score / total) * 100;
     
     if (percentage === 100) {
-      return { message: "Perfect! Outstanding work! 🎉", color: "text-green-600" };
+      return { message: "Perfect! Outstanding work! 🎉", color: "text-green-600 dark:text-green-400" };
     } else if (percentage >= 80) {
-      return { message: "Great job! Well done! 👏", color: "text-green-600" };
+      return { message: "Great job! Well done! 👏", color: "text-green-600 dark:text-green-400" };
     } else if (percentage >= 60) {
-      return { message: "Good effort! Keep it up! 👍", color: "text-blue-600" };
+      return { message: "Good effort! Keep it up! 👍", color: "text-blue-600 dark:text-blue-400" };
     } else if (percentage >= 40) {
-      return { message: "Nice try! You're getting there! 💪", color: "text-orange-600" };
+      return { message: "Nice try! You're getting there! 💪", color: "text-orange-600 dark:text-orange-400" };
     } else {
-      return { message: "Keep practicing! You'll improve! 🌟", color: "text-purple-600" };
+      return { message: "Keep practicing! You'll improve! 🌟", color: "text-purple-600 dark:text-purple-400" };
     }
   };
   
@@ -105,16 +105,16 @@ const MCQDisplay: React.FC = () => {
       transition={{ delay: 0.3 }}
       className="w-full"
     >
-      <Card className="bg-white shadow-md">
+      <Card className="bg-white dark:bg-gray-800 shadow-md">
         <CardContent>
-          <h2 className="text-xl font-semibold mb-4 text-purple-700">
+          <h2 className="text-xl font-semibold mb-4 text-purple-700 dark:text-purple-300">
             Test Your Knowledge
           </h2>
           
           {isGeneratingMcqs ? (
             <div className="flex items-center gap-3 p-8 text-center justify-center">
-              <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
-              <span className="text-gray-600">MCQs are getting generated...</span>
+              <Loader2 className="h-5 w-5 animate-spin text-purple-600 dark:text-purple-400" />
+              <span className="text-gray-600 dark:text-gray-300">MCQs are getting generated...</span>
             </div>
           ) : currentMcqs && currentMcqs.length > 0 ? (
             <>
@@ -123,7 +123,7 @@ const MCQDisplay: React.FC = () => {
                 <div className="space-y-6">
                   {/* Review Progress */}
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-sm font-medium text-purple-600">
+                    <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
                       Review {reviewQuestionIndex + 1}/{currentMcqs.length}
                     </span>
                     <Button
@@ -141,9 +141,9 @@ const MCQDisplay: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="border border-gray-200 rounded-md p-6"
+                    className="border border-gray-200 dark:border-gray-700 rounded-md p-6"
                   >
-                    <h3 className="text-lg font-medium mb-4 text-gray-800">
+                    <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
                       {currentMcqs[reviewQuestionIndex].question}
                     </h3>
                     
@@ -154,19 +154,19 @@ const MCQDisplay: React.FC = () => {
                         const isWrongUserAnswer = isUserAnswer && !isCorrectAnswer;
                         
                         let optionClass = 'border rounded-md p-4 transition-all';
-                        let iconColor = 'border-gray-300';
+                        let iconColor = 'border-gray-300 dark:border-gray-600';
                         let icon = String.fromCharCode(65 + optionIndex);
                         
                         if (isCorrectAnswer) {
-                          optionClass += ' border-green-500 bg-green-50';
+                          optionClass += ' border-green-500 bg-green-50 dark:bg-green-900/20';
                           iconColor = 'border-green-500 bg-green-500 text-white';
                           icon = '✓';
                         } else if (isWrongUserAnswer) {
-                          optionClass += ' border-red-500 bg-red-50';
+                          optionClass += ' border-red-500 bg-red-50 dark:bg-red-900/20';
                           iconColor = 'border-red-500 bg-red-500 text-white';
                           icon = '✗';
                         } else {
-                          optionClass += ' border-gray-300 bg-gray-50';
+                          optionClass += ' border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800';
                         }
                         
                         return (
@@ -176,14 +176,14 @@ const MCQDisplay: React.FC = () => {
                                 {icon}
                               </span>
                               <div className="flex-1">
-                                <span className="text-gray-700">{option}</span>
+                                <span className="text-gray-700 dark:text-gray-300">{option}</span>
                                 {isCorrectAnswer && (
-                                  <div className="text-sm text-green-600 font-medium mt-1">
+                                  <div className="text-sm text-green-600 dark:text-green-400 font-medium mt-1">
                                     ✓ Correct Answer
                                   </div>
                                 )}
                                 {isWrongUserAnswer && (
-                                  <div className="text-sm text-red-600 font-medium mt-1">
+                                  <div className="text-sm text-red-600 dark:text-red-400 font-medium mt-1">
                                     ✗ Your Answer (Incorrect)
                                   </div>
                                 )}
@@ -196,8 +196,8 @@ const MCQDisplay: React.FC = () => {
                     
                     {/* Explanation for wrong answers */}
                     {selectedAnswers[reviewQuestionIndex] !== currentMcqs[reviewQuestionIndex].correctAnswer && (
-                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                        <p className="text-sm text-blue-800">
+                      <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+                        <p className="text-sm text-blue-800 dark:text-blue-300">
                           <strong>Correct Answer:</strong> {currentMcqs[reviewQuestionIndex].options[currentMcqs[reviewQuestionIndex].correctAnswer]}
                         </p>
                       </div>
@@ -260,13 +260,13 @@ const MCQDisplay: React.FC = () => {
                     transition={{ delay: 0.4 }}
                     className="mb-6"
                   >
-                    <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                    <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">
                       Quiz Completed!
                     </h3>
-                    <div className="text-4xl font-bold text-purple-600 mb-2">
+                    <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">
                       {score}/{currentMcqs.length}
                     </div>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-300">
                       You answered {score} out of {currentMcqs.length} questions correctly
                     </p>
                   </motion.div>
@@ -304,7 +304,7 @@ const MCQDisplay: React.FC = () => {
                   {/* Progress Indicator */}
                   <div className="mb-6">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-purple-600">
+                      <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
                         Question {currentQuestionIndex + 1}/{currentMcqs.length}
                       </span>
                       <div className="flex space-x-1">
@@ -313,16 +313,16 @@ const MCQDisplay: React.FC = () => {
                             key={index}
                             className={`w-2 h-2 rounded-full ${
                               index <= currentQuestionIndex 
-                                ? 'bg-purple-600' 
-                                : 'bg-gray-300'
+                                ? 'bg-purple-600 dark:bg-purple-400' 
+                                : 'bg-gray-300 dark:bg-gray-600'
                             }`}
                           />
                         ))}
                       </div>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div 
-                        className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                        className="bg-purple-600 dark:bg-purple-400 h-2 rounded-full transition-all duration-300"
                         style={{ 
                           width: `${((currentQuestionIndex + 1) / currentMcqs.length) * 100}%` 
                         }}
@@ -336,9 +336,9 @@ const MCQDisplay: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="border border-gray-200 rounded-md p-6"
+                    className="border border-gray-200 dark:border-gray-700 rounded-md p-6"
                   >
-                    <h3 className="text-lg font-medium mb-4 text-gray-800">
+                    <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
                       {currentMcqs[currentQuestionIndex].question}
                     </h3>
                     
@@ -353,8 +353,8 @@ const MCQDisplay: React.FC = () => {
                             whileTap={{ scale: 0.98 }}
                             className={`border rounded-md p-4 cursor-pointer transition-all ${
                               isSelected 
-                                ? 'border-purple-500 bg-purple-50' 
-                                : 'border-gray-300 hover:bg-gray-50'
+                                ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' 
+                                : 'border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
                             }`}
                             onClick={() => handleOptionSelect(optionIndex)}
                           >
@@ -362,11 +362,11 @@ const MCQDisplay: React.FC = () => {
                               <span className={`flex items-center justify-center w-6 h-6 rounded-full border text-xs mr-3 ${
                                 isSelected 
                                   ? 'border-purple-500 bg-purple-500 text-white' 
-                                  : 'border-gray-300'
+                                  : 'border-gray-300 dark:border-gray-600'
                               }`}>
                                 {String.fromCharCode(65 + optionIndex)}
                               </span>
-                              <span className="text-gray-700">{option}</span>
+                              <span className="text-gray-700 dark:text-gray-300">{option}</span>
                             </div>
                           </motion.div>
                         );
@@ -399,16 +399,16 @@ const MCQDisplay: React.FC = () => {
             </>
           ) : error ? (
             <div className="p-6 text-center">
-              <div className="flex items-center justify-center gap-2 text-red-600 mb-2">
+              <div className="flex items-center justify-center gap-2 text-red-600 dark:text-red-400 mb-2">
                 <AlertCircle size={20} />
                 <span className="font-medium">MCQ Generation Failed</span>
               </div>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
                 Unable to generate questions from this content. Please try again.
               </p>
             </div>
           ) : (
-            <div className="p-6 text-center text-gray-500">
+            <div className="p-6 text-center text-gray-500 dark:text-gray-400">
               <p>No questions could be generated from this content.</p>
             </div>
           )}

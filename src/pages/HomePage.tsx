@@ -50,22 +50,22 @@ const HomePage: React.FC = () => {
   
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-pink-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600 dark:border-purple-400"></div>
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-pink-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       <Header />
       
       <main className="container mx-auto py-8 px-4 flex-grow flex flex-col">
         <div className="mb-6 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600">
+          <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 dark:from-purple-400 dark:via-pink-400 dark:to-purple-400">
             AI Content Generator
           </h1>
-          <p className="mt-2 text-slate-600 max-w-2xl mx-auto">
+          <p className="mt-2 text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
             Generate beautiful content with AI or enhance your own text with images and questions.
           </p>
         </div>
@@ -107,7 +107,7 @@ const HomePage: React.FC = () => {
             <div className="mt-6 text-center">
               <button
                 onClick={handleNewContent}
-                className="text-purple-600 underline hover:text-purple-800 transition-colors"
+                className="text-purple-600 dark:text-purple-400 underline hover:text-purple-800 dark:hover:text-purple-300 transition-colors"
               >
                 Start Over
               </button>

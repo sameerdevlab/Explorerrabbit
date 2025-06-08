@@ -4,18 +4,29 @@ import { Toaster } from 'react-hot-toast';
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
 import useAuthStore from './store/authStore';
+import useThemeStore from './store/themeStore';
 
 function App() {
   const { initialize, loading, user } = useAuthStore();
+  const { theme } = useThemeStore();
   
   useEffect(() => {
     initialize();
   }, [initialize]);
   
+  useEffect(() => {
+    // Apply theme to document element
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+  
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-pink-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600 dark:border-purple-400"></div>
       </div>
     );
   }
@@ -35,7 +46,7 @@ function App() {
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#363636',
+            background: theme === 'dark' ? '#374151' : '#363636',
             color: '#fff',
           },
         }}

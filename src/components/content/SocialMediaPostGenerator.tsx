@@ -44,18 +44,18 @@ const SocialMediaPostGenerator: React.FC = () => {
       transition={{ delay: 0.4 }}
       className="w-full"
     >
-      <Card className="bg-white shadow-md">
+      <Card className="bg-white dark:bg-gray-800 shadow-md">
         <CardContent>
           <div className="flex items-center gap-2 mb-4">
-            <Share2 className="h-5 w-5 text-purple-600" />
-            <h3 className="text-lg font-semibold text-purple-700">
+            <Share2 className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+            <h3 className="text-lg font-semibold text-purple-700 dark:text-purple-300">
               Social Media Post
             </h3>
           </div>
           
           {!socialMediaPost && !isGeneratingSocialMediaPost ? (
             <div className="text-center py-6">
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 Generate an engaging social media post based on your content
               </p>
               <Button 
@@ -69,15 +69,15 @@ const SocialMediaPostGenerator: React.FC = () => {
             </div>
           ) : isGeneratingSocialMediaPost ? (
             <div className="flex items-center gap-3 p-6 text-center justify-center">
-              <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
-              <span className="text-gray-600">Generating social media post...</span>
+              <Loader2 className="h-5 w-5 animate-spin text-purple-600 dark:text-purple-400" />
+              <span className="text-gray-600 dark:text-gray-300">Generating social media post...</span>
             </div>
           ) : socialMediaPost ? (
             <div className="space-y-4">
               <TextArea
                 value={socialMediaPost}
                 readOnly
-                className="w-full min-h-[120px] bg-gray-50 border-gray-200"
+                className="w-full min-h-[120px] bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
                 placeholder="Generated social media post will appear here..."
               />
               

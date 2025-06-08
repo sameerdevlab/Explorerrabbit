@@ -15,7 +15,7 @@ const ContentDisplay: React.FC = () => {
         {[...Array(8)].map((_, index) => (
           <div
             key={index}
-            className={`h-4 bg-gray-200 rounded animate-pulse`}
+            className={`h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse`}
             style={{
               width: `${Math.random() * 40 + 60}%`, // Random width between 60-100%
               animationDelay: `${index * 0.1}s`,
@@ -42,9 +42,9 @@ const ContentDisplay: React.FC = () => {
               loading="lazy"
             />
             <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center backdrop-blur-sm">
-              <div className="bg-white/95 backdrop-blur-sm rounded-lg p-4 flex items-center gap-3 shadow-lg">
-                <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
-                <span className="text-sm font-medium text-gray-700">Generating image...</span>
+              <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg p-4 flex items-center gap-3 shadow-lg">
+                <Loader2 className="h-5 w-5 animate-spin text-purple-600 dark:text-purple-400" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Generating image...</span>
               </div>
             </div>
           </div>
@@ -71,7 +71,7 @@ const ContentDisplay: React.FC = () => {
       // Add the text line
       if (line.trim()) {
         content.push(
-          <p key={`line-${index}`} className="mb-4">
+          <p key={`line-${index}`} className="mb-4 text-gray-800 dark:text-gray-200">
             {line}
           </p>
         );
@@ -93,9 +93,9 @@ const ContentDisplay: React.FC = () => {
               />
               {isGeneratingImages && image.alt === 'Loading image...' && (
                 <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                  <div className="bg-white/95 backdrop-blur-sm rounded-lg p-4 flex items-center gap-3 shadow-lg">
-                    <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
-                    <span className="text-sm font-medium text-gray-700">Images are getting generated...</span>
+                  <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg p-4 flex items-center gap-3 shadow-lg">
+                    <Loader2 className="h-5 w-5 animate-spin text-purple-600 dark:text-purple-400" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Images are getting generated...</span>
                   </div>
                 </div>
               )}
@@ -106,7 +106,7 @@ const ContentDisplay: React.FC = () => {
     });
     
     return (
-      <div className="prose prose-slate max-w-none">
+      <div className="prose prose-slate dark:prose-invert max-w-none">
         {content}
       </div>
     );
@@ -119,9 +119,9 @@ const ContentDisplay: React.FC = () => {
       transition={{ delay: 0.2 }}
       className="w-full h-full"
     >
-      <Card className="h-full flex flex-col bg-white shadow-md">
+      <Card className="h-full flex flex-col bg-white dark:bg-gray-800 shadow-md">
         <CardContent className="flex-grow overflow-y-auto">
-          <h2 className="text-xl font-semibold mb-4 text-purple-700 sticky top-0 bg-white z-10 pb-2">
+          <h2 className="text-xl font-semibold mb-4 text-purple-700 dark:text-purple-300 sticky top-0 bg-white dark:bg-gray-800 z-10 pb-2">
             {mode === 'generate' ? 'Generated Content' : 'Your Text with Images'}
           </h2>
           
@@ -130,16 +130,16 @@ const ContentDisplay: React.FC = () => {
             <div className="space-y-6">
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
-                  <span className="text-gray-600">Generating text content...</span>
+                  <Loader2 className="h-5 w-5 animate-spin text-purple-600 dark:text-purple-400" />
+                  <span className="text-gray-600 dark:text-gray-300">Generating text content...</span>
                 </div>
                 {renderBlinkingLines()}
               </div>
               
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
-                  <span className="text-gray-600">Preparing images...</span>
+                  <Loader2 className="h-5 w-5 animate-spin text-purple-600 dark:text-purple-400" />
+                  <span className="text-gray-600 dark:text-gray-300">Preparing images...</span>
                 </div>
                 {renderPlaceholderImages()}
               </div>
@@ -150,8 +150,8 @@ const ContentDisplay: React.FC = () => {
           ) : (
             /* Fallback for edge cases */
             <div className="flex items-center gap-3 p-8 text-center justify-center">
-              <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
-              <span className="text-gray-600">Loading content...</span>
+              <Loader2 className="h-5 w-5 animate-spin text-purple-600 dark:text-purple-400" />
+              <span className="text-gray-600 dark:text-gray-300">Loading content...</span>
             </div>
           )}
         </CardContent>
