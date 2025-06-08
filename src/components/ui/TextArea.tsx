@@ -10,7 +10,12 @@ interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ className, variant = 'default', error, glowing = false, ...props }, ref) => {
     return (
-      <div className="w-full">
+      <div className={cn(
+        "w-full",
+        {
+          'glowing-textarea-border': glowing,
+        }
+      )}>
         <textarea
           className={cn(
             'w-full px-4 py-2 text-gray-700 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all relative z-10',
@@ -18,7 +23,6 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
               'bg-white border-gray-300': variant === 'default',
               'bg-white/40 backdrop-blur-md border-white/20': variant === 'glass',
               'border-red-500 focus:ring-red-500': error,
-              'glowing-textarea-border': glowing,
             },
             className
           )}
