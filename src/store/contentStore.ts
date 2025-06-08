@@ -152,19 +152,28 @@ const useContentStore = create<ContentState & {
         callEdgeFunction('generate-mcqs', { text: pastedText })
       ]);
       
+      console.log('🔍 Image response:', imageResponse);
+      console.log('🔍 MCQ response:', mcqResponse);
+      
       // Handle image generation result
       let finalImages = placeholderImages; // Keep placeholders as fallback
       if (imageResponse.status === 'fulfilled' && imageResponse.value.images && imageResponse.value.images.length > 0) {
         finalImages = imageResponse.value.images;
+        console.log('✅ Images generated successfully:', finalImages);
+      } else {
+        console.log('❌ Image generation failed or returned empty:', imageResponse);
       }
       
       // Handle MCQ generation result
       let finalMcqs: any[] = [];
-      let shouldKeepMcqLoading = false;
       if (mcqResponse.status === 'fulfilled' && mcqResponse.value.mcqs && mcqResponse.value.mcqs.length > 0) {
         finalMcqs = mcqResponse.value.mcqs;
+        console.log('✅ MCQs generated successfully:', finalMcqs);
       } else {
-        shouldKeepMcqLoading = true; // Keep loading indicator active when MCQ generation fails or returns empty
+        console.log('❌ MCQ generation failed or returned empty:', mcqResponse);
+        if (mcqResponse.status === 'rejected') {
+          console.error('MCQ generation error:', mcqResponse.reason);
+        }
       }
       
       // Combine the results
@@ -174,23 +183,30 @@ const useContentStore = create<ContentState & {
         mcqs: finalMcqs,
       };
       
-      // Set the final result
+      // Set the final result - ALWAYS turn off loading states
       set({
         result,
         currentText: pastedText,
         currentImages: finalImages,
         currentMcqs: finalMcqs,
         loading: false,
-        isGeneratingImages: false, // Always hide image loading (placeholder remains if needed)
-        isGeneratingMcqs: shouldKeepMcqLoading, // Keep MCQ loading active if generation failed or returned empty
+        isGeneratingImages: false,
+        isGeneratingMcqs: false, // Always turn off MCQ loading
         isProcessingPastedText: false,
       });
+      
+      // Show success message
+      if (finalMcqs.length > 0) {
+        toast.success(`Generated ${finalMcqs.length} questions successfully!`);
+      } else {
+        toast.error('MCQ generation failed - please try again');
+      }
       
     } catch (error) {
       console.error('Error processing text:', error);
       const errorMessage = error instanceof Error ? error.message : 'An error occurred while processing your text';
       
-      // Keep placeholder images and show MCQ loading on general error
+      // Keep placeholder images and turn off all loading states on error
       const currentState = get();
       const placeholderImages = currentState.currentImages.length > 0 ? currentState.currentImages : generatePlaceholderImages(1, 10);
       
@@ -198,9 +214,10 @@ const useContentStore = create<ContentState & {
         error: errorMessage,
         loading: false,
         isProcessingPastedText: false,
-        isGeneratingImages: false, // Hide image loading on general error
-        isGeneratingMcqs: true, // Keep MCQ loading active on general error
-        currentImages: placeholderImages, // Ensure placeholder images remain
+        isGeneratingImages: false,
+        isGeneratingMcqs: false, // Turn off MCQ loading on error
+        currentImages: placeholderImages,
+        currentMcqs: [], // Ensure MCQs are empty on error
       });
       
       toast.error(errorMessage);

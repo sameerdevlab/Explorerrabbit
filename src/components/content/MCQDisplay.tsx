@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { Card } from '../ui/Card';
 import Button from '../ui/Button';
 import useContentStore from '../../store/contentStore';
 
 const MCQDisplay: React.FC = () => {
-  const { currentMcqs, isGeneratingMcqs } = useContentStore();
+  const { currentMcqs, isGeneratingMcqs, error } = useContentStore();
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
   
-  if (!isGeneratingMcqs && (!currentMcqs || currentMcqs.length === 0)) return null;
+  console.log('🔍 MCQDisplay render:', { 
+    currentMcqs, 
+    isGeneratingMcqs, 
+    mcqCount: currentMcqs?.length || 0,
+    error 
+  });
   
   const handleOptionSelect = (questionIndex: number, optionIndex: number) => {
     setSelectedAnswers(prev => ({
@@ -135,6 +140,16 @@ const MCQDisplay: React.FC = () => {
                 )}
               </div>
             </>
+          ) : error ? (
+            <div className="p-8 text-center">
+              <div className="flex items-center justify-center gap-2 text-red-600 mb-2">
+                <AlertCircle size={20} />
+                <span className="font-medium">MCQ Generation Failed</span>
+              </div>
+              <p className="text-gray-600 text-sm">
+                Unable to generate questions from this content. Please try again.
+              </p>
+            </div>
           ) : (
             <div className="p-8 text-center text-gray-500">
               <p>No questions could be generated from this content.</p>

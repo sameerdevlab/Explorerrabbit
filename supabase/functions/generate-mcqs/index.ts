@@ -99,6 +99,8 @@ Deno.serve(async (req) => {
       );
     }
 
+    console.log('🔍 Generating MCQs for text length:', text.length);
+
     // Generate MCQs using Groq
     const mcqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -111,7 +113,7 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "Create 3 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Format the response as a JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3)."
+            content: "Create 3 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Return ONLY a valid JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3). Do not include any other text or formatting."
           },
           {
             role: "user",
@@ -125,6 +127,9 @@ Deno.serve(async (req) => {
 
     const mcqData = await mcqResponse.json();
     
+    console.log('🔍 Groq MCQ response status:', mcqResponse.ok);
+    console.log('🔍 Groq MCQ response data:', mcqData);
+    
     if (!mcqResponse.ok) {
       console.error("Groq API error:", mcqData);
       throw new Error(mcqData.error?.message || "Failed to generate MCQs");
@@ -132,9 +137,41 @@ Deno.serve(async (req) => {
 
     let mcqs;
     try {
-      const parsedContent = JSON.parse(mcqData.choices[0].message.content);
+      const responseContent = mcqData.choices[0].message.content;
+      console.log('🔍 Raw MCQ content:', responseContent);
+      
+      // Clean the response content to extract JSON
+      let cleanContent = responseContent.trim();
+      
+      // Remove any markdown code blocks
+      if (cleanContent.startsWith('```json')) {
+        cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (cleanContent.startsWith('```')) {
+        cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      
+      const parsedContent = JSON.parse(cleanContent);
+      console.log('🔍 Parsed MCQ content:', parsedContent);
+      
       // Handle both array format and object with questions property
       mcqs = Array.isArray(parsedContent) ? parsedContent : (parsedContent.questions || []);
+      
+      console.log('🔍 Final MCQs:', mcqs);
+      
+      // Validate MCQ structure
+      if (mcqs.length > 0) {
+        mcqs = mcqs.filter(mcq => 
+          mcq.question && 
+          Array.isArray(mcq.options) && 
+          mcq.options.length === 4 && 
+          typeof mcq.correctAnswer === 'number' &&
+          mcq.correctAnswer >= 0 && 
+          mcq.correctAnswer < 4
+        );
+      }
+      
+      console.log('🔍 Validated MCQs:', mcqs);
+      
     } catch (error) {
       console.error("Error parsing MCQs:", error);
       mcqs = [];
