@@ -98,11 +98,6 @@ const MCQDisplay: React.FC = () => {
   const score = getScore();
   const scoreMessage = getScoreMessage(score, currentMcqs?.length || 0);
   
-  // Don't render if no MCQs and not generating
-  if (!isGeneratingMcqs && (!currentMcqs || currentMcqs.length === 0) && !error) {
-    return null;
-  }
-  
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
