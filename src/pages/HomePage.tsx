@@ -93,7 +93,7 @@ const HomePage: React.FC = () => {
             <div className="flex flex-col md:flex-row gap-6 flex-grow min-h-0">
               {/* Content Display - Left side with independent scrolling */}
               <div className="w-full md:w-1/2 flex flex-col min-h-0">
-                <div className="flex-grow overflow-y-auto">
+                <div>
                   <ContentDisplay />
                 </div>
               </div>
