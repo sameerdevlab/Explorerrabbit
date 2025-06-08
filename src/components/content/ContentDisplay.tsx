@@ -119,7 +119,7 @@ const ContentDisplay: React.FC = () => {
       transition={{ delay: 0.2 }}
       className="w-full h-full flex flex-com min-h-0"
     >
-      <div className="overflow-y-auto space-y-6 pr-2">
+      <div>
         <Card className="h-full flex flex-col bg-white shadow-md min-h-0">
         <CardContent className="flex-grow overflow-y-auto min-h-0">
           <h2 className="text-xl font-semibold mb-4 text-purple-700 sticky top-0 bg-white z-10 pb-2">
