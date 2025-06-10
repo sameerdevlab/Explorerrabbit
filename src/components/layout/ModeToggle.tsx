@@ -20,7 +20,7 @@ const ModeToggle: React.FC = () => {
           
           {mode === 'generate' && (
             <motion.div
-              className="absolute inset-0 rounded-md shadow-lg"
+              className="absolute inset-0 rounded-md shadow-lg glowing-wrapper"
               layoutId="pill"
               initial={false}
               transition={{ type: "spring", duration: 0.5 }}
@@ -39,7 +39,7 @@ const ModeToggle: React.FC = () => {
           
           {mode === 'paste' && (
             <motion.div
-              className="absolute inset-0 rounded-md shadow-lg"
+              className="absolute inset-0 rounded-md shadow-lg glowing-wrapper"
               layoutId="pill"
               initial={false}
               transition={{ type: "spring", duration: 0.5 }}
