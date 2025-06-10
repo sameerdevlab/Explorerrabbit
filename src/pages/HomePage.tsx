@@ -107,7 +107,7 @@ const HomePage: React.FC = () => {
             <div className="mt-6 text-center">
               <button
                 onClick={handleNewContent}
-                className="text-purple-600 dark:text-purple-400 underline hover:text-purple-800 dark:hover:text-purple-300 transition-colors"
+                className="text-purple-600 dark:text-purple-400 underline hover:text-purple-800 dark:hover:text-purple-300 transition-colors mb-4"
               >
                 Start Over
               </button>
