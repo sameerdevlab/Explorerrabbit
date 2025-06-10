@@ -16,11 +16,6 @@ const TextInput: React.FC<TextInputProps> = ({ minimized = false }) => {
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('🔍 TextInput handleSubmit called');
-    console.log('📝 pastedText value:', pastedText);
-    console.log('📏 pastedText length:', pastedText.length);
-    console.log('🧹 pastedText trimmed:', pastedText.trim());
-    console.log('📏 pastedText trimmed length:', pastedText.trim().length);
     processExistingText();
   };
   
