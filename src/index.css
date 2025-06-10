@@ -37,7 +37,7 @@
     rgba(239, 68, 68, 0.8)
   );
   background-size: 400% 400%;
-  animation: glowing-border 3s ease-in-out infinite;
+  animation: glowing-border 20s ease-in-out infinite;
   opacity: 0.9;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
