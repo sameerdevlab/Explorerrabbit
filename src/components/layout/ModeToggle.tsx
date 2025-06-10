@@ -15,7 +15,7 @@ const ModeToggle: React.FC = () => {
           }`}
           onClick={() => setMode('generate')}
         >
-          <div className="flex z-20">
+          <div className="flex items-center z-20">
             <Lightbulb size={18} />
             <span>Generate Content</span>
           </div>
@@ -36,7 +36,7 @@ const ModeToggle: React.FC = () => {
           }`}
           onClick={() => setMode('paste')}
         >
-          <div className="flex z-20">
+          <div className="flex items-center z-20">
             <FileText size={18} />
             <span>Paste Your Own Text</span>
           </div>
