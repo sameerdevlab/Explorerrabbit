@@ -20,9 +20,20 @@
     #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000
   );
   background-size: 400% 400%;
-  border-radius: 15px;
+  border-bottom-left-radius: 18px 228px;
+  border-bottom-right-radius: 228px 18px;
+  border-top-right-radius: 18px 228px;
+  border-top-left-radius: 228px 18px;
   animation: glowing-border 35s linear infinite;
   opacity: 0.8;
+}
+
+/* Sketchy card style */
+.card-sketchy {
+  border-bottom-left-radius: 15px 225px;
+  border-bottom-right-radius: 225px 15px;
+  border-top-right-radius: 15px 225px;
+  border-top-left-radius: 225px 15px;
 }
 
 /* Mode toggle gradient background */
