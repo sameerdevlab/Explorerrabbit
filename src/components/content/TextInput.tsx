@@ -57,7 +57,7 @@ const TextInput: React.FC<TextInputProps> = ({ minimized = false }) => {
       className="w-full max-w-3xl mx-auto px-4"
     >
       <div className="glowing-wrapper">
-        <Card variant="sketchy-glass" className="overflow-hidden shadow-lg">
+        <Card variant="sketchy-glass" className="shadow-lg">
           <div className="p-6">
             <h2 className="text-2xl font-bold mb-2 text-slate-800 dark:text-slate-200">Process Your Text</h2>
             <p className="text-slate-600 dark:text-slate-400 mb-6">
