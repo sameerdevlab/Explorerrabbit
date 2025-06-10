@@ -21,7 +21,7 @@
   );
   background-size: 400% 400%;
   border-radius: 15px;
-  animation: glowing-border 12s linear infinite;
+  animation: glowing-border 15s linear infinite;
   opacity: 0.8;
 }
 
