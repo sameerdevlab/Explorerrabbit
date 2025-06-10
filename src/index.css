@@ -5,6 +5,12 @@
 /* Glowing wrapper effect for cards */
 .glowing-wrapper {
   position: relative;
+  transform: rotate(-0.5deg);
+  transition: transform 0.3s ease-in-out;
+}
+
+.glowing-wrapper:hover {
+  transform: rotate(0.5deg) scale(1.02);
 }
 
 .glowing-wrapper::before {
@@ -26,6 +32,7 @@
   border-top-left-radius: 228px 18px;
   animation: glowing-border 35s linear infinite;
   opacity: 0.8;
+  transform: rotate(1deg);
 }
 
 /* Sketchy card style */
@@ -34,6 +41,12 @@
   border-bottom-right-radius: 225px 15px;
   border-top-right-radius: 15px 225px;
   border-top-left-radius: 225px 15px;
+  transform: rotate(0.3deg);
+  transition: transform 0.3s ease-in-out;
+}
+
+.card-sketchy:hover {
+  transform: rotate(-0.2deg);
 }
 
 /* Mode toggle gradient background */
@@ -74,10 +87,11 @@
   border-top-left-radius: 225px 15px;
   border: 2px solid #41403e;
   transition: all 0.2s ease-in-out;
+  transform: rotate(-0.5deg);
 }
 
 .btn-sketchy:hover {
-  transform: translateY(2px);
+  transform: translateY(2px) rotate(0.5deg);
   box-shadow: 0px 15px 20px -5px rgba(0, 0, 0, 0.15);
 }
 
@@ -87,13 +101,13 @@
 }
 
 .btn-sketchy:active {
-  transform: translateY(4px);
+  transform: translateY(4px) rotate(-0.2deg);
   box-shadow: 0px 5px 10px -2px rgba(0, 0, 0, 0.1);
 }
 
 /* Dark mode sketchy button */
 .dark .btn-sketchy {
-  background-color: #474151;
+  background-color: #374151;
   color: #f9fafb;
   border-color: #9ca3af;
 }
