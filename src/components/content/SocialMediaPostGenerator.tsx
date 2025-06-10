@@ -61,6 +61,7 @@ const SocialMediaPostGenerator: React.FC = () => {
               <Button 
                 onClick={handleGenerate}
                 disabled={!currentText.trim()}
+                variant="sketchy"
                 className="w-full sm:w-auto"
               >
                 <Share2 className="h-4 w-4 mr-2" />
@@ -84,7 +85,7 @@ const SocialMediaPostGenerator: React.FC = () => {
               <div className="flex gap-2">
                 <Button
                   onClick={handleCopy}
-                  variant="outline"
+                  variant="sketchy"
                   className="flex-1"
                 >
                   {copied ? (
@@ -102,7 +103,7 @@ const SocialMediaPostGenerator: React.FC = () => {
                 
                 <Button
                   onClick={handleGenerate}
-                  variant="outline"
+                  variant="sketchy"
                   className="flex-1"
                 >
                   <Share2 className="h-4 w-4 mr-2" />

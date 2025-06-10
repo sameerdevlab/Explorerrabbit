@@ -39,7 +39,7 @@ const PromptInput: React.FC<PromptInputProps> = ({ minimized = false }) => {
                 icon={<Search size={16} />}
                 className="flex-grow"
               />
-              <Button type="submit" isLoading={loading}>
+              <Button type="submit" variant="sketchy" isLoading={loading}>
                 Generate
               </Button>
             </form>
@@ -78,6 +78,7 @@ const PromptInput: React.FC<PromptInputProps> = ({ minimized = false }) => {
                 
                 <Button
                   type="submit"
+                  variant="sketchy"
                   size="lg"
                   className="w-full"
                   isLoading={loading}

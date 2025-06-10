@@ -128,7 +128,7 @@ const MCQDisplay: React.FC = () => {
                     </span>
                     <Button
                       onClick={backToResults}
-                      variant="outline"
+                      variant="sketchy"
                       size="sm"
                     >
                       Back to Results
@@ -209,7 +209,7 @@ const MCQDisplay: React.FC = () => {
                     <Button
                       onClick={handleReviewPrevious}
                       disabled={reviewQuestionIndex === 0}
-                      variant="outline"
+                      variant="sketchy"
                       className="flex-1"
                     >
                       <ChevronLeft className="h-4 w-4 mr-2" />
@@ -218,7 +218,7 @@ const MCQDisplay: React.FC = () => {
                     <Button
                       onClick={handleReviewNext}
                       disabled={reviewQuestionIndex === currentMcqs.length - 1}
-                      variant="outline"
+                      variant="sketchy"
                       className="flex-1"
                     >
                       Next
@@ -290,10 +290,10 @@ const MCQDisplay: React.FC = () => {
                     transition={{ delay: 0.8 }}
                     className="space-y-3"
                   >
-                    <Button onClick={startReview} variant="outline" className="w-full">
+                    <Button onClick={startReview} variant="sketchy" className="w-full">
                       Review Answers
                     </Button>
-                    <Button onClick={resetQuiz} className="w-full">
+                    <Button onClick={resetQuiz} variant="sketchy" className="w-full">
                       Try Again
                     </Button>
                   </motion.div>
@@ -380,6 +380,7 @@ const MCQDisplay: React.FC = () => {
                       <Button 
                         onClick={handleNext}
                         disabled={selectedAnswers[currentQuestionIndex] === undefined}
+                        variant="sketchy"
                         className="w-full"
                       >
                         Next Question
@@ -388,6 +389,7 @@ const MCQDisplay: React.FC = () => {
                       <Button 
                         onClick={handleSubmit}
                         disabled={selectedAnswers[currentQuestionIndex] === undefined}
+                        variant="sketchy"
                         className="w-full"
                       >
                         Submit Quiz

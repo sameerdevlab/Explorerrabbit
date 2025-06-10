@@ -44,7 +44,7 @@ const TextInput: React.FC<TextInputProps> = ({ minimized = false }) => {
                 className="flex-grow h-10 min-h-0 resize-none py-2"
                 rows={1}
               />
-              <Button type="submit" isLoading={loading}>
+              <Button type="submit" variant="sketchy" isLoading={loading}>
                 Process
               </Button>
             </form>
@@ -83,6 +83,7 @@ const TextInput: React.FC<TextInputProps> = ({ minimized = false }) => {
                 
                 <Button
                   type="submit"
+                  variant="sketchy"
                   size="lg"
                   className="w-full"
                   isLoading={loading}

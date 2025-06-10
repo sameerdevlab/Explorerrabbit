@@ -51,3 +51,38 @@
     background-position: 100% 50%;
   }
 }
+
+/* Sketchy button styles */
+.btn-sketchy {
+  background-color: #fff;
+  color: #41403e;
+  box-shadow: 0px 25px 25px -10px rgba(0, 0, 0, 0.2);
+  border-bottom-left-radius: 15px 225px;
+  border-bottom-right-radius: 225px 15px;
+  border-top-right-radius: 15px 225px;
+  border-top-left-radius: 225px 15px;
+  border: 2px solid #41403e;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-sketchy:hover {
+  transform: translateY(2px);
+  box-shadow: 0px 15px 20px -5px rgba(0, 0, 0, 0.15);
+}
+
+.btn-sketchy:focus {
+  box-shadow: 0px 15px 20px -5px rgba(0, 0, 0, 0.15);
+  outline: none;
+}
+
+.btn-sketchy:active {
+  transform: translateY(4px);
+  box-shadow: 0px 5px 10px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode sketchy button */
+.dark .btn-sketchy {
+  background-color: #374151;
+  color: #f9fafb;
+  border-color: #9ca3af;
+}
