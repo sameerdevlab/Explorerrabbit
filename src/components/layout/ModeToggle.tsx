@@ -39,7 +39,7 @@ const ModeToggle: React.FC = () => {
           
           {mode === 'paste' && (
             <motion.div
-              className="absolute inset-0 bg-gray/60 dark:bg-gray/40 rounded-md shadow-sm"
+              className="absolute inset-0 bg-gray/90 dark:bg-gray/40 rounded-md shadow-sm"
               layoutId="pill"
               initial={false}
               transition={{ type: "spring", duration: 0.5 }}
