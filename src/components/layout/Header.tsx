@@ -22,7 +22,7 @@ const Header: React.FC = () => {
             variant="sketchy"
             size="sm"
             onClick={toggleTheme}
-            className="bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30 p-2 shadow-md"
+            className="backdrop-blur-sm border border-white/30 text-white hover:bg-white/30 p-2 shadow-md"
           >
             {theme === 'light' ? (
               <Moon size={18} />
