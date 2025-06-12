@@ -183,17 +183,6 @@ const MCQDisplay: React.FC = () => {
               {reviewMode ? (
                 // Review Mode
                 <div className="space-y-6">
-                  {/* Review Navigation Button */}
-                  <div className="flex justify-end">
-                    <Button
-                      onClick={backToResults}
-                      variant="sketchy"
-                      size="sm"
-                    >
-                      Back to Results
-                    </Button>
-                  </div>
-                  
                   {/* Review Question */}
                   <motion.div
                     key={reviewQuestionIndex}
@@ -266,7 +255,7 @@ const MCQDisplay: React.FC = () => {
                     )}
                   </motion.div>
                   
-                  {/* Review Navigation */}
+                  {/* Review Navigation - Show "Back to Results" on last question instead of "Next" */}
                   <div className="flex gap-4">
                     <Button
                       onClick={handleReviewPrevious}
@@ -277,15 +266,25 @@ const MCQDisplay: React.FC = () => {
                       <ChevronLeft className="h-4 w-4 mr-2" />
                       Previous
                     </Button>
-                    <Button
-                      onClick={handleReviewNext}
-                      disabled={reviewQuestionIndex === currentMcqs.length - 1}
-                      variant="sketchy"
-                      className="flex-1"
-                    >
-                      Next
-                      <ChevronRight className="h-4 w-4 ml-2" />
-                    </Button>
+                    
+                    {reviewQuestionIndex === currentMcqs.length - 1 ? (
+                      <Button
+                        onClick={backToResults}
+                        variant="sketchy"
+                        className="flex-1"
+                      >
+                        Back to Results
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={handleReviewNext}
+                        variant="sketchy"
+                        className="flex-1"
+                      >
+                        Next
+                        <ChevronRight className="h-4 w-4 ml-2" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               ) : quizCompleted ? (
