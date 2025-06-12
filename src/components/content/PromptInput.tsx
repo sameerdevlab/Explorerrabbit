@@ -25,7 +25,7 @@ const PromptInput: React.FC<PromptInputProps> = ({ minimized = false }) => {
         layout
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full sticky bottom-4 px-4 z-50 mt-4"
+        className="w-full sticky bottom-4 px-4 z-50 mt-10"
       >
         <div className="glowing-wrapper max-w-2xl mx-auto">
           <Card variant="glass" className="p-2">
