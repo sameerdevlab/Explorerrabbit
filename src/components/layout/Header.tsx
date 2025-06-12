@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   const { theme, toggleTheme } = useThemeStore();
   
   return (
-    <header className="w-full py-4 px-6 bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 dark:from-gray-800 dark:via-gray-700 dark:to-gray-600 text-white shadow-md">
+    <header className="w-full py-4 bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 dark:from-gray-800 dark:via-gray-700 dark:to-gray-600 text-white shadow-md">
       <div className="container sticky top-0 z-50 rounded-full p-3 shadow-lg mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Sparkles size={24} className="text-white" />
