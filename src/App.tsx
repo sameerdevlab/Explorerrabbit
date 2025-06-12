@@ -25,7 +25,7 @@ function App() {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-300 via-pink-200 to-yellow-200 dark:from-gray-900 dark:to-gray-800">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600 dark:border-purple-400"></div>
       </div>
     );
@@ -37,7 +37,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/auth" element={<AuthPage />} />
-          <Route path="*" element={<Navigate to="/\" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
       

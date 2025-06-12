@@ -13,7 +13,7 @@ const AuthPage: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-100 to-pink-100 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center justify-center p-4 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-purple-300 via-pink-200 to-yellow-200 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center justify-center p-4 transition-colors duration-300">
       <div className="w-full max-w-md text-center mb-8">
         <div className="flex justify-center">
           <Sparkles size={48} className="text-purple-600 dark:text-purple-400" />
