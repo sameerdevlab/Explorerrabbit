@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, AlertCircle, CheckCircle, Trophy, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Loader2, AlertCircle, CheckCircle, Trophy, Star, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
 import useContentStore from '../../store/contentStore';
 
 const MCQDisplay: React.FC = () => {
-  const { currentMcqs, isGeneratingMcqs, error } = useContentStore();
+  const { 
+    currentMcqs, 
+    isGeneratingMcqs, 
+    error, 
+    mcqGenerationStatus, 
+    mcqErrorMessage, 
+    retryMcqGeneration 
+  } = useContentStore();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [quizCompleted, setQuizCompleted] = useState(false);
@@ -17,7 +24,9 @@ const MCQDisplay: React.FC = () => {
     currentMcqs, 
     isGeneratingMcqs, 
     mcqCount: currentMcqs?.length || 0,
-    error 
+    error,
+    mcqGenerationStatus,
+    mcqErrorMessage
   });
   
   const handleOptionSelect = (optionIndex: number) => {
@@ -111,10 +120,38 @@ const MCQDisplay: React.FC = () => {
             Test Your Knowledge
           </h2>
           
-          {isGeneratingMcqs ? (
+          {mcqGenerationStatus === 'generating' || isGeneratingMcqs ? (
             <div className="flex items-center gap-3 p-8 text-center justify-center">
               <Loader2 className="h-5 w-5 animate-spin text-purple-600 dark:text-purple-400" />
               <span className="text-gray-600 dark:text-gray-300">MCQs are getting generated...</span>
+            </div>
+          ) : mcqGenerationStatus === 'failed_first_attempt' ? (
+            <div className="p-6 text-center">
+              <div className="flex items-center justify-center gap-2 text-orange-600 dark:text-orange-400 mb-4">
+                <AlertCircle size={20} />
+                <span className="font-medium">MCQ Generation Failed</span>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                {mcqErrorMessage}
+              </p>
+              <Button
+                onClick={retryMcqGeneration}
+                variant="sketchy"
+                className="w-full sm:w-auto"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Retry MCQ Generation
+              </Button>
+            </div>
+          ) : mcqGenerationStatus === 'failed_second_attempt' ? (
+            <div className="p-6 text-center">
+              <div className="flex items-center justify-center gap-2 text-red-600 dark:text-red-400 mb-2">
+                <AlertCircle size={20} />
+                <span className="font-medium">MCQ Generation Failed</span>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                {mcqErrorMessage}
+              </p>
             </div>
           ) : currentMcqs && currentMcqs.length > 0 ? (
             <>

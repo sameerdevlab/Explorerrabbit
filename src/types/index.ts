@@ -41,6 +41,10 @@ export interface ContentState {
   currentImages: ImageData[];
   currentMcqs: MCQuestion[];
   socialMediaPost: string | null;
+  
+  // MCQ generation status and retry logic
+  mcqGenerationStatus: 'idle' | 'generating' | 'failed_first_attempt' | 'failed_second_attempt' | 'success';
+  mcqErrorMessage: string | null;
 }
 
 export interface AuthState {

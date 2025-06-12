@@ -13,6 +13,7 @@ const useContentStore = create<ContentState & {
   generateContent: () => Promise<void>;
   processExistingText: () => Promise<void>;
   generateSocialMediaPost: () => Promise<void>;
+  retryMcqGeneration: () => Promise<void>;
 }>((set, get) => ({
   mode: 'generate',
   prompt: '',
@@ -34,6 +35,10 @@ const useContentStore = create<ContentState & {
   currentMcqs: [],
   socialMediaPost: null,
   
+  // MCQ generation status and retry logic
+  mcqGenerationStatus: 'idle',
+  mcqErrorMessage: null,
+  
   setMode: (mode) => set({ mode }),
   setPrompt: (prompt) => set({ prompt }),
   setPastedText: (text) => {
@@ -52,6 +57,8 @@ const useContentStore = create<ContentState & {
     currentImages: [],
     currentMcqs: [],
     socialMediaPost: null,
+    mcqGenerationStatus: 'idle',
+    mcqErrorMessage: null,
   }),
   
   generateContent: async () => {
@@ -84,6 +91,8 @@ const useContentStore = create<ContentState & {
         currentImages: [], // Start with empty images to show placeholder loading
         currentMcqs: [],
         socialMediaPost: null,
+        mcqGenerationStatus: 'generating',
+        mcqErrorMessage: null,
       });
       
       // Call the Supabase Edge Function for content generation
@@ -91,17 +100,28 @@ const useContentStore = create<ContentState & {
         prompt,
       });
       
+      // Check MCQ generation success
+      let mcqStatus: 'success' | 'failed_first_attempt' = 'success';
+      let mcqError: string | null = null;
+      
+      if (!data.mcqs || data.mcqs.length === 0) {
+        mcqStatus = 'failed_first_attempt';
+        mcqError = 'Failed to generate MCQs. Click retry to try again.';
+      }
+      
       // Set the final result
       set({
         result: data as ContentGenerationResult,
         currentText: data.text,
         currentImages: data.images,
-        currentMcqs: data.mcqs,
+        currentMcqs: data.mcqs || [],
         loading: false,
         isGeneratingText: false,
         isGeneratingImages: false,
         isGeneratingMcqs: false,
         isProcessingPastedText: false,
+        mcqGenerationStatus: mcqStatus,
+        mcqErrorMessage: mcqError,
       });
     } catch (error) {
       console.error('Error generating content:', error);
@@ -110,6 +130,8 @@ const useContentStore = create<ContentState & {
         error: errorMessage,
         loading: false,
         isProcessingPastedText: false,
+        mcqGenerationStatus: 'failed_first_attempt',
+        mcqErrorMessage: 'Failed to generate MCQs. Click retry to try again.',
         // Keep loading indicators active to show persistent loading state
         // isGeneratingText: false,
         // isGeneratingImages: false,
@@ -151,6 +173,8 @@ const useContentStore = create<ContentState & {
         currentImages: placeholderImages,
         currentMcqs: [],
         socialMediaPost: null,
+        mcqGenerationStatus: 'generating',
+        mcqErrorMessage: null,
       });
       
       // Process images and MCQs in parallel
@@ -173,6 +197,9 @@ const useContentStore = create<ContentState & {
       
       // Handle MCQ generation result
       let finalMcqs: any[] = [];
+      let mcqStatus: 'success' | 'failed_first_attempt' = 'success';
+      let mcqError: string | null = null;
+      
       if (mcqResponse.status === 'fulfilled' && mcqResponse.value.mcqs && mcqResponse.value.mcqs.length > 0) {
         finalMcqs = mcqResponse.value.mcqs;
         console.log('✅ MCQs generated successfully:', finalMcqs);
@@ -181,6 +208,8 @@ const useContentStore = create<ContentState & {
         if (mcqResponse.status === 'rejected') {
           console.error('MCQ generation error:', mcqResponse.reason);
         }
+        mcqStatus = 'failed_first_attempt';
+        mcqError = 'Failed to generate MCQs. Click retry to try again.';
       }
       
       // Combine the results
@@ -200,6 +229,8 @@ const useContentStore = create<ContentState & {
         isGeneratingImages: false,
         isGeneratingMcqs: false, // Always turn off MCQ loading
         isProcessingPastedText: false,
+        mcqGenerationStatus: mcqStatus,
+        mcqErrorMessage: mcqError,
       });
       
       // Show success message
@@ -225,9 +256,81 @@ const useContentStore = create<ContentState & {
         isGeneratingMcqs: false, // Turn off MCQ loading on error
         currentImages: placeholderImages,
         currentMcqs: [], // Ensure MCQs are empty on error
+        mcqGenerationStatus: 'failed_first_attempt',
+        mcqErrorMessage: 'Failed to generate MCQs. Click retry to try again.',
       });
       
       toast.error(errorMessage);
+    }
+  },
+  
+  retryMcqGeneration: async () => {
+    const { currentText, mcqGenerationStatus } = get();
+    
+    // Only allow retry if we're in the first failure state
+    if (mcqGenerationStatus !== 'failed_first_attempt') {
+      return;
+    }
+    
+    // Check if user is authenticated
+    const { user } = useAuthStore.getState();
+    if (!user) {
+      set({ mcqErrorMessage: 'Please sign in to retry MCQ generation' });
+      toast.error('Please sign in to retry MCQ generation');
+      return;
+    }
+    
+    if (!currentText.trim()) {
+      set({ mcqErrorMessage: 'No content available to generate MCQs' });
+      toast.error('No content available to generate MCQs');
+      return;
+    }
+    
+    try {
+      set({ 
+        mcqGenerationStatus: 'generating',
+        mcqErrorMessage: null,
+        isGeneratingMcqs: true,
+      });
+      
+      // Call the MCQ generation edge function
+      const data = await callEdgeFunction('generate-mcqs', {
+        text: currentText,
+      });
+      
+      console.log('🔄 MCQ retry response:', data);
+      
+      if (data.mcqs && data.mcqs.length > 0) {
+        // Retry successful
+        set({
+          currentMcqs: data.mcqs,
+          mcqGenerationStatus: 'success',
+          mcqErrorMessage: null,
+          isGeneratingMcqs: false,
+        });
+        
+        toast.success(`Generated ${data.mcqs.length} questions successfully!`);
+      } else {
+        // Retry failed - second attempt
+        set({
+          mcqGenerationStatus: 'failed_second_attempt',
+          mcqErrorMessage: 'MCQs cannot be generated from this content.',
+          isGeneratingMcqs: false,
+        });
+        
+        toast.error('MCQs cannot be generated from this content');
+      }
+    } catch (error) {
+      console.error('Error retrying MCQ generation:', error);
+      
+      // Second attempt failed
+      set({
+        mcqGenerationStatus: 'failed_second_attempt',
+        mcqErrorMessage: 'MCQs cannot be generated from this content.',
+        isGeneratingMcqs: false,
+      });
+      
+      toast.error('MCQs cannot be generated from this content');
     }
   },
   
