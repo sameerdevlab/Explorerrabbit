@@ -50,14 +50,14 @@ const HomePage: React.FC = () => {
   
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-300 via-pink-200 to-yellow-200 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-300 dark:from-gray-900 dark:to-gray-800">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600 dark:border-purple-400"></div>
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-300 via-pink-200 to-yellow-200 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-300 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       <Header />
       
       <main className="container mx-auto py-8 px-4 flex-grow flex flex-col">
