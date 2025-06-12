@@ -7,17 +7,17 @@ import useAuthStore from './authStore';
 
 // Social Media Post Type Prompts
 const SOCIAL_MEDIA_PROMPTS = {
-  'informative-summary': 'Summarize the following content into a concise, informative social media post. Keep the tone professional, helpful, and clear. Avoid fluff. Include the key facts and insights in 2–3 lines. Content: {{USER_CONTENT}}',
+  'informative-summary': 'Summarize the following content into a short, informative social media post. Use clear, professional language and include 1–2 relevant emojis. Highlight key facts or takeaways in 2–3 sentences. Avoid fluff, and format it for LinkedIn or Instagram. Content: {{USER_CONTENT}}',
   
-  'tips-carousel': 'Convert the following content into a carousel-style post. Start with a hook or headline. Then break down the main points into 5–7 short, actionable steps or tips, each formatted as a separate slide caption. Keep the tone simple, educational, and clear. Content: {{USER_CONTENT}}',
+  'tips-carousel': 'Turn the following content into a clean, structured social media post with helpful tips or steps. Start with a short hook or headline, followed by 5–7 numbered or bulleted tips. Use friendly, educational language and 1–2 emojis. Format it for Instagram or LinkedIn. Do not format as slides. Content: {{USER_CONTENT}}',
   
-  'motivational-quote': 'Create a motivational social media post using the following content. Start with a powerful quote or emotional hook, followed by a brief inspiring message about the content\'s theme. Keep it short, punchy, and creator-style. Content: {{USER_CONTENT}}',
+  'motivational-quote': 'Create a motivational social media post based on the following content. Begin with a powerful quote or emotional hook, then write a short, inspiring message related to the content\'s theme. Add 1–2 relevant emojis. Keep the tone positive, creator-style, and punchy. Content: {{USER_CONTENT}}',
   
-  'stats-based': 'From the following content, extract any surprising or important statistics or facts. Use them to create a "Did You Know?" style social media post. Make it data-driven, attention-grabbing, and formatted for LinkedIn, Twitter, or infographics. Content: {{USER_CONTENT}}',
+  'stats-based': 'Extract the most surprising or impactful statistics or facts from the following content and turn them into a "Did You Know?" style social media post. Use 1–2 emojis and a clear, bold tone. Format it for Instagram, X (Twitter), or LinkedIn. Make it eye-catching and easy to skim. Content: {{USER_CONTENT}}',
   
-  'personal-journey': 'Write a social media post in the style of a personal journey or story based on this content. Use a relatable, humble tone. Begin with a personal hook or reflection, then explain how someone can start or grow in this journey. End with an encouraging call to action. Content: {{USER_CONTENT}}',
+  'personal-journey': 'Write a social media post in the style of a personal reflection or journey. Start with a relatable hook or emotional thought, then share insights or lessons based on the content. End with an encouraging call to action. Use 1–2 emojis and keep the tone humble, honest, and human. Content: {{USER_CONTENT}}',
   
-  'experimental-remix': 'Rewrite the following content in a bold, creative, Gen Z–friendly, or poetic style. You may use metaphors, rhymes, emojis, slang, or humor to make it edgy and modern. Keep the core message intact. Content: {{USER_CONTENT}}'
+  'experimental-remix': 'Rewrite the following content in a bold, creative, Gen Z–friendly or poetic style. Use emojis, metaphors, rhymes, humor, or slang to make it stand out. Keep the message clear but add a modern, edgy twist for Instagram or Twitter/X. Have fun with the style. Content: {{USER_CONTENT}}'
 };
 
 const useContentStore = create<ContentState & {
