@@ -54,20 +54,21 @@
 
 /* Sketchy button styles */
 .btn-sketchy {
-  background-color: #fff;
-  color: #41403e;
+  background: linear-gradient(135deg, #e6f0fa 0%, #d1e7f0 50%, #b8dce8 100%);
+  color: #2c3e50;
   box-shadow: 0px 25px 25px -10px rgba(0, 0, 0, 0.2);
   border-bottom-left-radius: 15px 225px;
   border-bottom-right-radius: 225px 15px;
   border-top-right-radius: 15px 225px;
   border-top-left-radius: 225px 15px;
-  border: 2px solid #41403e;
+  border: 2px solid #34495e;
   transition: all 0.2s ease-in-out;
 }
 
 .btn-sketchy:hover {
   transform: translateY(2px);
   box-shadow: 0px 15px 20px -5px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 50%, #d0e8ff 100%);
 }
 
 .btn-sketchy:focus {
@@ -82,7 +83,11 @@
 
 /* Dark mode sketchy button */
 .dark .btn-sketchy {
-  background-color: #374151;
-  color: #f9fafb;
-  border-color: #9ca3af;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #3d566e 100%);
+  color: #ecf0f1;
+  border-color: #7f8c8d;
+}
+
+.dark .btn-sketchy:hover {
+  background: linear-gradient(135deg, #34495e 0%, #3d566e 50%, #4a6278 100%);
 }
