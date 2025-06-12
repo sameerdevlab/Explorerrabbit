@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import toast from 'react-hot-toast';
-import { ContentState, ContentGenerationResult, SocialMediaPostType } from '../types';
+import { ContentState, ContentGenerationResult, SocialMediaPostType, UserLevel } from '../types';
 import { callEdgeFunction } from '../lib/supabase';
 import { generatePlaceholderImages, generateInitialPlaceholderImages } from '../lib/utils';
 import useAuthStore from './authStore';
@@ -20,6 +20,15 @@ const SOCIAL_MEDIA_PROMPTS = {
   'experimental-remix': 'Rewrite the following content in a bold, creative, Gen Z–friendly or poetic style. Use emojis, metaphors, rhymes, humor, or slang to make it stand out. Keep the message clear but add a modern, edgy twist for Instagram or Twitter/X. Have fun with the style. Content: {{USER_CONTENT}}'
 };
 
+// User level specific prompts for personal journey posts
+const PERSONAL_JOURNEY_USER_LEVEL_PROMPTS = {
+  'beginner': 'Write a social media post from the perspective of someone just starting their journey. Use a humble, curious tone that shows vulnerability and eagerness to learn. Start with a relatable beginner struggle or realization, then share insights from the content that would help other beginners. End with an encouraging message about taking the first steps. Use 1–2 emojis and keep the tone honest, hopeful, and inspiring for fellow beginners. Content: {{USER_CONTENT}}',
+  
+  'intermediate': 'Write a social media post from the perspective of someone who has made some progress but is still growing. Use a tone that balances confidence with humility, showing both achievements and ongoing challenges. Start with a reflection on the journey so far, then share insights from the content that would help others at a similar stage. End with encouragement about continuing to grow and learn. Use 1–2 emojis and keep the tone relatable, motivating, and authentic. Content: {{USER_CONTENT}}',
+  
+  'experienced': 'Write a social media post from the perspective of someone who has achieved success and wants to give back. Use a wise, mentoring tone that shares hard-earned wisdom without being preachy. Start with a reflection on the journey and lessons learned, then share key insights from the content that would benefit others. End with an inspiring call to action that encourages others to pursue their goals. Use 1–2 emojis and keep the tone generous, inspiring, and authentic. Content: {{USER_CONTENT}}'
+};
+
 const useContentStore = create<ContentState & {
   setMode: (mode: 'generate' | 'paste') => void;
   setPrompt: (prompt: string) => void;
@@ -27,7 +36,7 @@ const useContentStore = create<ContentState & {
   clearContent: () => void;
   generateContent: () => Promise<void>;
   processExistingText: () => Promise<void>;
-  generateSocialMediaPost: (postType: SocialMediaPostType) => Promise<void>;
+  generateSocialMediaPost: (postType: SocialMediaPostType, userLevel?: UserLevel) => Promise<void>;
   retryMcqGeneration: () => Promise<void>;
 }>((set, get) => ({
   mode: 'generate',
@@ -351,7 +360,7 @@ const useContentStore = create<ContentState & {
     }
   },
   
-  generateSocialMediaPost: async (postType: SocialMediaPostType) => {
+  generateSocialMediaPost: async (postType: SocialMediaPostType, userLevel?: UserLevel) => {
     const { currentText } = get();
     
     // Check if user is authenticated
@@ -374,8 +383,17 @@ const useContentStore = create<ContentState & {
         error: null,
       });
       
-      // Get the prompt template for the selected post type
-      const promptTemplate = SOCIAL_MEDIA_PROMPTS[postType];
+      // Get the appropriate prompt template
+      let promptTemplate: string;
+      
+      if (postType === 'personal-journey' && userLevel) {
+        // Use user level specific prompt for personal journey posts
+        promptTemplate = PERSONAL_JOURNEY_USER_LEVEL_PROMPTS[userLevel];
+      } else {
+        // Use default prompt for other post types
+        promptTemplate = SOCIAL_MEDIA_PROMPTS[postType];
+      }
+      
       const prompt = promptTemplate.replace('{{USER_CONTENT}}', currentText);
       
       // Call the Supabase Edge Function for social media post generation

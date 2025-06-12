@@ -6,7 +6,7 @@ import Button from '../ui/Button';
 import TextArea from '../ui/TextArea';
 import SocialMediaPostTypeModal from './SocialMediaPostTypeModal';
 import useContentStore from '../../store/contentStore';
-import { SocialMediaPostType } from '../../types';
+import { SocialMediaPostType, UserLevel } from '../../types';
 import toast from 'react-hot-toast';
 
 const SocialMediaPostGenerator: React.FC = () => {
@@ -38,8 +38,8 @@ const SocialMediaPostGenerator: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleSelectPostType = (postType: SocialMediaPostType) => {
-    generateSocialMediaPost(postType);
+  const handleSelectPostType = (postType: SocialMediaPostType, userLevel?: UserLevel) => {
+    generateSocialMediaPost(postType, userLevel);
   };
 
   const handleCopy = async () => {

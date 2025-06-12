@@ -29,6 +29,8 @@ export type SocialMediaPostType =
   | 'personal-journey'
   | 'experimental-remix';
 
+export type UserLevel = 'beginner' | 'intermediate' | 'experienced';
+
 export interface ContentState {
   mode: 'generate' | 'paste';
   prompt: string;
