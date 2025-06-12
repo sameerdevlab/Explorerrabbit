@@ -9,8 +9,8 @@ const Header: React.FC = () => {
   const { theme, toggleTheme } = useThemeStore();
   
   return (
-    <header className="w-full px-6 bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 dark:from-gray-800 dark:via-gray-700 dark:to-gray-600 text-white shadow-md">
-      <div className="container sticky top-0 z-500 rounded-full p-3 shadow-lg mx-auto flex justify-between items-center">
+    <header className="w-full sticky top-0 z-500 px-6 px-4 bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 dark:from-gray-800 dark:via-gray-700 dark:to-gray-600 text-white shadow-md">
+      <div className="container shadow-lg mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Sparkles size={24} className="text-white" />
           <h1 className="text-xl font-bold">AI Content Generator</h1>
