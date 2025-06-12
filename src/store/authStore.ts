@@ -1,14 +1,13 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabase';
 import { AuthState, User } from '../types';
-import toast from 'react-hot-toast';
 
 const useAuthStore = create<AuthState & {
   initialize: () => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-}>((set, get) => ({
+}>((set) => ({
   user: null,
   session: null,
   loading: true,
@@ -16,70 +15,43 @@ const useAuthStore = create<AuthState & {
   
   initialize: async () => {
     try {
-      set({ loading: true, error: null });
+      set({ loading: true });
       
       // Get the current session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (sessionError) {
-        console.error('Session error:', sessionError);
-        set({ error: sessionError.message });
-        return;
-      }
-      
-      if (session?.user) {
-        set({
-          user: {
-            id: session.user.id,
-            email: session.user.email || '',
-          },
-          session,
-          error: null,
-        });
-      } else {
-        set({ user: null, session: null });
+      if (session) {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          set({
+            user: {
+              id: user.id,
+              email: user.email || '',
+            },
+            session,
+          });
+        }
       }
       
       // Set up the auth state change listener
-      supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        
-        if (event === 'SIGNED_IN' && session?.user) {
+      supabase.auth.onAuthStateChange((_event, session) => {
+        if (session) {
+          const user = session.user;
           set({
-            user: {
-              id: session.user.id,
-              email: session.user.email || '',
-            },
+            user: user ? {
+              id: user.id,
+              email: user.email || '',
+            } : null,
             session,
-            error: null,
-            loading: false,
           });
-          toast.success(`Welcome back, ${session.user.email}!`);
-        } else if (event === 'SIGNED_OUT') {
-          set({ 
-            user: null, 
-            session: null, 
-            error: null,
-            loading: false,
-          });
-          toast.success('Signed out successfully');
-        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-          set({
-            user: {
-              id: session.user.id,
-              email: session.user.email || '',
-            },
-            session,
-            error: null,
-          });
+        } else {
+          set({ user: null, session: null });
         }
       });
     } catch (error) {
       console.error('Auth initialization error:', error);
-      set({ 
-        error: error instanceof Error ? error.message : 'Authentication error',
-        loading: false,
-      });
+      set({ error: error instanceof Error ? error.message : 'Authentication error' });
     } finally {
       set({ loading: false });
     }
@@ -92,46 +64,16 @@ const useAuthStore = create<AuthState & {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          emailRedirectTo: window.location.origin,
-        }
       });
       
-      if (error) {
-        console.error('Sign up error:', error);
-        throw error;
-      }
+      if (error) throw error;
       
-      if (data.user && !data.session) {
-        // Email confirmation required
-        toast.success('Account created! Please check your email to confirm your account.');
-        set({ loading: false });
-        return;
-      }
-      
-      if (data.user && data.session) {
-        // Auto sign-in successful
-        set({
-          user: {
-            id: data.user.id,
-            email: data.user.email || '',
-          },
-          session: data.session,
-          loading: false,
-          error: null,
-        });
-        toast.success(`Account created successfully! Welcome, ${data.user.email}!`);
-      }
-      
+      // User data will be set by the onAuthStateChange listener
     } catch (error) {
       console.error('Sign up error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Sign up failed';
-      set({ 
-        error: errorMessage,
-        loading: false,
-      });
-      toast.error(errorMessage);
-      throw error;
+      set({ error: error instanceof Error ? error.message : 'Sign up failed' });
+    } finally {
+      set({ loading: false });
     }
   },
   
@@ -144,65 +86,27 @@ const useAuthStore = create<AuthState & {
         password,
       });
       
-      if (error) {
-        console.error('Sign in error:', error);
-        throw error;
-      }
+      if (error) throw error;
       
-      if (data.user && data.session) {
-        set({
-          user: {
-            id: data.user.id,
-            email: data.user.email || '',
-          },
-          session: data.session,
-          loading: false,
-          error: null,
-        });
-        toast.success(`Welcome back, ${data.user.email}!`);
-      }
-      
+      // User data will be set by the onAuthStateChange listener
     } catch (error) {
       console.error('Sign in error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Sign in failed';
-      set({ 
-        error: errorMessage,
-        loading: false,
-      });
-      toast.error(errorMessage);
-      throw error;
+      set({ error: error instanceof Error ? error.message : 'Sign in failed' });
+    } finally {
+      set({ loading: false });
     }
   },
   
   signOut: async () => {
     try {
       set({ loading: true, error: null });
-      
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error('Sign out error:', error);
-        throw error;
-      }
-      
-      // Clear state immediately
-      set({ 
-        user: null, 
-        session: null, 
-        loading: false,
-        error: null,
-      });
-      
-      toast.success('Signed out successfully');
-      
+      await supabase.auth.signOut();
+      // User data will be cleared by the onAuthStateChange listener
     } catch (error) {
       console.error('Sign out error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Sign out failed';
-      set({ 
-        error: errorMessage,
-        loading: false,
-      });
-      toast.error(errorMessage);
+      set({ error: error instanceof Error ? error.message : 'Sign out failed' });
+    } finally {
+      set({ loading: false });
     }
   },
 }));
