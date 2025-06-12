@@ -200,49 +200,52 @@ const MCQDisplay: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="border border-gray-200 dark:border-gray-700 rounded-md p-6"
+                    className="space-y-6"
                   >
-                    <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
-                      {currentMcqs[reviewQuestionIndex].question}
-                    </h3>
+                    {/* Enhanced Question Display */}
+                    <div className="p-6 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl border border-purple-200 dark:border-purple-700 shadow-sm">
+                      <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 leading-relaxed">
+                        {currentMcqs[reviewQuestionIndex].question}
+                      </h3>
+                    </div>
                     
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {currentMcqs[reviewQuestionIndex].options.map((option, optionIndex) => {
                         const isUserAnswer = selectedAnswers[reviewQuestionIndex] === optionIndex;
                         const isCorrectAnswer = currentMcqs[reviewQuestionIndex].correctAnswer === optionIndex;
                         const isWrongUserAnswer = isUserAnswer && !isCorrectAnswer;
                         
-                        let optionClass = 'border rounded-md p-4 transition-all';
+                        let optionClass = 'border rounded-xl p-5 transition-all duration-200 shadow-sm';
                         let iconColor = 'border-gray-300 dark:border-gray-600';
                         let icon = String.fromCharCode(65 + optionIndex);
                         
                         if (isCorrectAnswer) {
-                          optionClass += ' border-green-500 bg-green-50 dark:bg-green-900/20';
-                          iconColor = 'border-green-500 bg-green-500 text-white';
+                          optionClass += ' border-green-600 bg-green-100 dark:bg-green-900 shadow-md';
+                          iconColor = 'border-green-600 bg-green-600 text-white shadow-sm';
                           icon = '✓';
                         } else if (isWrongUserAnswer) {
-                          optionClass += ' border-red-500 bg-red-50 dark:bg-red-900/20';
-                          iconColor = 'border-red-500 bg-red-500 text-white';
+                          optionClass += ' border-red-600 bg-red-100 dark:bg-red-900 shadow-md';
+                          iconColor = 'border-red-600 bg-red-600 text-white shadow-sm';
                           icon = '✗';
                         } else {
-                          optionClass += ' border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800';
+                          optionClass += ' border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800';
                         }
                         
                         return (
                           <div key={optionIndex} className={optionClass}>
                             <div className="flex items-start">
-                              <span className={`flex items-center justify-center w-6 h-6 rounded-full text-xs mr-3 ${iconColor}`}>
+                              <span className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold mr-4 ${iconColor}`}>
                                 {icon}
                               </span>
                               <div className="flex-1">
-                                <span className="text-gray-700 dark:text-gray-300">{option}</span>
+                                <span className="text-gray-700 dark:text-gray-300 text-base leading-relaxed">{option}</span>
                                 {isCorrectAnswer && (
-                                  <div className="text-sm text-green-600 dark:text-green-400 font-medium mt-1">
+                                  <div className="text-sm text-green-600 dark:text-green-400 font-semibold mt-2">
                                     ✓ Correct Answer
                                   </div>
                                 )}
                                 {isWrongUserAnswer && (
-                                  <div className="text-sm text-red-600 dark:text-red-400 font-medium mt-1">
+                                  <div className="text-sm text-red-600 dark:text-red-400 font-semibold mt-2">
                                     ✗ Your Answer (Incorrect)
                                   </div>
                                 )}
@@ -253,9 +256,9 @@ const MCQDisplay: React.FC = () => {
                       })}
                     </div>
                     
-                    {/* Explanation for wrong answers */}
+                    {/* Enhanced Explanation for wrong answers */}
                     {selectedAnswers[reviewQuestionIndex] !== currentMcqs[reviewQuestionIndex].correctAnswer && (
-                      <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+                      <div className="mt-6 p-4 bg-blue-100 dark:bg-blue-900 border border-blue-300 dark:border-blue-700 rounded-xl shadow-sm">
                         <p className="text-sm text-blue-800 dark:text-blue-300">
                           <strong>Correct Answer:</strong> {currentMcqs[reviewQuestionIndex].options[currentMcqs[reviewQuestionIndex].correctAnswer]}
                         </p>
@@ -362,9 +365,9 @@ const MCQDisplay: React.FC = () => {
                 <>
                   {/* Progress Bar */}
                   <div className="mb-6">
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 shadow-inner">
                       <div 
-                        className="bg-purple-600 dark:bg-purple-400 h-2 rounded-full transition-all duration-300"
+                        className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
                         style={{ 
                           width: `${((currentQuestionIndex + 1) / currentMcqs.length) * 100}%` 
                         }}
@@ -378,37 +381,40 @@ const MCQDisplay: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="border border-gray-200 dark:border-gray-700 rounded-md p-6"
+                    className="space-y-6"
                   >
-                    <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
-                      {currentMcqs[currentQuestionIndex].question}
-                    </h3>
+                    {/* Enhanced Question Display */}
+                    <div className="p-6 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl border border-purple-200 dark:border-purple-700 shadow-sm">
+                      <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 leading-relaxed">
+                        {currentMcqs[currentQuestionIndex].question}
+                      </h3>
+                    </div>
                     
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {currentMcqs[currentQuestionIndex].options.map((option, optionIndex) => {
                         const isSelected = selectedAnswers[currentQuestionIndex] === optionIndex;
                         
                         return (
                           <motion.div
                             key={optionIndex}
-                            whileHover={{ scale: 1.02 }}
+                            whileHover={{ scale: 1.02, y: -2 }}
                             whileTap={{ scale: 0.98 }}
-                            className={`border rounded-md p-4 cursor-pointer transition-all ${
+                            className={`border rounded-xl p-5 cursor-pointer transition-all duration-200 ${
                               isSelected 
-                                ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' 
-                                : 'border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                ? 'border-purple-600 bg-purple-100 dark:bg-purple-900 shadow-md transform scale-[1.02]' 
+                                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-purple-400 dark:hover:border-purple-500 shadow-sm hover:shadow-md'
                             }`}
                             onClick={() => handleOptionSelect(optionIndex)}
                           >
                             <div className="flex items-start">
-                              <span className={`flex items-center justify-center w-6 h-6 rounded-full border text-xs mr-3 ${
+                              <span className={`flex items-center justify-center w-8 h-8 rounded-full border text-sm font-semibold mr-4 transition-all duration-200 ${
                                 isSelected 
-                                  ? 'border-purple-500 bg-purple-500 text-white' 
-                                  : 'border-gray-300 dark:border-gray-600'
+                                  ? 'border-purple-600 bg-purple-600 text-white shadow-sm' 
+                                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                               }`}>
                                 {String.fromCharCode(65 + optionIndex)}
                               </span>
-                              <span className="text-gray-700 dark:text-gray-300">{option}</span>
+                              <span className="text-gray-700 dark:text-gray-300 text-base leading-relaxed flex-1">{option}</span>
                             </div>
                           </motion.div>
                         );
