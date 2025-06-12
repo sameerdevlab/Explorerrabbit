@@ -124,7 +124,7 @@ const useContentStore = create<ContentState & {
         mcqError = 'Failed to generate MCQs. Click retry to try again.';
       }
       
-      // Set the final result
+      // Set the final result and clear the prompt field
       set({
         result: data as ContentGenerationResult,
         currentText: data.text,
@@ -137,6 +137,7 @@ const useContentStore = create<ContentState & {
         isProcessingPastedText: false,
         mcqGenerationStatus: mcqStatus,
         mcqErrorMessage: mcqError,
+        prompt: '', // Clear the prompt field after successful generation
       });
     } catch (error) {
       console.error('Error generating content:', error);
@@ -234,7 +235,7 @@ const useContentStore = create<ContentState & {
         mcqs: finalMcqs,
       };
       
-      // Set the final result - ALWAYS turn off loading states
+      // Set the final result - ALWAYS turn off loading states and clear the pasted text field
       set({
         result,
         currentText: pastedText,
@@ -246,6 +247,7 @@ const useContentStore = create<ContentState & {
         isProcessingPastedText: false,
         mcqGenerationStatus: mcqStatus,
         mcqErrorMessage: mcqError,
+        pastedText: '', // Clear the pasted text field after successful processing
       });
       
       // Show success message
