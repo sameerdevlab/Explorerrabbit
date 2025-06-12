@@ -360,7 +360,7 @@ const MCQDisplay: React.FC = () => {
                         variant="sketchy"
                         className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-none shadow-lg"
                       >
-                        Back to Results
+                        Results
                       </Button>
                     ) : (
                       <Button
