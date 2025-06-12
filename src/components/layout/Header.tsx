@@ -13,7 +13,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Sparkles size={24} className="text-white" />
-          <h1 className="text-xl font-bold">AI Content Generator</h1>
+          <h1 className="text-xl font-bold">EXPLORER</h1>
         </div>
         
         <div className="flex items-center gap-4">
