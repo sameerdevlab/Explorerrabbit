@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   const { theme, toggleTheme } = useThemeStore();
   
   return (
-    <header className="w-full sticky top-0 z-50 px-6 py-4 bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-300 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 text-white shadow-lg border-b-2 border-white/20">
+    <header className="w-full sticky top-0 z-50 px-6 py-4 bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 text-white shadow-lg border-b-2 border-white/20">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-white/20 rounded-full backdrop-blur-sm">
