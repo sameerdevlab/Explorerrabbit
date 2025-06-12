@@ -97,7 +97,7 @@ const HomePage: React.FC = () => {
               
               {/* MCQ and Social Media Post - Right side with sticky positioning */}
               <div className="sticky top-[104px] w-full md:w-1/2 flex flex-col h-[calc(100vh-136px)] z-10">
-                <div className="flex-grow overflow-y-auto space-y-6">
+                <div className="flex-grow overflow-y-auto space-y-6 pb-24">
                   <MCQDisplay />
                   <SocialMediaPostGenerator />
                 </div>
