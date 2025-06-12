@@ -86,7 +86,7 @@ const SocialMediaPostGenerator: React.FC = () => {
                 <TextArea
                   value={socialMediaPost}
                   readOnly
-                  className="w-full min-h-[120px] bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                  className="w-full bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
                   placeholder="Generated social media post will appear here..."
                 />
                 
