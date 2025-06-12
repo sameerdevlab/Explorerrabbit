@@ -28,7 +28,7 @@ const PromptInput: React.FC<PromptInputProps> = ({ minimized = false }) => {
         className="w-full sticky bottom-4 px-4 z-50"
       >
         <div className="glowing-wrapper max-w-2xl mx-auto">
-          <Card variant="sketchy-glass" className="p-2">
+          <Card variant="glass" className="p-2">
             <form onSubmit={handleSubmit} className="flex gap-2">
               <Input
                 ref={inputRef}
@@ -57,7 +57,7 @@ const PromptInput: React.FC<PromptInputProps> = ({ minimized = false }) => {
       className="w-full max-w-3xl mx-auto px-4"
     >
       <div className="glowing-wrapper">
-        <Card variant="sketchy-glass" className="overflow-hidden shadow-lg">
+        <Card variant="glass" className="overflow-hidden shadow-lg">
           <div className="p-6">
             <h2 className="text-2xl font-bold mb-2 text-slate-800 dark:text-slate-200">Generate AI Content</h2>
             <p className="text-slate-600 dark:text-slate-400 mb-6">

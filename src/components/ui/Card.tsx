@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '../../lib/utils';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'glass' | 'sketchy-glass';
+  variant?: 'default' | 'glass';
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
@@ -11,11 +11,10 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'shadow-md relative z-10',
+          'rounded-xl shadow-md relative z-10',
           {
-            'bg-white dark:bg-gray-800 rounded-xl': variant === 'default',
-            'bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border border-white/20 dark:border-gray-700/20 rounded-xl': variant === 'glass',
-            'bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border border-white/20 dark:border-gray-700/20 card-sketchy': variant === 'sketchy-glass',
+            'bg-white dark:bg-gray-800': variant === 'default',
+            'bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border border-white/20 dark:border-gray-700/20': variant === 'glass',
           },
           className
         )}
