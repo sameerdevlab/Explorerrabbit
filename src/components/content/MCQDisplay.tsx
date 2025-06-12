@@ -34,11 +34,12 @@ const MCQDisplay: React.FC = () => {
       ...prev,
       [currentQuestionIndex]: optionIndex,
     }));
-  };
-  
-  const handleNext = () => {
+    
+    // Auto-advance to next question if not the last question
     if (currentQuestionIndex < currentMcqs.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => prev + 1);
+      }, 500); // Small delay to show selection before advancing
     }
   };
   
@@ -116,9 +117,33 @@ const MCQDisplay: React.FC = () => {
     >
       <Card className="bg-white dark:bg-gray-800 shadow-md">
         <CardContent>
-          <h2 className="text-xl font-semibold mb-4 text-purple-700 dark:text-purple-300">
-            Test Your Knowledge
-          </h2>
+          {/* Header with title and progress side by side */}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-purple-700 dark:text-purple-300">
+              Test Your Knowledge
+            </h2>
+            
+            {/* Progress indicator - only show when we have MCQs and not in loading/error states */}
+            {currentMcqs && currentMcqs.length > 0 && !isGeneratingMcqs && mcqGenerationStatus !== 'generating' && (
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
+                  {reviewMode ? `Review ${reviewQuestionIndex + 1}/${currentMcqs.length}` : `Question ${currentQuestionIndex + 1}/${currentMcqs.length}`}
+                </span>
+                <div className="flex space-x-1">
+                  {currentMcqs.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full ${
+                        index <= (reviewMode ? reviewQuestionIndex : currentQuestionIndex)
+                          ? 'bg-purple-600 dark:bg-purple-400' 
+                          : 'bg-gray-300 dark:bg-gray-600'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
           
           {mcqGenerationStatus === 'generating' || isGeneratingMcqs ? (
             <div className="flex items-center gap-3 p-8 text-center justify-center">
@@ -158,11 +183,8 @@ const MCQDisplay: React.FC = () => {
               {reviewMode ? (
                 // Review Mode
                 <div className="space-y-6">
-                  {/* Review Progress */}
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
-                      Review {reviewQuestionIndex + 1}/{currentMcqs.length}
-                    </span>
+                  {/* Review Navigation Button */}
+                  <div className="flex justify-end">
                     <Button
                       onClick={backToResults}
                       variant="sketchy"
@@ -338,25 +360,8 @@ const MCQDisplay: React.FC = () => {
               ) : (
                 // Single Question Display
                 <>
-                  {/* Progress Indicator */}
+                  {/* Progress Bar */}
                   <div className="mb-6">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
-                        Question {currentQuestionIndex + 1}/{currentMcqs.length}
-                      </span>
-                      <div className="flex space-x-1">
-                        {currentMcqs.map((_, index) => (
-                          <div
-                            key={index}
-                            className={`w-2 h-2 rounded-full ${
-                              index <= currentQuestionIndex 
-                                ? 'bg-purple-600 dark:bg-purple-400' 
-                                : 'bg-gray-300 dark:bg-gray-600'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div 
                         className="bg-purple-600 dark:bg-purple-400 h-2 rounded-full transition-all duration-300"
@@ -411,28 +416,18 @@ const MCQDisplay: React.FC = () => {
                     </div>
                   </motion.div>
                   
-                  {/* Navigation Buttons */}
-                  <div className="mt-6 flex gap-4">
-                    {currentQuestionIndex < currentMcqs.length - 1 ? (
-                      <Button 
-                        onClick={handleNext}
-                        disabled={selectedAnswers[currentQuestionIndex] === undefined}
-                        variant="sketchy"
-                        className="w-full"
-                      >
-                        Next Question
-                      </Button>
-                    ) : (
+                  {/* Submit Button - Only show on last question and when answered */}
+                  {currentQuestionIndex === currentMcqs.length - 1 && selectedAnswers[currentQuestionIndex] !== undefined && (
+                    <div className="mt-6">
                       <Button 
                         onClick={handleSubmit}
-                        disabled={selectedAnswers[currentQuestionIndex] === undefined}
                         variant="sketchy"
                         className="w-full"
                       >
                         Submit Quiz
                       </Button>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </>
               )}
             </>
