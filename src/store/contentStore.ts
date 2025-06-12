@@ -1,9 +1,24 @@
 import { create } from 'zustand';
 import toast from 'react-hot-toast';
-import { ContentState, ContentGenerationResult } from '../types';
+import { ContentState, ContentGenerationResult, SocialMediaPostType } from '../types';
 import { callEdgeFunction } from '../lib/supabase';
 import { generatePlaceholderImages, generateInitialPlaceholderImages } from '../lib/utils';
 import useAuthStore from './authStore';
+
+// Social Media Post Type Prompts
+const SOCIAL_MEDIA_PROMPTS = {
+  'informative-summary': 'Summarize the following content into a concise, informative social media post. Keep the tone professional, helpful, and clear. Avoid fluff. Include the key facts and insights in 2–3 lines. Content: {{USER_CONTENT}}',
+  
+  'tips-carousel': 'Convert the following content into a carousel-style post. Start with a hook or headline. Then break down the main points into 5–7 short, actionable steps or tips, each formatted as a separate slide caption. Keep the tone simple, educational, and clear. Content: {{USER_CONTENT}}',
+  
+  'motivational-quote': 'Create a motivational social media post using the following content. Start with a powerful quote or emotional hook, followed by a brief inspiring message about the content\'s theme. Keep it short, punchy, and creator-style. Content: {{USER_CONTENT}}',
+  
+  'stats-based': 'From the following content, extract any surprising or important statistics or facts. Use them to create a "Did You Know?" style social media post. Make it data-driven, attention-grabbing, and formatted for LinkedIn, Twitter, or infographics. Content: {{USER_CONTENT}}',
+  
+  'personal-journey': 'Write a social media post in the style of a personal journey or story based on this content. Use a relatable, humble tone. Begin with a personal hook or reflection, then explain how someone can start or grow in this journey. End with an encouraging call to action. Content: {{USER_CONTENT}}',
+  
+  'experimental-remix': 'Rewrite the following content in a bold, creative, Gen Z–friendly, or poetic style. You may use metaphors, rhymes, emojis, slang, or humor to make it edgy and modern. Keep the core message intact. Content: {{USER_CONTENT}}'
+};
 
 const useContentStore = create<ContentState & {
   setMode: (mode: 'generate' | 'paste') => void;
@@ -12,7 +27,7 @@ const useContentStore = create<ContentState & {
   clearContent: () => void;
   generateContent: () => Promise<void>;
   processExistingText: () => Promise<void>;
-  generateSocialMediaPost: () => Promise<void>;
+  generateSocialMediaPost: (postType: SocialMediaPostType) => Promise<void>;
   retryMcqGeneration: () => Promise<void>;
 }>((set, get) => ({
   mode: 'generate',
@@ -334,7 +349,7 @@ const useContentStore = create<ContentState & {
     }
   },
   
-  generateSocialMediaPost: async () => {
+  generateSocialMediaPost: async (postType: SocialMediaPostType) => {
     const { currentText } = get();
     
     // Check if user is authenticated
@@ -357,9 +372,13 @@ const useContentStore = create<ContentState & {
         error: null,
       });
       
+      // Get the prompt template for the selected post type
+      const promptTemplate = SOCIAL_MEDIA_PROMPTS[postType];
+      const prompt = promptTemplate.replace('{{USER_CONTENT}}', currentText);
+      
       // Call the Supabase Edge Function for social media post generation
       const data = await callEdgeFunction('generate-social-media-post', {
-        text: currentText,
+        prompt,
       });
       
       set({

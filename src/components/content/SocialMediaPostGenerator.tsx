@@ -4,7 +4,9 @@ import { Share2, Copy, Loader2, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
 import TextArea from '../ui/TextArea';
+import SocialMediaPostTypeModal from './SocialMediaPostTypeModal';
 import useContentStore from '../../store/contentStore';
+import { SocialMediaPostType } from '../../types';
 import toast from 'react-hot-toast';
 
 const SocialMediaPostGenerator: React.FC = () => {
@@ -15,13 +17,18 @@ const SocialMediaPostGenerator: React.FC = () => {
     currentText 
   } = useContentStore();
   const [copied, setCopied] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleGenerate = () => {
+  const handleOpenModal = () => {
     if (!currentText.trim()) {
       toast.error('No content available to generate social media post');
       return;
     }
-    generateSocialMediaPost();
+    setIsModalOpen(true);
+  };
+
+  const handleSelectPostType = (postType: SocialMediaPostType) => {
+    generateSocialMediaPost(postType);
   };
 
   const handleCopy = async () => {
@@ -38,83 +45,92 @@ const SocialMediaPostGenerator: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4 }}
-      className="w-full"
-    >
-      <Card className="bg-white dark:bg-gray-800 shadow-md">
-        <CardContent>
-          <div className="flex items-center gap-2 mb-4">
-            <Share2 className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-            <h3 className="text-lg font-semibold text-purple-700 dark:text-purple-300">
-              Social Media Post
-            </h3>
-          </div>
-          
-          {!socialMediaPost && !isGeneratingSocialMediaPost ? (
-            <div className="text-center py-6">
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Generate an engaging social media post based on your content
-              </p>
-              <Button 
-                onClick={handleGenerate}
-                disabled={!currentText.trim()}
-                variant="sketchy"
-                className="w-full sm:w-auto"
-              >
-                <Share2 className="h-4 w-4 mr-2" />
-                Generate Social Media Post
-              </Button>
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="w-full"
+      >
+        <Card className="bg-white dark:bg-gray-800 shadow-md">
+          <CardContent>
+            <div className="flex items-center gap-2 mb-4">
+              <Share2 className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <h3 className="text-lg font-semibold text-purple-700 dark:text-purple-300">
+                Social Media Post
+              </h3>
             </div>
-          ) : isGeneratingSocialMediaPost ? (
-            <div className="flex items-center gap-3 p-6 text-center justify-center">
-              <Loader2 className="h-5 w-5 animate-spin text-purple-600 dark:text-purple-400" />
-              <span className="text-gray-600 dark:text-gray-300">Generating social media post...</span>
-            </div>
-          ) : socialMediaPost ? (
-            <div className="space-y-4">
-              <TextArea
-                value={socialMediaPost}
-                readOnly
-                className="w-full min-h-[120px] bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
-                placeholder="Generated social media post will appear here..."
-              />
-              
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleCopy}
+            
+            {!socialMediaPost && !isGeneratingSocialMediaPost ? (
+              <div className="text-center py-6">
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Generate an engaging social media post based on your content
+                </p>
+                <Button 
+                  onClick={handleOpenModal}
+                  disabled={!currentText.trim()}
                   variant="sketchy"
-                  className="flex-1"
-                >
-                  {copied ? (
-                    <>
-                      <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4 mr-2" />
-                      Copy Post
-                    </>
-                  )}
-                </Button>
-                
-                <Button
-                  onClick={handleGenerate}
-                  variant="sketchy"
-                  className="flex-1"
+                  className="w-full sm:w-auto"
                 >
                   <Share2 className="h-4 w-4 mr-2" />
-                  Regenerate
+                  Generate Social Media Post
                 </Button>
               </div>
-            </div>
-          ) : null}
-        </CardContent>
-      </Card>
-    </motion.div>
+            ) : isGeneratingSocialMediaPost ? (
+              <div className="flex items-center gap-3 p-6 text-center justify-center">
+                <Loader2 className="h-5 w-5 animate-spin text-purple-600 dark:text-purple-400" />
+                <span className="text-gray-600 dark:text-gray-300">Generating social media post...</span>
+              </div>
+            ) : socialMediaPost ? (
+              <div className="space-y-4">
+                <TextArea
+                  value={socialMediaPost}
+                  readOnly
+                  className="w-full min-h-[120px] bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                  placeholder="Generated social media post will appear here..."
+                />
+                
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleCopy}
+                    variant="sketchy"
+                    className="flex-1"
+                  >
+                    {copied ? (
+                      <>
+                        <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy Post
+                      </>
+                    )}
+                  </Button>
+                  
+                  <Button
+                    onClick={handleOpenModal}
+                    variant="sketchy"
+                    className="flex-1"
+                  >
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Regenerate
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Social Media Post Type Selection Modal */}
+      <SocialMediaPostTypeModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSelectPostType={handleSelectPostType}
+      />
+    </>
   );
 };
 

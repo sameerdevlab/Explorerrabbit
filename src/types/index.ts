@@ -21,6 +21,14 @@ export interface MCQuestion {
   correctAnswer: number; // Index of correct answer
 }
 
+export type SocialMediaPostType = 
+  | 'informative-summary'
+  | 'tips-carousel'
+  | 'motivational-quote'
+  | 'stats-based'
+  | 'personal-journey'
+  | 'experimental-remix';
+
 export interface ContentState {
   mode: 'generate' | 'paste';
   prompt: string;

@@ -84,11 +84,11 @@ Deno.serve(async (req) => {
 
     // Parse request body
     const requestData = await req.json();
-    const { text } = requestData;
+    const { prompt } = requestData;
 
-    if (!text) {
+    if (!prompt) {
       return new Response(
-        JSON.stringify({ error: "Text content is required" }),
+        JSON.stringify({ error: "Prompt is required" }),
         {
           status: 400,
           headers: {
@@ -99,9 +99,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log('🔍 Generating social media post for text length:', text.length);
+    console.log('🔍 Generating social media post with prompt length:', prompt.length);
 
-    // Generate social media post using Groq
+    // Generate social media post using Groq with the provided prompt
     const socialMediaResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -113,11 +113,11 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "Create an engaging social media post based on the provided content. The post should be concise, attention-grabbing, and suitable for platforms like Twitter/X, Instagram, or LinkedIn. Include relevant hashtags and emojis where appropriate. Keep it under 280 characters for Twitter compatibility, but make it engaging and shareable. Focus on the key insights or most interesting points from the content."
+            content: "You are a social media expert who creates engaging, platform-optimized content. Follow the user's specific instructions for the post style and format."
           },
           {
             role: "user",
-            content: `Create a social media post based on this content:\n\n${text}`
+            content: prompt
           }
         ],
         max_tokens: 300,
