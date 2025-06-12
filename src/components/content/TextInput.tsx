@@ -28,7 +28,7 @@ const TextInput: React.FC<TextInputProps> = ({ minimized = false }) => {
         className="w-full sticky bottom-4 px-4 z-50"
       >
         <div className="glowing-wrapper max-w-2xl mx-auto">
-          <Card variant="sketchy-glass" className="p-2">
+          <Card className="p-2">
             <form onSubmit={handleSubmit} className="flex gap-2">
               <TextArea
                 ref={textareaRef}
