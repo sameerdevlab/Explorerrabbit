@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Share2, Copy, Loader2, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
@@ -18,6 +18,17 @@ const SocialMediaPostGenerator: React.FC = () => {
   } = useContentStore();
   const [copied, setCopied] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize the textarea to fit the full social media post content
+  useEffect(() => {
+    if (socialMediaPost && textareaRef.current) {
+      // Reset height to auto to get the correct scrollHeight
+      textareaRef.current.style.height = 'auto';
+      // Set height to scrollHeight to fit content without scrollbars
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [socialMediaPost]);
 
   const handleOpenModal = () => {
     if (!currentText.trim()) {
@@ -84,9 +95,11 @@ const SocialMediaPostGenerator: React.FC = () => {
             ) : socialMediaPost ? (
               <div className="space-y-4">
                 <TextArea
+                  ref={textareaRef}
                   value={socialMediaPost}
                   readOnly
-                  className="w-full bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                  autoResize={true}
+                  className="w-full bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 overflow-hidden"
                   placeholder="Generated social media post will appear here..."
                 />
                 
