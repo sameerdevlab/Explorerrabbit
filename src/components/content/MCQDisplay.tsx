@@ -499,7 +499,7 @@ const MCQDisplay: React.FC = () => {
                         Try Again
                       </Button>
                       <Button 
-                        onClick={handleGenerateQuiz} 
+                        onClick={handleReGenerateQuiz} 
                         variant="sketchy" 
                         className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white border-none shadow-lg text-lg py-3"
                       >
