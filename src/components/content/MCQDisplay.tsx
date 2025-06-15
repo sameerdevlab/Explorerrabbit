@@ -794,106 +794,103 @@ const MCQDisplay: React.FC = () => {
 
       {/* Hidden Shareable Content for Image Generation */}
       <div
-        ref={shareableContentRef}
-        className="absolute left-[-9999px] top-[-9999px] w-[800px] h-[1200px] grid grid-cols-2 gap-6 bg-white p-8 font-sans"
-        style={{ display: '' }}
-      >
-        {currentMcqs && currentMcqs.length > 0 && quizCompleted && (
-          <div className="grid grid-cols-2 gap-6">
-            {/* Header */}
-            <div className="text-center border-b-4 border-blue-500 pb-6">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl">
-                  <Brain className="h-8 w-8 text-white" />
-                </div>
-                <h1 className="text-3xl font-bold text-gray-800">Quiz Results</h1>
-              </div>
-              <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-6">
-                <div className="text-5xl font-bold text-purple-600 mb-2">
-                  {score}/{currentMcqs.length}
-                </div>
-                <p className="text-lg text-gray-700 font-medium">
-                  Score: {Math.round((score / currentMcqs.length) * 100)}%
-                </p>
-                <p className="text-gray-600 mt-2">
-                  {scoreMessage.message}
-                </p>
-              </div>
+  ref={shareableContentRef}
+  className="absolute left-[-9999px] top-[-9999px] w-[800px] h-[1200px] bg-white p-8 font-sans grid grid-cols-2 gap-6"
+  style={{ display: '' }} // Keep display: 'none' when exporting
+>
+  {currentMcqs && currentMcqs.length > 0 && quizCompleted && (
+    <>
+      {/* Grid Item 1: Result Box */}
+      <div className="border-2 border-blue-300 rounded-xl p-6 bg-white shadow-md flex flex-col justify-center items-center">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl">
+            <Brain className="h-8 w-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-800">Quiz Results</h1>
+        </div>
+        <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-6 w-full text-center">
+          <div className="text-5xl font-bold text-purple-600 mb-2">
+            {score}/{currentMcqs.length}
+          </div>
+          <p className="text-lg text-gray-700 font-medium">
+            Score: {Math.round((score / currentMcqs.length) * 100)}%
+          </p>
+          <p className="text-gray-600 mt-2">
+            {scoreMessage.message}
+          </p>
+        </div>
+      </div>
+
+      {/* Grid Items 2, 3, 4: Question Boxes */}
+      {currentMcqs.slice(0, 3).map((mcq, questionIndex) => {
+        const userAnswer = selectedAnswers[questionIndex];
+        const isCorrect = userAnswer === mcq.correctAnswer;
+
+        return (
+          <div
+            key={questionIndex}
+            className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50 shadow-sm space-y-4"
+          >
+            {/* Question Header */}
+            <div className="flex justify-between items-start">
+              <h3 className="text-base font-semibold text-gray-800">{mcq.question}</h3>
+              <span className={`text-sm font-bold px-2 py-1 rounded-full ${
+                isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+              }`}>
+                {isCorrect ? '✓ Correct' : '✗ Incorrect'}
+              </span>
             </div>
 
-            {/* Questions Review */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-800 text-center">Question Review</h2>
-              
-              {currentMcqs.map((mcq, questionIndex) => {
-                const userAnswer = selectedAnswers[questionIndex];
-                const isCorrect = userAnswer === mcq.correctAnswer;
-                
+            {/* Options */}
+            <div className="space-y-2">
+              {mcq.options.map((option, i) => {
+                const isUserAnswer = userAnswer === i;
+                const isCorrectAnswer = mcq.correctAnswer === i;
+
+                let bgColor = 'bg-white';
+                let textColor = 'text-gray-700';
+                let icon = '';
+
+                if (isCorrectAnswer) {
+                  bgColor = 'bg-green-100';
+                  textColor = 'text-green-800';
+                  icon = '✓';
+                } else if (isUserAnswer && !isCorrectAnswer) {
+                  bgColor = 'bg-red-100';
+                  textColor = 'text-red-800';
+                  icon = '✗';
+                }
+
                 return (
-                  <div key={questionIndex} className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50">
-                    <div className="flex items-start gap-3 mb-4">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
-                        isCorrect ? 'bg-green-500' : 'bg-red-500'
-                      }`}>
-                        {questionIndex + 1}
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-800 flex-1">
-                        {mcq.question}
-                      </h3>
-                      <div className={`px-3 py-1 rounded-full text-sm font-bold ${
-                        isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}>
-                        {isCorrect ? '✓ Correct' : '✗ Incorrect'}
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      {mcq.options.map((option, optionIndex) => {
-                        const isUserAnswer = userAnswer === optionIndex;
-                        const isCorrectAnswer = mcq.correctAnswer === optionIndex;
-                        
-                        let bgColor = 'bg-white';
-                        let textColor = 'text-gray-700';
-                        let label = String.fromCharCode(65 + optionIndex);
-                        
-                        if (isCorrectAnswer) {
-                          bgColor = 'bg-green-100';
-                          textColor = 'text-green-800';
-                          label = '✓';
-                        } else if (isUserAnswer && !isCorrectAnswer) {
-                          bgColor = 'bg-red-100';
-                          textColor = 'text-red-800';
-                          label = '✗';
-                        }
-                        
-                        return (
-                          <div key={optionIndex} className={`p-3 rounded-lg border ${bgColor}`}>
-                            <div className="flex items-center gap-3">
-                              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
-                                isCorrectAnswer ? 'bg-green-500 text-white' : 
-                                isUserAnswer ? 'bg-red-500 text-white' : 'bg-gray-300 text-gray-600'
-                              }`}>
-                                {label}
-                              </span>
-                              <span className={`${textColor} font-medium`}>{option}</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                  <div
+                    key={i}
+                    className={`flex items-center gap-2 p-2 rounded ${bgColor}`}
+                  >
+                    <span
+                      className={`w-6 h-6 text-center text-sm font-bold rounded-full ${
+                        isCorrectAnswer ? 'bg-green-500 text-white' :
+                        isUserAnswer ? 'bg-red-500 text-white' : 'bg-gray-300 text-gray-600'
+                      }`}
+                    >
+                      {icon || String.fromCharCode(65 + i)}
+                    </span>
+                    <span className={`${textColor} text-sm`}>{option}</span>
                   </div>
                 );
               })}
             </div>
-
-            {/* Footer */}
-            <div className="text-center pt-6 border-t-2 border-gray-200">
-              <p className="text-gray-600">Generated by Explorer</p>
-              <p className="text-sm text-gray-500 mt-1">Share your learning journey! 🚀</p>
-            </div>
           </div>
-        )}
+        );
+      })}
+
+      {/* Footer (optional, spans below grid or can be part of a box) */}
+      <div className="col-span-2 text-center text-sm text-gray-400 mt-4">
+        Generated by Explorer • Share your learning journey 🚀
       </div>
+    </>
+  )}
+</div>
+
 
       {/* MCQ Difficulty Selection Modal */}
       <MCQDifficultyModal
