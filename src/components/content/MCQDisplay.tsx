@@ -796,32 +796,30 @@ const MCQDisplay: React.FC = () => {
       <div
   ref={shareableContentRef}
   className="absolute left-[-9999px] top-[-9999px] w-[800px] h-[1200px] bg-white p-8 font-sans grid grid-cols-2 gap-6"
-  style={{ display: '' }} // Keep display: 'none' when exporting
+  style={{ display: '' }}
 >
   {currentMcqs && currentMcqs.length > 0 && quizCompleted && (
     <>
-      {/* Grid Item 1: Result Box */}
-      <div className="border-2 border-blue-300 rounded-xl p-6 bg-white shadow-md flex flex-col justify-center items-center">
+      {/* Box 1: Quiz Results */}
+      <div className="border border-gray-200 rounded-xl p-6 shadow-sm col-span-1">
         <div className="flex items-center justify-center gap-3 mb-4">
           <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl">
             <Brain className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800">Quiz Results</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Quiz Results</h1>
         </div>
-        <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-6 w-full text-center">
+        <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-6 text-center">
           <div className="text-5xl font-bold text-purple-600 mb-2">
             {score}/{currentMcqs.length}
           </div>
           <p className="text-lg text-gray-700 font-medium">
             Score: {Math.round((score / currentMcqs.length) * 100)}%
           </p>
-          <p className="text-gray-600 mt-2">
-            {scoreMessage.message}
-          </p>
+          <p className="text-gray-600 mt-2">{scoreMessage.message}</p>
         </div>
       </div>
 
-      {/* Grid Items 2, 3, 4: Question Boxes */}
+      {/* Boxes 2–4: Individual MCQ Review Cards */}
       {currentMcqs.slice(0, 3).map((mcq, questionIndex) => {
         const userAnswer = selectedAnswers[questionIndex];
         const isCorrect = userAnswer === mcq.correctAnswer;
@@ -829,52 +827,70 @@ const MCQDisplay: React.FC = () => {
         return (
           <div
             key={questionIndex}
-            className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50 shadow-sm space-y-4"
+            className="border border-gray-200 rounded-xl p-6 bg-gray-50 shadow-sm"
           >
-            {/* Question Header */}
-            <div className="flex justify-between items-start">
-              <h3 className="text-base font-semibold text-gray-800">{mcq.question}</h3>
-              <span className={`text-sm font-bold px-2 py-1 rounded-full ${
-                isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-              }`}>
+            <div className="flex items-start gap-3 mb-4">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
+                  isCorrect ? 'bg-green-500' : 'bg-red-500'
+                }`}
+              >
+                {questionIndex + 1}
+              </div>
+              <h3 className="text-sm font-semibold text-gray-800 flex-1">
+                {mcq.question}
+              </h3>
+              <div
+                className={`px-2 py-1 rounded-full text-xs font-bold ${
+                  isCorrect
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-red-100 text-red-800'
+                }`}
+              >
                 {isCorrect ? '✓ Correct' : '✗ Incorrect'}
-              </span>
+              </div>
             </div>
 
-            {/* Options */}
             <div className="space-y-2">
-              {mcq.options.map((option, i) => {
-                const isUserAnswer = userAnswer === i;
-                const isCorrectAnswer = mcq.correctAnswer === i;
+              {mcq.options.map((option, optionIndex) => {
+                const isUserAnswer = userAnswer === optionIndex;
+                const isCorrectAnswer = mcq.correctAnswer === optionIndex;
 
                 let bgColor = 'bg-white';
                 let textColor = 'text-gray-700';
-                let icon = '';
+                let label = String.fromCharCode(65 + optionIndex);
 
                 if (isCorrectAnswer) {
                   bgColor = 'bg-green-100';
                   textColor = 'text-green-800';
-                  icon = '✓';
+                  label = '✓';
                 } else if (isUserAnswer && !isCorrectAnswer) {
                   bgColor = 'bg-red-100';
                   textColor = 'text-red-800';
-                  icon = '✗';
+                  label = '✗';
                 }
 
                 return (
                   <div
-                    key={i}
-                    className={`flex items-center gap-2 p-2 rounded ${bgColor}`}
+                    key={optionIndex}
+                    className={`p-2 rounded-lg border ${bgColor}`}
                   >
-                    <span
-                      className={`w-6 h-6 text-center text-sm font-bold rounded-full ${
-                        isCorrectAnswer ? 'bg-green-500 text-white' :
-                        isUserAnswer ? 'bg-red-500 text-white' : 'bg-gray-300 text-gray-600'
-                      }`}
-                    >
-                      {icon || String.fromCharCode(65 + i)}
-                    </span>
-                    <span className={`${textColor} text-sm`}>{option}</span>
+                    <div className="flex items-center gap-3 text-sm">
+                      <span
+                        className={`w-6 h-6 rounded-full flex items-center justify-center font-bold ${
+                          isCorrectAnswer
+                            ? 'bg-green-500 text-white'
+                            : isUserAnswer
+                            ? 'bg-red-500 text-white'
+                            : 'bg-gray-300 text-gray-600'
+                        }`}
+                      >
+                        {label}
+                      </span>
+                      <span className={`${textColor} font-medium`}>
+                        {option}
+                      </span>
+                    </div>
                   </div>
                 );
               })}
@@ -883,13 +899,14 @@ const MCQDisplay: React.FC = () => {
         );
       })}
 
-      {/* Footer (optional, spans below grid or can be part of a box) */}
+      {/* Footer - full width */}
       <div className="col-span-2 text-center text-sm text-gray-400 mt-4">
         Generated by Explorer • Share your learning journey 🚀
       </div>
     </>
   )}
 </div>
+
 
 
       {/* MCQ Difficulty Selection Modal */}
