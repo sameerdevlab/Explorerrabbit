@@ -842,7 +842,7 @@ const MCQDisplay: React.FC = () => {
                       {mcq.question}
                     </h3>
                     <div
-                      className={`px-3 py-1 rounded-full text-xs font-bold flex items-center ${
+                      className={`px-3 py-1 rounded-full text-xs font-bold flex items-center justify-center ${
                         isCorrect
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
