@@ -593,7 +593,13 @@ const MCQDisplay: React.FC = () => {
                         })}
                       </div>
                     </motion.div>
-                    <Button 
+                    <motion.div
+                      className="mt-8"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <Button 
                         onClick={handleReGenerateQuiz} 
                         variant="sketchy" 
                         className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white border-none shadow-lg text-lg py-3"
@@ -601,6 +607,7 @@ const MCQDisplay: React.FC = () => {
                         <RefreshCw className="h-5 w-5 mr-2" />
                         Regenerate MCQs
                       </Button>
+                    </motion.div>
                     {/* Submit Button - Only show on last question and when answered */}
                     {currentQuestionIndex === currentMcqs.length - 1 && selectedAnswers[currentQuestionIndex] !== undefined && (
                       <motion.div 
