@@ -799,7 +799,7 @@ const MCQDisplay: React.FC = () => {
         style={{ display: 'none' }}
       >
         {currentMcqs && currentMcqs.length > 0 && quizCompleted && (
-          <div className="space-y-8">
+          <div className="grid grid-cols-2 gap-6">
             {/* Header */}
             <div className="text-center border-b-4 border-blue-500 pb-6">
               <div className="flex items-center justify-center gap-3 mb-4">
