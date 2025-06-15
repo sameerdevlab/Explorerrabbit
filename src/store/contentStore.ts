@@ -115,7 +115,7 @@ const useContentStore = create<ContentState & {
         currentImages: [], // Start with empty images to show placeholder loading
         currentMcqs: [],
         socialMediaPost: null,
-        mcqGenerationStatus: 'generating',
+        mcqGenerationStatus: 'idle',
         mcqErrorMessage: null,
       });
       
@@ -192,20 +192,19 @@ const useContentStore = create<ContentState & {
         error: null,
         isGeneratingText: false, // Text is already available
         isGeneratingImages: true,
-        isGeneratingMcqs: true,
+        isGeneratingMcqs: false,
         isProcessingPastedText: true,
         currentText: pastedText,
         currentImages: placeholderImages,
         currentMcqs: [],
         socialMediaPost: null,
-        mcqGenerationStatus: 'generating',
+        mcqGenerationStatus: 'idle',
         mcqErrorMessage: null,
       });
       
       // Process images and MCQs in parallel
-      const [imageResponse, mcqResponse] = await Promise.allSettled([
+      const [imageResponse] = await Promise.allSettled([
         callEdgeFunction('generate-images', { text: pastedText }),
-        callEdgeFunction('generate-mcqs', { text: pastedText })
       ]);
       
       console.log('🔍 Image response:', imageResponse);
