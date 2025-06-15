@@ -215,84 +215,84 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Generate MCQs using Groq
-    const mcqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${groqApiKey}`,
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          {
-            role: "system",
-            content: "Create 5 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Format the response as a JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3)."
-          },
-          {
-            role: "user",
-            content: generatedText
-          }
-        ],
-        max_tokens: 800,
-        temperature: 0.7,
-      }),
-    });
+    // // Generate MCQs using Groq
+    // const mcqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Authorization": `Bearer ${groqApiKey}`,
+    //   },
+    //   body: JSON.stringify({
+    //     model: "llama-3.3-70b-versatile",
+    //     messages: [
+    //       {
+    //         role: "system",
+    //         content: "Create 5 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Format the response as a JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3)."
+    //       },
+    //       {
+    //         role: "user",
+    //         content: generatedText
+    //       }
+    //     ],
+    //     max_tokens: 800,
+    //     temperature: 0.7,
+    //   }),
+    // });
 
-    const mcqData = await mcqResponse.json();
+    // const mcqData = await mcqResponse.json();
     
-    if (!mcqResponse.ok) {
-      console.error("Groq API error:", mcqData);
-      throw new Error(mcqData.error?.message || "Failed to generate MCQs");
-    }
+    // if (!mcqResponse.ok) {
+    //   console.error("Groq API error:", mcqData);
+    //   throw new Error(mcqData.error?.message || "Failed to generate MCQs");
+    // }
 
-    let mcqs;
-    try {
-      const responseContent = mcqData.choices[0].message.content;
-      console.log('🔍 Raw MCQ content:', responseContent);
+    // let mcqs;
+    // try {
+    //   const responseContent = mcqData.choices[0].message.content;
+    //   console.log('🔍 Raw MCQ content:', responseContent);
       
-      // Clean the response content to extract JSON
-      let cleanContent = responseContent.trim();
+    //   // Clean the response content to extract JSON
+    //   let cleanContent = responseContent.trim();
       
-      // Remove any markdown code blocks
-      if (cleanContent.startsWith('```json')) {
-        cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-      } else if (cleanContent.startsWith('```')) {
-        cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
-      }
+    //   // Remove any markdown code blocks
+    //   if (cleanContent.startsWith('```json')) {
+    //     cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    //   } else if (cleanContent.startsWith('```')) {
+    //     cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    //   }
       
-      const parsedContent = JSON.parse(cleanContent);
-      console.log('🔍 Parsed MCQ content:', parsedContent);
+    //   const parsedContent = JSON.parse(cleanContent);
+    //   console.log('🔍 Parsed MCQ content:', parsedContent);
       
-      // Handle both array format and object with questions property
-      mcqs = Array.isArray(parsedContent) ? parsedContent : (parsedContent.questions || []);
+    //   // Handle both array format and object with questions property
+    //   mcqs = Array.isArray(parsedContent) ? parsedContent : (parsedContent.questions || []);
       
-      console.log('🔍 Final MCQs:', mcqs);
+    //   console.log('🔍 Final MCQs:', mcqs);
       
-      // Validate MCQ structure
-      if (mcqs.length > 0) {
-        mcqs = mcqs.filter(mcq => 
-          mcq.question && 
-          Array.isArray(mcq.options) && 
-          mcq.options.length === 4 && 
-          typeof mcq.correctAnswer === 'number' &&
-          mcq.correctAnswer >= 0 && 
-          mcq.correctAnswer < 4
-        );
-      }
+    //   // Validate MCQ structure
+    //   if (mcqs.length > 0) {
+    //     mcqs = mcqs.filter(mcq => 
+    //       mcq.question && 
+    //       Array.isArray(mcq.options) && 
+    //       mcq.options.length === 4 && 
+    //       typeof mcq.correctAnswer === 'number' &&
+    //       mcq.correctAnswer >= 0 && 
+    //       mcq.correctAnswer < 4
+    //     );
+    //   }
       
-      console.log('🔍 Validated MCQs:', mcqs);
+    //   console.log('🔍 Validated MCQs:', mcqs);
       
-    } catch (error) {
-      console.error("Error parsing MCQs:", error);
-      mcqs = [];
-    }
+    // } catch (error) {
+    //   console.error("Error parsing MCQs:", error);
+    //   mcqs = [];
+    // }
 
     // Combine everything into a response
     const result = {
       text: generatedText,
       images,
-      mcqs
+      //mcqs
     };
 
     return new Response(JSON.stringify(result), {
