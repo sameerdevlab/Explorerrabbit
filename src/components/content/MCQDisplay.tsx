@@ -87,6 +87,14 @@ const MCQDisplay: React.FC = () => {
     setIsDifficultyModalOpen(true);
   };
 
+  const handleReGenerateQuiz = () => {
+    if (!currentText.trim()) {
+      return;
+    }
+    resetQuiz();
+    setIsDifficultyModalOpen(true);
+  };
+
   const handleSelectDifficulty = (difficulty: DifficultyLevel) => {
     generateMcqs(difficulty);
     setIsDifficultyModalOpen(false);
