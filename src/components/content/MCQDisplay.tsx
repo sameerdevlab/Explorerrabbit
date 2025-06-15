@@ -827,7 +827,7 @@ const MCQDisplay: React.FC = () => {
               return (
                 <div
                   key={questionIndex}
-                  className="flex flex-col justify-between border-2 border-gray-200 rounded-xl p-4 bg-gray-50"
+                  className="flex flex-col justify-center items-center border-2 border-gray-200 rounded-xl p-4 bg-gray-50"
                 >
                   {/* Question Header */}
                   <div className="flex items-start gap-3 mb-4">
