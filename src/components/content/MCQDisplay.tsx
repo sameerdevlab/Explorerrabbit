@@ -847,7 +847,7 @@ const MCQDisplay: React.FC = () => {
                       </div>
                     </div>
                     
-                    <div className="space-y-2">
+                    <div className="space-y-2 flex flex-wrap">
                       {mcq.options.map((option, optionIndex) => {
                         const isUserAnswer = userAnswer === optionIndex;
                         const isCorrectAnswer = mcq.correctAnswer === optionIndex;
