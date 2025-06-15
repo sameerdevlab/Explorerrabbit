@@ -830,7 +830,7 @@ const MCQDisplay: React.FC = () => {
                   className="flex flex-col justify-center items-center border-2 border-gray-200 rounded-xl p-4 bg-gray-50"
                 >
                   {/* Question Header */}
-                  <div className="flex items-start gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-4">
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
                         isCorrect ? 'bg-green-500' : 'bg-red-500'
@@ -874,7 +874,7 @@ const MCQDisplay: React.FC = () => {
       
                       return (
                         <div key={optionIndex} className={`p-2 rounded-lg border ${bgColor}`}>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-baseline gap-2">
                             <span
                               className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
                                 isCorrectAnswer
