@@ -796,7 +796,7 @@ const MCQDisplay: React.FC = () => {
       <div
         ref={shareableContentRef}
         className="absolute left-[-9999px] top-[-9999px] w-[800px] bg-white p-8 font-sans grid grid-cols-2 gap-6"
-        style={{ display: 'none' }}
+        style={{ display: 'grid' }}
       >
         {currentMcqs && currentMcqs.length > 0 && quizCompleted && (
           <>
