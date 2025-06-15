@@ -109,7 +109,7 @@ const useContentStore = create<ContentState & {
         error: null,
         isGeneratingText: true,
         isGeneratingImages: true,
-        isGeneratingMcqs: true,
+        isGeneratingMcqs: false,
         isProcessingPastedText: false,
         currentText: '', // Start with empty text to show blinking lines
         currentImages: [], // Start with empty images to show placeholder loading
