@@ -795,7 +795,7 @@ const MCQDisplay: React.FC = () => {
       {/* Hidden Shareable Content for Image Generation */}
       <div
         ref={shareableContentRef}
-        className="absolute left-[-9999px] top-[-9999px] w-[800px] bg-white p-8 font-sans"
+        className="absolute left-[-9999px] top-[-9999px] w-[800px] h-[1200px] grid grid-cols-2 gap-6 bg-white p-8 font-sans"
         style={{ display: 'none' }}
       >
         {currentMcqs && currentMcqs.length > 0 && quizCompleted && (
