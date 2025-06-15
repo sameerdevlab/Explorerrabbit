@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, AlertCircle, CheckCircle, Trophy, Star, ChevronLeft, ChevronRight, RefreshCw, Brain, Target, Zap } from 'lucide-react';
+import { Loader2, AlertCircle, CheckCircle, Trophy, Star, ChevronLeft, ChevronRight, RefreshCw, Brain, Target, Zap, Share2, Download } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
 import MCQDifficultyModal, { DifficultyLevel } from './MCQDifficultyModal';
 import useContentStore from '../../store/contentStore';
+import html2canvas from 'html2canvas';
+import toast from 'react-hot-toast';
 
 const MCQDisplay: React.FC = () => {
   const { 
@@ -23,6 +25,10 @@ const MCQDisplay: React.FC = () => {
   const [reviewMode, setReviewMode] = useState(false);
   const [reviewQuestionIndex, setReviewQuestionIndex] = useState(0);
   const [isDifficultyModalOpen, setIsDifficultyModalOpen] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
+  
+  // Ref for the hidden shareable content
+  const shareableContentRef = useRef<HTMLDivElement>(null);
   
   console.log('🔍 MCQDisplay render:', { 
     currentMcqs, 
@@ -130,6 +136,97 @@ const MCQDisplay: React.FC = () => {
       return { message: "Nice try! You're getting there! 💪", color: "text-orange-600 dark:text-orange-400", bgColor: "from-orange-100 to-yellow-100 dark:from-orange-900/30 dark:to-yellow-900/30" };
     } else {
       return { message: "Keep practicing! You'll improve! 🌟", color: "text-purple-600 dark:text-purple-400", bgColor: "from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30" };
+    }
+  };
+
+  const handleShareResults = async () => {
+    if (!shareableContentRef.current || !currentMcqs || currentMcqs.length === 0) {
+      toast.error('No quiz results to share');
+      return;
+    }
+
+    setIsSharing(true);
+    toast.loading('Generating shareable image...', { id: 'share-loading' });
+
+    try {
+      const element = shareableContentRef.current;
+      
+      // Temporarily make the element visible for capture
+      const originalStyle = {
+        position: element.style.position,
+        left: element.style.left,
+        top: element.style.top,
+        display: element.style.display,
+        width: element.style.width,
+        height: element.style.height,
+      };
+
+      element.style.position = 'absolute';
+      element.style.left = '0';
+      element.style.top = '0';
+      element.style.display = 'block';
+      element.style.width = '800px';
+      element.style.height = 'auto';
+      element.style.zIndex = '9999';
+
+      // Wait a bit for styles to apply
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Capture the element
+      const canvas = await html2canvas(element, {
+        useCORS: true,
+        scale: 2,
+        backgroundColor: '#ffffff',
+        width: 800,
+        height: element.scrollHeight,
+        scrollX: 0,
+        scrollY: 0,
+      });
+
+      // Restore original styles
+      Object.assign(element.style, originalStyle);
+
+      // Convert to blob
+      const dataUrl = canvas.toDataURL('image/png', 1.0);
+      
+      // Try to use Web Share API first
+      if (navigator.share && navigator.canShare) {
+        try {
+          // Convert data URL to blob
+          const response = await fetch(dataUrl);
+          const blob = await response.blob();
+          const file = new File([blob], 'quiz-results.png', { type: 'image/png' });
+
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: 'My Quiz Results',
+              text: `I scored ${getScore()}/${currentMcqs.length} on this quiz! 🎉`,
+              files: [file],
+            });
+            
+            toast.success('Results shared successfully!', { id: 'share-loading' });
+            return;
+          }
+        } catch (shareError) {
+          console.log('Web Share API failed, falling back to download:', shareError);
+        }
+      }
+
+      // Fallback: Download the image
+      const link = document.createElement('a');
+      link.download = `quiz-results-${Date.now()}.png`;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success('Quiz results image downloaded!', { id: 'share-loading' });
+
+    } catch (error) {
+      console.error('Error generating shareable image:', error);
+      toast.error('Failed to generate shareable image', { id: 'share-loading' });
+    } finally {
+      setIsSharing(false);
     }
   };
   
@@ -482,26 +579,40 @@ const MCQDisplay: React.FC = () => {
                       transition={{ delay: 0.8 }}
                       className="space-y-4"
                     >
-                      <Button 
-                        onClick={startReview} 
-                        variant="sketchy" 
-                        className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-none shadow-lg text-lg py-3"
-                      >
-                        <Target className="h-5 w-5 mr-2" />
-                        Review Answers
-                      </Button>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <Button 
+                          onClick={startReview} 
+                          variant="sketchy" 
+                          className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-none shadow-lg text-lg py-3"
+                        >
+                          <Target className="h-5 w-5 mr-2" />
+                          Review Answers
+                        </Button>
+                        
+                        <Button 
+                          onClick={handleShareResults}
+                          isLoading={isSharing}
+                          variant="sketchy" 
+                          className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white border-none shadow-lg text-lg py-3"
+                        >
+                          <Share2 className="h-5 w-5 mr-2" />
+                          Share Results
+                        </Button>
+                      </div>
+                      
                       <Button 
                         onClick={resetQuiz} 
                         variant="sketchy" 
-                        className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white border-none shadow-lg text-lg py-3"
+                        className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-none shadow-lg text-lg py-3"
                       >
                         <RefreshCw className="h-5 w-5 mr-2" />
                         Try Again
                       </Button>
+                      
                       <Button 
                         onClick={handleReGenerateQuiz} 
                         variant="sketchy" 
-                        className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white border-none shadow-lg text-lg py-3"
+                        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-none shadow-lg text-lg py-3"
                       >
                         <RefreshCw className="h-5 w-5 mr-2" />
                         Regenerate MCQs
@@ -680,6 +791,109 @@ const MCQDisplay: React.FC = () => {
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* Hidden Shareable Content for Image Generation */}
+      <div
+        ref={shareableContentRef}
+        className="absolute left-[-9999px] top-[-9999px] w-[800px] bg-white p-8 font-sans"
+        style={{ display: 'none' }}
+      >
+        {currentMcqs && currentMcqs.length > 0 && quizCompleted && (
+          <div className="space-y-8">
+            {/* Header */}
+            <div className="text-center border-b-4 border-blue-500 pb-6">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl">
+                  <Brain className="h-8 w-8 text-white" />
+                </div>
+                <h1 className="text-3xl font-bold text-gray-800">Quiz Results</h1>
+              </div>
+              <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-6">
+                <div className="text-5xl font-bold text-purple-600 mb-2">
+                  {score}/{currentMcqs.length}
+                </div>
+                <p className="text-lg text-gray-700 font-medium">
+                  Score: {Math.round((score / currentMcqs.length) * 100)}%
+                </p>
+                <p className="text-gray-600 mt-2">
+                  {scoreMessage.message}
+                </p>
+              </div>
+            </div>
+
+            {/* Questions Review */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-gray-800 text-center">Question Review</h2>
+              
+              {currentMcqs.map((mcq, questionIndex) => {
+                const userAnswer = selectedAnswers[questionIndex];
+                const isCorrect = userAnswer === mcq.correctAnswer;
+                
+                return (
+                  <div key={questionIndex} className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50">
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
+                        isCorrect ? 'bg-green-500' : 'bg-red-500'
+                      }`}>
+                        {questionIndex + 1}
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800 flex-1">
+                        {mcq.question}
+                      </h3>
+                      <div className={`px-3 py-1 rounded-full text-sm font-bold ${
+                        isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
+                        {isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      {mcq.options.map((option, optionIndex) => {
+                        const isUserAnswer = userAnswer === optionIndex;
+                        const isCorrectAnswer = mcq.correctAnswer === optionIndex;
+                        
+                        let bgColor = 'bg-white';
+                        let textColor = 'text-gray-700';
+                        let label = String.fromCharCode(65 + optionIndex);
+                        
+                        if (isCorrectAnswer) {
+                          bgColor = 'bg-green-100';
+                          textColor = 'text-green-800';
+                          label = '✓';
+                        } else if (isUserAnswer && !isCorrectAnswer) {
+                          bgColor = 'bg-red-100';
+                          textColor = 'text-red-800';
+                          label = '✗';
+                        }
+                        
+                        return (
+                          <div key={optionIndex} className={`p-3 rounded-lg border ${bgColor}`}>
+                            <div className="flex items-center gap-3">
+                              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
+                                isCorrectAnswer ? 'bg-green-500 text-white' : 
+                                isUserAnswer ? 'bg-red-500 text-white' : 'bg-gray-300 text-gray-600'
+                              }`}>
+                                {label}
+                              </span>
+                              <span className={`${textColor} font-medium`}>{option}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Footer */}
+            <div className="text-center pt-6 border-t-2 border-gray-200">
+              <p className="text-gray-600">Generated by Explorer AI Content Generator</p>
+              <p className="text-sm text-gray-500 mt-1">Share your learning journey! 🚀</p>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* MCQ Difficulty Selection Modal */}
       <MCQDifficultyModal
