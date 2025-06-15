@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
 
     // Parse request body
     const requestData = await req.json();
-    const { text } = requestData;
+    const { text, difficulty = 'medium' } = requestData;
 
     if (!text) {
       return new Response(
@@ -100,6 +100,16 @@ Deno.serve(async (req) => {
     }
 
     console.log('🔍 Generating MCQs for text length:', text.length);
+    console.log('🔍 Difficulty level:', difficulty);
+
+    // Create difficulty-specific prompts
+    const difficultyPrompts = {
+      easy: "Create 3 easy multiple-choice questions based on the given text. Focus on basic facts, definitions, and straightforward concepts that can be directly found in the text. Each question should have 4 options with only one correct answer. Return ONLY a valid JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3). Do not include any other text or formatting.",
+      medium: "Create 3 medium-difficulty multiple-choice questions based on the given text. Focus on understanding, application, and connections between concepts. Questions should require some analysis and comprehension beyond basic recall. Each question should have 4 options with only one correct answer. Return ONLY a valid JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3). Do not include any other text or formatting.",
+      hard: "Create 3 challenging multiple-choice questions based on the given text. Focus on critical thinking, analysis, synthesis, and evaluation of the content. Questions should require deep understanding and the ability to make inferences or apply concepts to new situations. Each question should have 4 options with only one correct answer. Return ONLY a valid JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3). Do not include any other text or formatting."
+    };
+
+    const systemPrompt = difficultyPrompts[difficulty as keyof typeof difficultyPrompts] || difficultyPrompts.medium;
 
     // Generate MCQs using Groq
     const mcqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -113,7 +123,7 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "Create 3 multiple-choice questions based on the given text. Each question should have 4 options with only one correct answer. Return ONLY a valid JSON array of objects, each with: 'question' (string), 'options' (array of 4 strings), and 'correctAnswer' (index of correct option from 0 to 3). Do not include any other text or formatting."
+            content: systemPrompt
           },
           {
             role: "user",
