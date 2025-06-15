@@ -91,7 +91,11 @@ const MCQDisplay: React.FC = () => {
     if (!currentText.trim()) {
       return;
     }
-    resetQuiz();
+    setSelectedAnswers({});
+    setCurrentQuestionIndex(0);
+    setQuizCompleted(false);
+    setReviewMode(false);
+    setReviewQuestionIndex(0);
     setIsDifficultyModalOpen(true);
   };
 
