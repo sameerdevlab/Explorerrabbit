@@ -164,7 +164,7 @@ const MCQDisplay: React.FC = () => {
       element.style.position = 'absolute';
       element.style.left = '0';
       element.style.top = '0';
-      element.style.display = 'block';
+      element.style.display = 'grid';
       element.style.width = '800px';
       element.style.height = 'auto';
       element.style.zIndex = '9999';
