@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Loader2, AlertCircle, CheckCircle, Trophy, Star, ChevronLeft, ChevronRight, RefreshCw, Brain, Target, Zap, Share2, Download } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
+import ShareModal from '../ui/ShareModal';
 import MCQDifficultyModal, { DifficultyLevel } from './MCQDifficultyModal';
 import useContentStore from '../../store/contentStore';
 import html2canvas from 'html2canvas';
@@ -26,6 +27,9 @@ const MCQDisplay: React.FC = () => {
   const [reviewQuestionIndex, setReviewQuestionIndex] = useState(0);
   const [isDifficultyModalOpen, setIsDifficultyModalOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
+  const [shareTextContent, setShareTextContent] = useState('');
   
   // Ref for the hidden shareable content
   const shareableContentRef = useRef<HTMLDivElement>(null);
@@ -189,38 +193,12 @@ const MCQDisplay: React.FC = () => {
       // Convert to blob
       const dataUrl = canvas.toDataURL('image/png', 1.0);
       
-      // Try to use Web Share API first
-      if (navigator.share && navigator.canShare) {
-        try {
-          // Convert data URL to blob
-          const response = await fetch(dataUrl);
-          const blob = await response.blob();
-          const file = new File([blob], 'quiz-results.png', { type: 'image/png' });
-
-          if (navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              title: 'My Quiz Results',
-              text: `I scored ${getScore()}/${currentMcqs.length} on this quiz! 🎉`,
-              files: [file],
-            });
-            
-            toast.success('Results shared successfully!', { id: 'share-loading' });
-            return;
-          }
-        } catch (shareError) {
-          console.log('Web Share API failed, falling back to download:', shareError);
-        }
-      }
-
-      // Fallback: Download the image
-      const link = document.createElement('a');
-      link.download = `quiz-results-${Date.now()}.png`;
-      link.href = dataUrl;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      toast.success('Quiz results image downloaded!', { id: 'share-loading' });
+      // Set share data and open modal
+      setShareImageUrl(dataUrl);
+      setShareTextContent(`🎯 Check out my quiz results! I scored ${getScore()}/${currentMcqs.length} on this quiz! 🎉\n\nTest your knowledge too and see how you do! 💪\n\n#quiz #learning #knowledge #education #challenge`);
+      setIsShareModalOpen(true);
+      
+      toast.success('Quiz results ready to share!', { id: 'share-loading' });
 
     } catch (error) {
       console.error('Error generating shareable image:', error);
@@ -909,6 +887,15 @@ const MCQDisplay: React.FC = () => {
         isOpen={isDifficultyModalOpen}
         onClose={() => setIsDifficultyModalOpen(false)}
         onSelectDifficulty={handleSelectDifficulty}
+      />
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        title="Share Quiz Results"
+        textToShare={shareTextContent}
+        imageUrlToShare={shareImageUrl}
       />
     </>
   );

@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Share2, Copy, Loader2, CheckCircle, Sparkles, Send } from 'lucide-react';
+import { Share2, Copy, Loader2, CheckCircle, Sparkles, Send, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
 import TextArea from '../ui/TextArea';
+import ShareModal from '../ui/ShareModal';
 import SocialMediaPostTypeModal from './SocialMediaPostTypeModal';
 import useContentStore from '../../store/contentStore';
 import { SocialMediaPostType, UserLevel } from '../../types';
@@ -18,6 +19,7 @@ const SocialMediaPostGenerator: React.FC = () => {
   } = useContentStore();
   const [copied, setCopied] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-resize the textarea to fit the full social media post content
@@ -40,6 +42,14 @@ const SocialMediaPostGenerator: React.FC = () => {
 
   const handleSelectPostType = (postType: SocialMediaPostType, userLevel?: UserLevel) => {
     generateSocialMediaPost(postType, userLevel);
+  };
+
+  const handleSharePost = () => {
+    if (!socialMediaPost) {
+      toast.error('No social media post to share');
+      return;
+    }
+    setIsShareModalOpen(true);
   };
 
   const handleCopy = async () => {
@@ -184,11 +194,20 @@ const SocialMediaPostGenerator: React.FC = () => {
                   </Button>
                   
                   <Button
+                    onClick={handleSharePost}
+                    variant="sketchy"
+                    className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-none shadow-lg"
+                  >
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Share Post
+                  </Button>
+                  
+                  <Button
                     onClick={handleOpenModal}
                     variant="sketchy"
                     className="flex-1 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white border-none shadow-lg"
                   >
-                    <Share2 className="h-4 w-4 mr-2" />
+                    <RefreshCw className="h-4 w-4 mr-2" />
                     Regenerate
                   </Button>
                 </motion.div>
@@ -203,6 +222,14 @@ const SocialMediaPostGenerator: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSelectPostType={handleSelectPostType}
+      />
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        title="Share Social Media Post"
+        textToShare={socialMediaPost || ''}
       />
     </>
   );
