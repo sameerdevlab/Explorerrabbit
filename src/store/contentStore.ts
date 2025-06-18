@@ -8,7 +8,7 @@ import { DifficultyLevel } from '../components/content/MCQDifficultyModal';
 
 // Social Media Post Type Prompts
 const SOCIAL_MEDIA_PROMPTS = {
-  'informative-summary': 'Summarize the following content into a short, informative social media post. Use clear, professional language and include 1–2 relevant emojis. Highlight key facts or takeaways in 2–3 sentences. Avoid fluff, and format it for LinkedIn or Instagram. Content: {{USER_CONTENT}}',
+  'informative-summary': 'Summarize the following content into a short, informative social media post. Use clear, professional language and include 1–2 relevant emojis. Highlight key facts or takeaways in 2–3 sentences. Avoid fluff, and format it for LinkedIn or Instagram, At the end of the post, include 3–5 relevant and topic-specific hashtags in lowercase with no spaces. Avoid generic hashtags like #foryou or #viral. Format hashtags naturally on a new line or after the main content. Content: {{USER_CONTENT}}',
   
   'tips-carousel': 'Turn the following content into a clean, structured social media post with helpful tips or steps. Start with a short hook or headline, followed by 5–7 numbered or bulleted tips. Use friendly, educational language and 1–2 emojis. Format it for Instagram or LinkedIn. Do not format as slides. Content: {{USER_CONTENT}}',
   
