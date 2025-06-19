@@ -115,72 +115,77 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
   let html = `
     <div style="margin-bottom: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
       <!-- Title Section -->
-      <div class="avoid-break" style="border-bottom: 3px solid #8b5cf6; padding-bottom: 12px; margin-bottom: 16px; page-break-inside: avoid;">
-        <h1 style="color: #1f2937; font-size: 26px; font-weight: bold; margin: 0 0 6px 0; line-height: 1.2;">${item.title}</h1>
-        <p style="color: #6b7280; font-size: 13px; margin: 0; font-style: italic;">Created on ${formatDate(item.created_at)}</p>
+      <div style="border-bottom: 3px solid #8b5cf6; padding-bottom: 12px; margin-bottom: 16px;">
+        <h1 style="color: #1f2937; font-size: 26px; font-weight: bold; margin: 0 0 6px 0; line-height: 1.2;">
+          ${item.title}
+        </h1>
+        <p style="color: #6b7280; font-size: 13px; margin: 0; font-style: italic;">
+          Created on ${formatDate(item.created_at)}
+        </p>
       </div>
 
       <!-- Generated Text Content -->
-      <div class="avoid-break" style="margin-bottom: 18px; page-break-inside: avoid;">
-        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #ec4899; padding-left: 10px;">Content</h2>
+      <div style="margin-bottom: 18px;">
+        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #ec4899; padding-left: 10px;">
+          Content
+        </h2>
         <div style="line-height: 1.5; color: #374151; font-size: 15px; text-align: justify;">
-          ${item.generated_text.split('\n').map(paragraph => 
+          ${item.generated_text.split('\n').map(paragraph =>
             paragraph.trim() ? `<p style="margin: 0 0 10px 0;">${paragraph}</p>` : ''
           ).join('')}
         </div>
       </div>
-      
-      <!-- Section Separator -->
-      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
   `;
 
   // Add Images Section
   if (item.generated_images && item.generated_images.length > 0) {
     html += `
-      <div class="avoid-break" style="margin-bottom: 18px; page-break-inside: avoid;">
-        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #3b82f6; padding-left: 10px;">Generated Images</h2>
+      <div style="margin-bottom: 18px;">
+        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #3b82f6; padding-left: 10px;">
+          Generated Images
+        </h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
     `;
-    
-    item.generated_images.forEach((image, index) => {
+
+    item.generated_images.forEach((image) => {
       html += `
-        <div class="avoid-break" style="border: 2px solid #e5e7eb; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1); page-break-inside: avoid; margin-bottom: 12px;">
-          <img src="${image.url}" alt="${image.alt}" style="min-height: 180px; width: 100%; object-fit: cover; display: block;" />
+        <div class="mcq-question-block" style="border: 2px solid #e5e7eb; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1); margin-bottom: 12px;">
+          <img src="${image.url}" alt="${image.alt}" style="width: 100%; height: 180px; object-fit: cover; display: block;" />
           <div style="padding: 10px; background-color: #f9fafb;">
             <p style="margin: 0; font-size: 13px; color: #6b7280; font-style: italic;">${image.alt}</p>
           </div>
         </div>
       `;
     });
-    
-    html += `
-        </div>
-      </div>
-      
-      <!-- Section Separator -->
-      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
-    `;
+
+    html += `</div></div>`;
   }
 
-  // Add MCQs Section with improved page break handling
+  // Add MCQs Section
   if (item.generated_mcqs && item.generated_mcqs.length > 0) {
     html += `
-      <div class="avoid-break" style="margin-bottom: 18px; page-break-inside: avoid;">
-        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #10b981; padding-left: 10px;">Quiz Questions</h2>
+      <div style="margin-bottom: 18px;">
+        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #10b981; padding-left: 10px;">
+          Quiz Questions
+        </h2>
     `;
-    
+
     item.generated_mcqs.forEach((mcq, index) => {
       html += `
-        <div class="mcq-question-block avoid-break" style="margin-bottom: 16px; border: 2px solid #e5e7eb; border-radius: 10px; padding: 14px; background-color: #f9fafb; page-break-inside: avoid;">
-          <h3 style="color: #1f2937; font-size: 16px; font-weight: 600; margin: 0 0 10px 0;">Question ${index + 1}</h3>
-          <p style="color: #374151; font-size: 15px; margin: 0 0 10px 0; font-weight: 500;">${mcq.question}</p>
+        <div class="mcq-question-block" style="margin-bottom: 16px; border: 2px solid #e5e7eb; border-radius: 10px; padding: 14px; background-color: #f9fafb;">
+          <h3 style="color: #1f2937; font-size: 16px; font-weight: 600; margin: 0 0 10px 0;">
+            Question ${index + 1}
+          </h3>
+          <p style="color: #374151; font-size: 15px; margin: 0 0 10px 0; font-weight: 500;">
+            ${mcq.question}
+          </p>
           <div style="margin-left: 12px;">
       `;
-      
+
       mcq.options.forEach((option, optionIndex) => {
         const isCorrect = optionIndex === mcq.correctAnswer;
         const optionLetter = String.fromCharCode(65 + optionIndex);
-        
+
         html += `
           <div style="margin-bottom: 5px; display: flex; align-items: center;">
             <span style="
@@ -193,37 +198,32 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
               font-size: 11px; 
               font-weight: bold; 
               margin-right: 8px;
-              ${isCorrect ? 
-                'background-color: #10b981; color: white;' : 
-                'background-color: #e5e7eb; color: #6b7280;'
-              }
+              ${isCorrect ? 'background-color: #10b981; color: white;' : 'background-color: #e5e7eb; color: #6b7280;'}
             ">${isCorrect ? '✓' : optionLetter}</span>
-            <span style="color: ${isCorrect ? '#059669' : '#374151'}; font-weight: ${isCorrect ? '600' : '400'}; font-size: 14px;">${option}</span>
+            <span style="color: ${isCorrect ? '#059669' : '#374151'}; font-weight: ${isCorrect ? '600' : '400'}; font-size: 14px;">
+              ${option}
+            </span>
           </div>
         `;
       });
-      
-      html += `
-          </div>
-        </div>
-      `;
+
+      html += `</div></div>`;
     });
-    
-    html += `
-      </div>
-      
-      <!-- Section Separator -->
-      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
-    `;
+
+    html += `</div>`;
   }
 
-  // Add Social Media Post Section (no separator after this as it's the last section)
+  // Add Social Media Post Section
   if (item.generated_social_media_post && item.generated_social_media_post.trim()) {
     html += `
-      <div class="avoid-break social-media-post" style="margin-bottom: 18px; page-break-inside: avoid;">
-        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #f59e0b; padding-left: 10px;">Social Media Post</h2>
-        <div class="avoid-break" style="border: 2px solid #e5e7eb; border-radius: 10px; padding: 14px; background-color: #fffbeb; border-left: 4px solid #f59e0b; page-break-inside: avoid;">
-          <div style="color: #92400e; font-size: 15px; line-height: 1.4; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-line;">${item.generated_social_media_post}</div>
+      <div class="social-media-post" style="margin-bottom: 18px;">
+        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #f59e0b; padding-left: 10px;">
+          Social Media Post
+        </h2>
+        <div style="border: 2px solid #e5e7eb; border-radius: 10px; padding: 14px; background-color: #fffbeb; border-left: 4px solid #f59e0b;">
+          <div style="color: #92400e; font-size: 15px; line-height: 1.4; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-line;">
+            ${item.generated_social_media_post}
+          </div>
         </div>
       </div>
     `;
