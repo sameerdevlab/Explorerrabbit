@@ -132,6 +132,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     });
   };
 
+  // generating pdf function
   const handleDownloadPdf = async () => {
   if (!isValidSelection()) {
     toast.error('Please select a valid download option');
@@ -209,20 +210,20 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
         type: 'jpeg',
         quality: 0.95,
       },
-      // html2canvas: {
-      //   scale: 2,
-      //   useCORS: true,
-      //   allowTaint: true,
-      //   backgroundColor: '#ffffff',
-      //   width: elementWidth,
-      //   height: elementHeight,
-      //   scrollX: 0,
-      //   scrollY: 0,
-      //   x: 0,
-      //   y: 0,
-      //   logging: false,
-      //   removeContainer: true,
-      // },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: elementWidth,
+        height: elementHeight,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
+        logging: false,
+        removeContainer: true,
+      },
       jsPDF: {
         unit: 'in',
         format: 'a4',
