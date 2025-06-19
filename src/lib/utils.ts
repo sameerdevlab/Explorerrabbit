@@ -256,8 +256,10 @@ export function generateHtmlForAllSavedContent(savedContent: SavedContentItem[])
   `;
 
   savedContent.forEach((item, index) => {
+    const isLast = index === savedContent.length - 1;
+
     html += `
-      <div style="page-break-after: always;">
+      <div style="${isLast ? 'min-height: 300px;' : 'page-break-after: always;'}">
         ${generateHtmlForSavedContentItem(item)}
       </div>
     `;
