@@ -107,7 +107,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] flex items-center justify-center px-4 py-8"
         >
           {/* Backdrop */}
           <motion.div
