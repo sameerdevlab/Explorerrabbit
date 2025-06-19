@@ -183,7 +183,7 @@ const SavedContentModal: React.FC<SavedContentModalProps> = ({
                         >
                           <CardContent className="p-4">
                             {/* Delete Button */}
-                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 opacity-90 transition-opacity duration-200">
                               <Button
                                 variant="ghost"
                                 size="sm"
