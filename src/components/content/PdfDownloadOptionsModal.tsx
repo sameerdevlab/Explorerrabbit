@@ -195,12 +195,12 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     // Scroll to top and capture full height
-    element.scrollTop = 0;
-    element.scrollLeft = 0;
-    element.style.minHeight = `${element.scrollHeight}px`;
+    // element.scrollTop = 0;
+    // element.scrollLeft = 0;
+    // element.style.minHeight = `${element.scrollHeight}px`;
 
-    const elementWidth = Math.max(element.scrollWidth, 800);
-    const elementHeight = Math.max(element.scrollHeight, 1000);
+    // const elementWidth = Math.max(element.scrollWidth, 800);
+    // const elementHeight = Math.max(element.scrollHeight, 1000);
 
     const options = {
       margin: [0.5, 0.5, 0.5, 0.5],
