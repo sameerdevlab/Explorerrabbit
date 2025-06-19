@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Navigate } from 'react-router-dom';
+import { Save, RotateCcw } from 'lucide-react';
 import Header from '../components/layout/Header';
 import ModeToggle from '../components/layout/ModeToggle';
 import PromptInput from '../components/content/PromptInput';
@@ -8,6 +9,7 @@ import TextInput from '../components/content/TextInput';
 import ContentDisplay from '../components/content/ContentDisplay';
 import MCQDisplay from '../components/content/MCQDisplay';
 import SocialMediaPostGenerator from '../components/content/SocialMediaPostGenerator';
+import Button from '../components/ui/Button';
 import useContentStore from '../store/contentStore';
 import useAuthStore from '../store/authStore';
 
@@ -24,6 +26,8 @@ const HomePage: React.FC = () => {
     isGeneratingMcqs,
     isProcessingPastedText,
     loading: contentLoading
+    saveContent,
+    isSaving
   } = useContentStore();
   const { user, loading: authLoading } = useAuthStore();
   const [showResults, setShowResults] = useState(false);
@@ -105,12 +109,26 @@ const HomePage: React.FC = () => {
             </div>
             
             <div className="mt-6 text-center">
-              <button
-                onClick={handleNewContent}
-                className="text-purple-600 dark:text-purple-400 underline hover:text-purple-800 dark:hover:text-purple-300 transition-colors mb-4"
-              >
-                Start Over
-              </button>
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <Button
+                  onClick={saveContent}
+                  isLoading={isSaving}
+                  variant="sketchy"
+                  className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white border-none shadow-lg"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {isSaving ? 'Saving...' : 'Save Content'}
+                </Button>
+                
+                <Button
+                  onClick={handleNewContent}
+                  variant="sketchy"
+                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-none shadow-lg"
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Start Over
+                </Button>
+              </div>
             </div>
             
             {/* Minimized input at the bottom */}

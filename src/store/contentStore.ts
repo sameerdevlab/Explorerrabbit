@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import toast from 'react-hot-toast';
-import { ContentState, ContentGenerationResult, SocialMediaPostType, UserLevel } from '../types';
+import { ContentState, ContentGenerationResult, SocialMediaPostType, UserLevel, SavedContentItem } from '../types';
 import { callEdgeFunction } from '../lib/supabase';
 import { generatePlaceholderImages, generateInitialPlaceholderImages } from '../lib/utils';
 import useAuthStore from './authStore';
@@ -40,6 +40,9 @@ const useContentStore = create<ContentState & {
   generateSocialMediaPost: (postType: SocialMediaPostType, userLevel?: UserLevel) => Promise<void>;
   retryMcqGeneration: () => Promise<void>;
   generateMcqs: (difficulty: DifficultyLevel) => Promise<void>;
+  saveContent: () => Promise<void>;
+  loadSavedContent: () => Promise<void>;
+  loadSavedContentItem: (item: SavedContentItem) => void;
 }>((set, get) => ({
   mode: 'generate',
   prompt: '',
@@ -65,6 +68,11 @@ const useContentStore = create<ContentState & {
   mcqGenerationStatus: 'idle',
   mcqErrorMessage: null,
   
+  // Save content functionality
+  isSaving: false,
+  savedContent: [],
+  isLoadingSavedContent: false,
+  
   setMode: (mode) => set({ mode }),
   setPrompt: (prompt) => set({ prompt }),
   setPastedText: (text) => {
@@ -85,6 +93,7 @@ const useContentStore = create<ContentState & {
     socialMediaPost: null,
     mcqGenerationStatus: 'idle',
     mcqErrorMessage: null,
+    isSaving: false,
   }),
   
   generateContent: async () => {
@@ -452,6 +461,102 @@ const useContentStore = create<ContentState & {
       });
       toast.error(errorMessage);
     }
+  },
+  
+  saveContent: async () => {
+    const { currentText, currentImages, currentMcqs, socialMediaPost } = get();
+    
+    // Check if user is authenticated
+    const { user } = useAuthStore.getState();
+    if (!user) {
+      toast.error('Please sign in to save content');
+      return;
+    }
+    
+    if (!currentText.trim()) {
+      toast.error('No content available to save');
+      return;
+    }
+    
+    try {
+      set({ isSaving: true });
+      
+      // Generate a title from the first 50 characters of the text
+      const title = currentText.substring(0, 50).trim() + (currentText.length > 50 ? '...' : '');
+      
+      // Call the save-content edge function
+      const data = await callEdgeFunction('save-content', {
+        title,
+        generatedText: currentText,
+        generatedImages: currentImages,
+        generatedMcqs: currentMcqs,
+        generatedSocialMediaPost: socialMediaPost || '',
+      });
+      
+      // Add the new saved content to the local state
+      const currentSavedContent = get().savedContent;
+      set({
+        savedContent: [data.savedContent, ...currentSavedContent],
+        isSaving: false,
+      });
+      
+      toast.success('Content saved successfully!');
+    } catch (error) {
+      console.error('Error saving content:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save content';
+      set({ isSaving: false });
+      toast.error(errorMessage);
+    }
+  },
+  
+  loadSavedContent: async () => {
+    // Check if user is authenticated
+    const { user } = useAuthStore.getState();
+    if (!user) {
+      return;
+    }
+    
+    try {
+      set({ isLoadingSavedContent: true });
+      
+      // Call the get-saved-content edge function
+      const data = await callEdgeFunction('get-saved-content', {});
+      
+      set({
+        savedContent: data.savedContent || [],
+        isLoadingSavedContent: false,
+      });
+    } catch (error) {
+      console.error('Error loading saved content:', error);
+      set({ isLoadingSavedContent: false });
+      toast.error('Failed to load saved content');
+    }
+  },
+  
+  loadSavedContentItem: (item: SavedContentItem) => {
+    // Load the saved content item into the current state
+    set({
+      currentText: item.generated_text,
+      currentImages: item.generated_images,
+      currentMcqs: item.generated_mcqs,
+      socialMediaPost: item.generated_social_media_post || null,
+      result: {
+        text: item.generated_text,
+        images: item.generated_images,
+        mcqs: item.generated_mcqs,
+      },
+      // Reset loading states
+      loading: false,
+      isGeneratingText: false,
+      isGeneratingImages: false,
+      isGeneratingMcqs: false,
+      isProcessingPastedText: false,
+      isGeneratingSocialMediaPost: false,
+      mcqGenerationStatus: 'success',
+      mcqErrorMessage: null,
+    });
+    
+    toast.success(`Loaded: ${item.title}`);
   },
 }));
 

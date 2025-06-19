@@ -31,6 +31,17 @@ export type SocialMediaPostType =
 
 export type UserLevel = 'beginner' | 'intermediate' | 'experienced';
 
+export interface SavedContentItem {
+  id: string;
+  user_id: string;
+  title: string;
+  generated_text: string;
+  generated_images: ImageData[];
+  generated_mcqs: MCQuestion[];
+  generated_social_media_post: string;
+  created_at: string;
+}
+
 export interface ContentState {
   mode: 'generate' | 'paste';
   prompt: string;
@@ -55,6 +66,11 @@ export interface ContentState {
   // MCQ generation status and retry logic
   mcqGenerationStatus: 'idle' | 'generating' | 'failed_first_attempt' | 'failed_second_attempt' | 'success';
   mcqErrorMessage: string | null;
+  
+  // Save content functionality
+  isSaving: boolean;
+  savedContent: SavedContentItem[];
+  isLoadingSavedContent: boolean;
 }
 
 export interface AuthState {
