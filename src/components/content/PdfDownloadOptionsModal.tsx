@@ -104,7 +104,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
         loadedCount++;
         if (loadedCount === totalImages) {
           // Add a small delay after all images are loaded
-          setTimeout(resolve, 200);
+          setTimeout(resolve, 500);
         }
       };
 
@@ -157,6 +157,8 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
         display: element.style.display,
         pointerEvents: element.style.pointerEvents,
         backgroundColor: element.style.backgroundColor,
+        overflow: element.style.overflow,
+        visibility: element.style.visibility,
       };
 
       // Set the HTML content
@@ -173,27 +175,29 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       element.style.display = 'block';
       element.style.pointerEvents = 'auto';
       element.style.backgroundColor = '#ffffff';
+      element.style.overflow = 'visible';
+      element.style.visibility = 'visible';
 
       // Wait for the DOM to update and styles to apply
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Wait for all images to load
       await waitForImagesToLoad(element);
 
       // Get the actual rendered dimensions
-      const elementWidth = element.scrollWidth || 800;
-      const elementHeight = element.scrollHeight || 1000;
+      const elementWidth = Math.max(element.scrollWidth, 800);
+      const elementHeight = Math.max(element.scrollHeight, 1000);
 
-      // Configure html2pdf options with proper dimensions
+      // Configure html2pdf options with improved page break handling
       const options = {
         margin: [0.5, 0.5, 0.5, 0.5],
         filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
         image: { 
           type: 'jpeg', 
-          quality: 0.98 
+          quality: 0.95 
         },
         html2canvas: { 
-          scale: 2,
+          scale: 1.5,
           useCORS: true,
           allowTaint: true,
           backgroundColor: '#ffffff',
@@ -205,6 +209,8 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
           scrollY: 0,
           x: 0,
           y: 0,
+          logging: false,
+          removeContainer: true,
         },
         jsPDF: { 
           unit: 'in', 
@@ -216,7 +222,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
           mode: ['avoid-all', 'css', 'legacy'],
           before: '.page-break-before',
           after: '.page-break-after',
-          avoid: '.page-break-avoid'
+          avoid: ['img', '.page-break-avoid', '.avoid-break']
         }
       };
 
@@ -244,14 +250,15 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       if (hiddenDivRef.current) {
         const element = hiddenDivRef.current;
         element.style.position = 'fixed';
-        element.style.left = '0';
-        element.style.top = '0';
+        element.style.left = '-9999px';
+        element.style.top = '-9999px';
         element.style.width = '800px';
         element.style.backgroundColor = '#ffffff';
         element.style.opacity = '0';
         element.style.zIndex = '-1';
         element.style.pointerEvents = 'none';
         element.style.display = 'none';
+        element.style.visibility = 'hidden';
       }
     } finally {
       setIsGeneratingPdf(false);
@@ -471,11 +478,20 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
         </motion.div>
       )}
       
-      {/* Hidden div for PDF generation - Initially hidden with display: none */}
+      {/* Hidden div for PDF generation - Positioned off-screen but visible for rendering */}
       <div
         ref={hiddenDivRef}
         style={{
+          position: 'fixed',
+          left: '-9999px',
+          top: '-9999px',
+          width: '800px',
+          backgroundColor: '#ffffff',
+          opacity: '0',
+          zIndex: '-1',
+          pointerEvents: 'none',
           display: 'none',
+          visibility: 'hidden',
         }}
       />
     </AnimatePresence>
