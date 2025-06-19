@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Download, FileText, Loader2, AlertCircle } from 'lucide-react';
+import { X, Download, FileText, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
@@ -25,6 +25,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   const [selectedOption, setSelectedOption] = useState<DownloadOption>('all');
   const [customCount, setCustomCount] = useState<string>('');
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [debugMode, setDebugMode] = useState(false);
   const hiddenDivRef = useRef<HTMLDivElement>(null);
 
   const downloadOptions = [
@@ -92,7 +93,10 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   const waitForImagesToLoad = (element: HTMLElement): Promise<void> => {
     return new Promise((resolve) => {
       const images = element.querySelectorAll('img');
+      console.log('🖼️ Found', images.length, 'images to load');
+      
       if (images.length === 0) {
+        console.log('✅ No images to load, proceeding');
         resolve();
         return;
       }
@@ -102,142 +106,206 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
 
       const checkAllLoaded = () => {
         loadedCount++;
+        console.log(`🖼️ Image ${loadedCount}/${totalImages} loaded`);
         if (loadedCount === totalImages) {
-          // Add a small delay after all images are loaded
-          setTimeout(resolve, 500);
+          console.log('✅ All images loaded, waiting additional 1000ms');
+          // Add a longer delay after all images are loaded
+          setTimeout(resolve, 1000);
         }
       };
 
-      images.forEach((img) => {
+      images.forEach((img, index) => {
         if (img.complete) {
+          console.log(`🖼️ Image ${index + 1} already loaded`);
           checkAllLoaded();
         } else {
-          img.onload = checkAllLoaded;
-          img.onerror = checkAllLoaded; // Count failed images as "loaded" to avoid hanging
+          img.onload = () => {
+            console.log(`🖼️ Image ${index + 1} loaded successfully`);
+            checkAllLoaded();
+          };
+          img.onerror = () => {
+            console.log(`❌ Image ${index + 1} failed to load`);
+            checkAllLoaded(); // Count failed images as "loaded" to avoid hanging
+          };
         }
       });
     });
   };
 
   const handleDownloadPdf = async () => {
-  if (!isValidSelection()) {
-    toast.error('Please select a valid download option');
-    return;
-  }
-
-  const filteredContent = getFilteredContent();
-  if (filteredContent.length === 0) {
-    toast.error('No content to download');
-    return;
-  }
-
-  const element = hiddenDivRef.current;
-  if (!element) {
-    toast.error('PDF generation container not found');
-    return;
-  }
-
-  Object.assign(hiddenDivRef.current.style, {
-  display: 'block',
-  position: 'absolute',
-  top: '0',
-  left: '0',
-  width: '800px',
-  backgroundColor: '#ffffff',
-  zIndex: '9999',
-  opacity: '1',
-  visibility: 'visible',
-  pointerEvents: 'none',
-  overflow: 'visible',
-  });
-
-  setIsGeneratingPdf(true);
-  const loadingToastId = toast.loading('Preparing your PDF...');
-
-  try {
-    // Step 1: Inject content
-    const htmlContent = generateHtmlForAllSavedContent(filteredContent);
-    element.innerHTML = htmlContent;
-
-    // Step 2: Style for visibility
-    // Object.assign(element.style, {
-    //   position: 'absolute',
-    //   top: '0',
-    //   left: '0',
-    //   width: '800px',
-    //   backgroundColor: '#fff',
-    //   opacity: '1',
-    //   zIndex: '9999',
-    //   display: 'block',
-    //   visibility: 'visible',
-    //   pointerEvents: 'none',
-    //   overflow: 'visible',
-    //   height: 'auto',
-    // });
-
-    // Step 3: Wait for DOM & Images
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    await waitForImagesToLoad(element);
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Step 4: Generate PDF
-    await html2pdf()
-      .set({
-        margin: [0.5, 0.5, 0.5, 0.5],
-        filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#fff',
-        },
-        jsPDF: {
-          unit: 'in',
-          format: 'a4',
-          orientation: 'portrait',
-        },
-        pagebreak: {
-          mode: ['css', 'legacy'],
-          avoid: ['.avoid-break', 'img'],
-        }
-      })
-      .from(element)
-      .save();
-
-    toast.success('PDF downloaded successfully!', { id: loadingToastId });
-    onClose();
-
-  } catch (err) {
-    console.error('PDF generation error:', err);
-    toast.error('PDF generation failed', { id: loadingToastId });
-  } finally {
-    // Step 5: Reset
-    setIsGeneratingPdf(false);
-    hiddenDivRef.current.innerHTML = '';
-    Object.assign(hiddenDivRef.current.style, {
-      display: 'none',
-      position: 'fixed',
-      left: '-9999px',
-      top: '-9999px',
-      opacity: '0',
-      zIndex: '-1',
-      visibility: 'hidden',
-    });
-
-    if (element) {
-      element.innerHTML = '';
-      element.style.display = 'none';
+    if (!isValidSelection()) {
+      toast.error('Please select a valid download option');
+      return;
     }
-  }
-};
 
+    const filteredContent = getFilteredContent();
+    if (filteredContent.length === 0) {
+      toast.error('No content to download');
+      return;
+    }
 
+    const element = hiddenDivRef.current;
+    if (!element) {
+      toast.error('PDF generation container not found');
+      return;
+    }
+
+    console.log('🚀 Starting PDF generation process');
+    console.log('📄 Content items to include:', filteredContent.length);
+
+    setIsGeneratingPdf(true);
+    const loadingToastId = toast.loading('Preparing your PDF...');
+
+    try {
+      // Step 1: Inject content
+      console.log('📝 Step 1: Generating HTML content');
+      const htmlContent = generateHtmlForAllSavedContent(filteredContent);
+      element.innerHTML = htmlContent;
+      console.log('✅ HTML content injected, length:', htmlContent.length);
+
+      // Step 2: Style for visibility (with debugging option)
+      console.log('👁️ Step 2: Making element visible for rendering');
+      
+      if (debugMode) {
+        // DEBUG MODE: Make visible on screen for inspection
+        Object.assign(element.style, {
+          display: 'block',
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '800px',
+          backgroundColor: '#ffffff',
+          zIndex: '9999',
+          opacity: '1',
+          visibility: 'visible',
+          overflow: 'visible',
+          border: '3px solid red',
+          maxHeight: '80vh',
+          overflowY: 'auto',
+          boxShadow: '0 0 20px rgba(0,0,0,0.5)',
+        });
+        
+        toast.success('Debug mode: Content is now visible on screen. Check if it looks correct!', { 
+          id: loadingToastId,
+          duration: 5000 
+        });
+        
+        // Wait longer in debug mode for manual inspection
+        console.log('🐛 DEBUG MODE: Element is now visible on screen for 10 seconds');
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        
+      } else {
+        // NORMAL MODE: Off-screen but visible to renderer
+        Object.assign(element.style, {
+          display: 'block',
+          position: 'absolute',
+          top: '0',
+          left: '0',
+          width: '800px',
+          backgroundColor: '#ffffff',
+          zIndex: '9999',
+          opacity: '1',
+          visibility: 'visible',
+          pointerEvents: 'none',
+          overflow: 'visible',
+        });
+      }
+
+      // Step 3: Wait for DOM & Images (increased delays)
+      console.log('⏳ Step 3: Waiting for DOM to settle (2000ms)');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      console.log('🖼️ Step 4: Waiting for images to load');
+      await waitForImagesToLoad(element);
+      
+      console.log('⏳ Step 5: Final wait before PDF generation (1000ms)');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Step 4: Generate PDF
+      console.log('📄 Step 6: Starting PDF generation');
+      toast.loading('Generating PDF...', { id: loadingToastId });
+      
+      await html2pdf()
+        .set({
+          margin: [0.5, 0.5, 0.5, 0.5],
+          filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#fff',
+            logging: true, // Enable logging for debugging
+            allowTaint: false,
+            foreignObjectRendering: true,
+          },
+          jsPDF: {
+            unit: 'in',
+            format: 'a4',
+            orientation: 'portrait',
+          },
+          pagebreak: {
+            mode: ['css', 'legacy'],
+            avoid: ['.avoid-break', 'img'],
+          }
+        })
+        .from(element)
+        .save();
+
+      console.log('✅ PDF generation completed successfully');
+      toast.success('PDF downloaded successfully!', { id: loadingToastId });
+      
+      if (!debugMode) {
+        onClose();
+      }
+
+    } catch (err) {
+      console.error('❌ PDF generation error:', err);
+      toast.error(`PDF generation failed: ${err instanceof Error ? err.message : 'Unknown error'}`, { 
+        id: loadingToastId 
+      });
+    } finally {
+      // Step 5: Reset (unless in debug mode)
+      if (!debugMode) {
+        console.log('🧹 Step 7: Cleaning up');
+        setIsGeneratingPdf(false);
+        element.innerHTML = '';
+        Object.assign(element.style, {
+          display: 'none',
+          position: 'fixed',
+          left: '-9999px',
+          top: '-9999px',
+          opacity: '0',
+          zIndex: '-1',
+          visibility: 'hidden',
+        });
+      } else {
+        console.log('🐛 DEBUG MODE: Leaving element visible for inspection');
+        setIsGeneratingPdf(false);
+      }
+    }
+  };
 
   const handleCloseModal = () => {
     if (!isGeneratingPdf) {
+      // Clean up debug mode if active
+      if (debugMode && hiddenDivRef.current) {
+        hiddenDivRef.current.innerHTML = '';
+        Object.assign(hiddenDivRef.current.style, {
+          display: 'none',
+          position: 'fixed',
+          left: '-9999px',
+          top: '-9999px',
+          opacity: '0',
+          zIndex: '-1',
+          visibility: 'hidden',
+        });
+      }
+      
       onClose();
       // Reset state when modal is closed
       setSelectedOption('all');
       setCustomCount('');
+      setDebugMode(false);
     }
   };
 
@@ -283,16 +351,52 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
                       </p>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleCloseModal}
-                    disabled={isGeneratingPdf}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <X size={20} />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {/* Debug Mode Toggle */}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDebugMode(!debugMode)}
+                      disabled={isGeneratingPdf}
+                      className={`p-2 rounded-lg transition-colors ${
+                        debugMode 
+                          ? 'bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50 text-yellow-700 dark:text-yellow-400' 
+                          : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                      title={debugMode ? 'Disable debug mode' : 'Enable debug mode (shows content on screen)'}
+                    >
+                      {debugMode ? <Eye size={16} /> : <EyeOff size={16} />}
+                    </Button>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleCloseModal}
+                      disabled={isGeneratingPdf}
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <X size={20} />
+                    </Button>
+                  </div>
                 </div>
+
+                {/* Debug Mode Notice */}
+                {debugMode && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-700 rounded-xl"
+                  >
+                    <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+                      <Eye className="h-5 w-5" />
+                      <span className="font-semibold">Debug Mode Enabled</span>
+                    </div>
+                    <p className="text-yellow-700 dark:text-yellow-300 text-sm mt-1">
+                      The content will be displayed on screen for 10 seconds before PDF generation. 
+                      Use this to verify the content looks correct before generating the PDF.
+                    </p>
+                  </motion.div>
+                )}
                 
                 {savedContent.length === 0 ? (
                   <motion.div 
@@ -431,6 +535,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
                         <FileText className="h-4 w-4" />
                         <p>
                           The PDF will include all content, images, quiz questions, and social media posts for the selected items.
+                          {debugMode && ' Debug mode will show content on screen first.'}
                         </p>
                       </div>
                     </div>
