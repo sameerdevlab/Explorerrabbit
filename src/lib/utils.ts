@@ -115,14 +115,14 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
   let html = `
     <div style="margin-bottom: 20px; page-break-after: auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
       <!-- Title Section -->
-      <div class="avoid-break" style="border-bottom: 3px solid #8b5cf6; padding-bottom: 12px; margin-bottom: 16px; page-break-inside: avoid; page-break-after: avoid;">
+      <div class="avoid-break" style="border-bottom: 3px solid #8b5cf6; padding-bottom: 12px; margin-bottom: 16px; page-break-inside: avoid;">
         <h1 style="color: #1f2937; font-size: 26px; font-weight: bold; margin: 0 0 6px 0; line-height: 1.2;">${item.title}</h1>
         <p style="color: #6b7280; font-size: 13px; margin: 0; font-style: italic;">Created on ${formatDate(item.created_at)}</p>
       </div>
 
       <!-- Generated Text Content -->
       <div class="avoid-break" style="margin-bottom: 18px; page-break-inside: avoid;">
-        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #ec4899; padding-left: 10px; page-break-after: avoid;">Content</h2>
+        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #ec4899; padding-left: 10px;">Content</h2>
         <div style="line-height: 1.5; color: #374151; font-size: 15px; text-align: justify;">
           ${item.generated_text.split('\n').map(paragraph => 
             paragraph.trim() ? `<p style="margin: 0 0 10px 0; page-break-inside: avoid;">${paragraph}</p>` : ''
@@ -135,7 +135,7 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
   if (item.generated_images && item.generated_images.length > 0) {
     html += `
       <div class="avoid-break" style="margin-bottom: 18px; page-break-inside: avoid;">
-        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #3b82f6; padding-left: 10px; page-break-after: avoid;">Generated Images</h2>
+        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #3b82f6; padding-left: 10px;">Generated Images</h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
     `;
     
@@ -160,13 +160,13 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
   if (item.generated_mcqs && item.generated_mcqs.length > 0) {
     html += `
       <div class="avoid-break" style="margin-bottom: 18px; page-break-inside: avoid;">
-        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #10b981; padding-left: 10px; page-break-after: avoid;">Quiz Questions</h2>
+        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #10b981; padding-left: 10px;">Quiz Questions</h2>
     `;
     
     item.generated_mcqs.forEach((mcq, index) => {
       html += `
         <div class="mcq-question-block avoid-break" style="margin-bottom: 16px; border: 2px solid #e5e7eb; border-radius: 10px; padding: 14px; background-color: #f9fafb; page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid;">
-          <h3 style="color: #1f2937; font-size: 16px; font-weight: 600; margin: 0 0 10px 0; page-break-after: avoid;">Question ${index + 1}</h3>
+          <h3 style="color: #1f2937; font-size: 16px; font-weight: 600; margin: 0 0 10px 0;">Question ${index + 1}</h3>
           <p style="color: #374151; font-size: 15px; margin: 0 0 10px 0; font-weight: 500; page-break-inside: avoid;">${mcq.question}</p>
           <div style="margin-left: 12px; page-break-inside: avoid;">
       `;
@@ -210,7 +210,7 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
   if (item.generated_social_media_post && item.generated_social_media_post.trim()) {
     html += `
       <div class="avoid-break social-media-post" style="margin-bottom: 18px; page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid;">
-        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #f59e0b; padding-left: 10px; page-break-after: avoid;">Social Media Post</h2>
+        <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #f59e0b; padding-left: 10px;">Social Media Post</h2>
         <div class="avoid-break" style="border: 2px solid #e5e7eb; border-radius: 10px; padding: 14px; background-color: #fffbeb; border-left: 4px solid #f59e0b; page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid;">
           <div style="color: #92400e; font-size: 15px; line-height: 1.4; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-line; page-break-inside: avoid;">${item.generated_social_media_post}</div>
         </div>
