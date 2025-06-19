@@ -25,7 +25,7 @@ const HomePage: React.FC = () => {
     isGeneratingImages,
     isGeneratingMcqs,
     isProcessingPastedText,
-    loading: contentLoading
+    loading: contentLoading,
     saveContent,
     isSaving
   } = useContentStore();
