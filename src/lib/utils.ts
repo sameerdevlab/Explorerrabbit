@@ -251,10 +251,10 @@ export function generateHtmlForAllSavedContent(savedContent: SavedContentItem[])
 
   savedContent.forEach((item, index) => {
     html += generateHtmlForSavedContentItem(item); // Your existing item rendering function
-
-    if (index < savedContent.length - 1) {
-      html += `<div style="height: 10px;"></div>`;
-    }
+    html += `<div style="height: 10px;"></div>`;
+    // if (index < savedContent.length - 1) {
+    //   html += `<div style="height: 10px;"></div>`;
+    // }
   });
 
   html += `</div>`;
