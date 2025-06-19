@@ -126,7 +126,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   }
 
   const filteredContent = getFilteredContent();
-
   if (filteredContent.length === 0) {
     toast.error('No content to download');
     return;
@@ -143,46 +142,35 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   try {
     const element = hiddenDivRef.current;
 
-    // Generate the HTML
-    const htmlContent = generateHtmlForAllSavedContent(filteredContent);
+    // ✅ Generate HTML with proper breaks (only before next item, not after last one)
+    const htmlContent = generateHtmlForAllSavedContent(filteredContent); // You must apply break only on non-last items in this function
     element.innerHTML = htmlContent;
 
-    // Save original styles
-    const originalStyle = {
-      position: element.style.position,
-      left: element.style.left,
-      top: element.style.top,
-      width: element.style.width,
-      height: element.style.height,
-      opacity: element.style.opacity,
-      zIndex: element.style.zIndex,
-      display: element.style.display,
-      pointerEvents: element.style.pointerEvents,
-      backgroundColor: element.style.backgroundColor,
-      overflow: element.style.overflow,
-      visibility: element.style.visibility,
-    };
+    // ✅ Save original styles
+    const originalStyle = { ...element.style };
 
-    // Make element visible for capture
-    element.style.position = 'absolute';
-    element.style.left = '0';
-    element.style.top = '0';
-    element.style.width = '800px';
-    element.style.opacity = '1';
-    element.style.zIndex = '9999';
-    element.style.display = 'block';
-    element.style.pointerEvents = 'auto';
-    element.style.backgroundColor = '#ffffff';
-    element.style.overflow = 'visible';
-    element.style.visibility = 'visible';
-    element.style.height = 'auto'; // ✅ KEY LINE
+    // ✅ Apply temporary visible styles for accurate rendering
+    Object.assign(element.style, {
+      position: 'absolute',
+      left: '0',
+      top: '0',
+      width: '800px',
+      opacity: '1',
+      zIndex: '9999',
+      display: 'block',
+      pointerEvents: 'auto',
+      backgroundColor: '#ffffff',
+      overflow: 'visible',
+      visibility: 'visible',
+      height: 'auto',
+    });
 
-    // Wait for layout and image loads
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    await waitForImagesToLoad(element);
+    // ✅ Wait for DOM + images to settle
     await new Promise(resolve => setTimeout(resolve, 1500));
+    await waitForImagesToLoad(element);
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // ✅ Let html2canvas auto-calculate dimensions
+    // ✅ PDF config (let html2canvas handle full height — do NOT set height manually)
     const options = {
       margin: [0.5, 0.5, 0.5, 0.5],
       filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
@@ -195,12 +183,8 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        scrollX: 0,
-        scrollY: 0,
         logging: false,
         removeContainer: true,
-        // ❌ DO NOT set width/height manually
-        // ✅ Let html2canvas auto-resolve full scroll height
       },
       jsPDF: {
         unit: 'in',
@@ -210,16 +194,18 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       },
       pagebreak: {
         mode: ['css', 'legacy'],
-        avoid: ['img', '.avoid-break', '.social-media-post', '.mcq-question-block']
-      }
+        avoid: ['img', '.avoid-break', '.social-media-post', '.mcq-question-block'],
+      },
     };
 
+    // ✅ Generate PDF in animation frame
     await new Promise(resolve => {
       requestAnimationFrame(() => {
         html2pdf().from(element).set(options).save().then(resolve);
       });
     });
 
+    // ✅ Restore original style
     Object.assign(element.style, originalStyle);
 
     toast.success(`PDF downloaded successfully with ${filteredContent.length} items!`, {
@@ -230,23 +216,23 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
 
   } catch (error) {
     console.error('Error generating PDF:', error);
-    toast.error('Failed to generate PDF. Please try again.', {
-      id: loadingToastId,
-    });
+    toast.error('Failed to generate PDF. Please try again.', { id: loadingToastId });
 
-    // Ensure element is hidden again
+    // Re-hide the element if something fails
     const element = hiddenDivRef.current;
     if (element) {
-      element.style.position = 'fixed';
-      element.style.left = '-9999px';
-      element.style.top = '-9999px';
-      element.style.width = '800px';
-      element.style.backgroundColor = '#ffffff';
-      element.style.opacity = '0';
-      element.style.zIndex = '-1';
-      element.style.pointerEvents = 'none';
-      element.style.display = 'none';
-      element.style.visibility = 'hidden';
+      Object.assign(element.style, {
+        position: 'fixed',
+        left: '-9999px',
+        top: '-9999px',
+        width: '800px',
+        backgroundColor: '#ffffff',
+        opacity: '0',
+        zIndex: '-1',
+        pointerEvents: 'none',
+        display: 'none',
+        visibility: 'hidden',
+      });
     }
   } finally {
     setIsGeneratingPdf(false);
@@ -255,6 +241,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     }
   }
 };
+
 
   const handleCloseModal = () => {
     if (!isGeneratingPdf) {
