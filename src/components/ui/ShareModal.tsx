@@ -126,7 +126,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
             className="relative w-full max-w-md max-h-[90vh] overflow-y-auto z-[9999]"
           >
             <Card className="bg-white dark:bg-gray-800 shadow-2xl">
-              <CardContent className="p-6">
+              <CardContent className="px-10 py-6">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
