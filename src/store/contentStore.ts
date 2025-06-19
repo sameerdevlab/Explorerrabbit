@@ -43,6 +43,7 @@ const useContentStore = create<ContentState & {
   saveContent: () => Promise<void>;
   loadSavedContent: () => Promise<void>;
   loadSavedContentItem: (item: SavedContentItem) => void;
+  deleteSavedContent: (id: string) => Promise<void>;
 }>((set, get) => ({
   mode: 'generate',
   prompt: '',
@@ -72,6 +73,7 @@ const useContentStore = create<ContentState & {
   isSaving: false,
   savedContent: [],
   isLoadingSavedContent: false,
+  isDeletingContent: false,
   
   setMode: (mode) => set({ mode }),
   setPrompt: (prompt) => set({ prompt }),
@@ -557,6 +559,36 @@ const useContentStore = create<ContentState & {
     });
     
     toast.success(`Loaded: ${item.title}`);
+  },
+  
+  deleteSavedContent: async (id: string) => {
+    // Check if user is authenticated
+    const { user } = useAuthStore.getState();
+    if (!user) {
+      toast.error('Please sign in to delete content');
+      return;
+    }
+    
+    try {
+      set({ isDeletingContent: true });
+      
+      // Call the delete-saved-content edge function
+      await callEdgeFunction('delete-saved-content', { id });
+      
+      // Remove the deleted content from the local state
+      const currentSavedContent = get().savedContent;
+      set({
+        savedContent: currentSavedContent.filter(item => item.id !== id),
+        isDeletingContent: false,
+      });
+      
+      toast.success('Content deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting content:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete content';
+      set({ isDeletingContent: false });
+      toast.error(errorMessage);
+    }
   },
 }));
 

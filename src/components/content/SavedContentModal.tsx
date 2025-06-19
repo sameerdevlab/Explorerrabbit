@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, FileText, Calendar, Loader2, Bookmark } from 'lucide-react';
+import { X, FileText, Calendar, Loader2, Bookmark, Trash2, AlertTriangle } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
 import useContentStore from '../../store/contentStore';
@@ -15,7 +15,16 @@ const SavedContentModal: React.FC<SavedContentModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { savedContent, isLoadingSavedContent, loadSavedContent, loadSavedContentItem } = useContentStore();
+  const { 
+    savedContent, 
+    isLoadingSavedContent, 
+    isDeletingContent,
+    loadSavedContent, 
+    loadSavedContentItem,
+    deleteSavedContent 
+  } = useContentStore();
+  
+  const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
 
   React.useEffect(() => {
     if (isOpen) {
@@ -26,6 +35,29 @@ const SavedContentModal: React.FC<SavedContentModalProps> = ({
   const handleLoadContent = (item: SavedContentItem) => {
     loadSavedContentItem(item);
     onClose();
+  };
+
+  const handleDeleteContent = async (item: SavedContentItem, event: React.MouseEvent) => {
+    // Prevent the card click event from firing
+    event.stopPropagation();
+    
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${item.title}"?\n\nThis action cannot be undone.`
+    );
+    
+    if (!confirmed) {
+      return;
+    }
+    
+    try {
+      setDeletingItemId(item.id);
+      await deleteSavedContent(item.id);
+    } catch (error) {
+      console.error('Error deleting content:', error);
+    } finally {
+      setDeletingItemId(null);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -146,15 +178,32 @@ const SavedContentModal: React.FC<SavedContentModalProps> = ({
                         transition={{ delay: index * 0.1 }}
                       >
                         <Card
-                          className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] border-2 border-gray-200 dark:border-gray-600 bg-gradient-to-br from-white to-purple-50/30 dark:from-gray-800 dark:to-purple-900/20"
+                          className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] border-2 border-gray-200 dark:border-gray-600 bg-gradient-to-br from-white to-purple-50/30 dark:from-gray-800 dark:to-purple-900/20 relative group"
                           onClick={() => handleLoadContent(item)}
                         >
                           <CardContent className="p-4">
+                            {/* Delete Button */}
+                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => handleDeleteContent(item, e)}
+                                disabled={deletingItemId === item.id || isDeletingContent}
+                                className="p-2 h-8 w-8 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-full shadow-md"
+                              >
+                                {deletingItemId === item.id ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-3 w-3" />
+                                )}
+                              </Button>
+                            </div>
+                            
                             <div className="flex items-start gap-3">
                               <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700">
                                 <FileText className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                               </div>
-                              <div className="flex-1 min-w-0">
+                              <div className="flex-1 min-w-0 pr-8">
                                 <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2 truncate">
                                   {item.title}
                                 </h3>
@@ -163,7 +212,7 @@ const SavedContentModal: React.FC<SavedContentModalProps> = ({
                                     <Calendar className="h-3 w-3" />
                                     <span>{formatDate(item.created_at)}</span>
                                   </div>
-                                  <div className="flex gap-2 text-xs">
+                                  <div className="flex gap-2 text-xs flex-wrap">
                                     {item.generated_images.length > 0 && (
                                       <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded">
                                         {item.generated_images.length} images
@@ -195,9 +244,12 @@ const SavedContentModal: React.FC<SavedContentModalProps> = ({
                 
                 {/* Footer */}
                 <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                    Click on any saved content to load it back into the editor
-                  </p>
+                  <div className="flex items-center gap-2 justify-center text-sm text-gray-500 dark:text-gray-400">
+                    <AlertTriangle className="h-4 w-4" />
+                    <p>
+                      Click on any saved content to load it back into the editor. Hover over items to see the delete option.
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>

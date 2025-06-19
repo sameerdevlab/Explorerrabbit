@@ -71,6 +71,7 @@ export interface ContentState {
   isSaving: boolean;
   savedContent: SavedContentItem[];
   isLoadingSavedContent: boolean;
+  isDeletingContent: boolean;
 }
 
 export interface AuthState {
