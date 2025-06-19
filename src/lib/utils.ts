@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { ImageData } from '../types';
+import { ImageData, SavedContentItem } from '../types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -97,4 +97,172 @@ export function generateImagePrompt(text: string): string {
 
 export function generateRandomId(): string {
   return Math.random().toString(36).substring(2, 9);
+}
+
+// PDF Generation Utilities
+export function generateHtmlForSavedContentItem(item: SavedContentItem): string {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  let html = `
+    <div style="margin-bottom: 40px; page-break-after: auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+      <!-- Title Section -->
+      <div style="border-bottom: 3px solid #8b5cf6; padding-bottom: 15px; margin-bottom: 25px;">
+        <h1 style="color: #1f2937; font-size: 28px; font-weight: bold; margin: 0 0 8px 0; line-height: 1.2;">${item.title}</h1>
+        <p style="color: #6b7280; font-size: 14px; margin: 0; font-style: italic;">Created on ${formatDate(item.created_at)}</p>
+      </div>
+
+      <!-- Generated Text Content -->
+      <div style="margin-bottom: 30px;">
+        <h2 style="color: #374151; font-size: 20px; font-weight: 600; margin: 0 0 15px 0; border-left: 4px solid #ec4899; padding-left: 12px;">Content</h2>
+        <div style="line-height: 1.8; color: #374151; font-size: 16px; text-align: justify;">
+          ${item.generated_text.split('\n').map(paragraph => 
+            paragraph.trim() ? `<p style="margin: 0 0 16px 0;">${paragraph}</p>` : ''
+          ).join('')}
+        </div>
+      </div>
+  `;
+
+  // Add Images Section
+  if (item.generated_images && item.generated_images.length > 0) {
+    html += `
+      <div style="margin-bottom: 30px;">
+        <h2 style="color: #374151; font-size: 20px; font-weight: 600; margin: 0 0 15px 0; border-left: 4px solid #3b82f6; padding-left: 12px;">Generated Images</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+    `;
+    
+    item.generated_images.forEach((image, index) => {
+      html += `
+        <div style="border: 2px solid #e5e7eb; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+          <img src="${image.url}" alt="${image.alt}" style="width: 100%; height: 200px; object-fit: cover; display: block;" />
+          <div style="padding: 12px; background-color: #f9fafb;">
+            <p style="margin: 0; font-size: 14px; color: #6b7280; font-style: italic;">${image.alt}</p>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += `
+        </div>
+      </div>
+    `;
+  }
+
+  // Add MCQs Section
+  if (item.generated_mcqs && item.generated_mcqs.length > 0) {
+    html += `
+      <div style="margin-bottom: 30px;">
+        <h2 style="color: #374151; font-size: 20px; font-weight: 600; margin: 0 0 15px 0; border-left: 4px solid #10b981; padding-left: 12px;">Quiz Questions</h2>
+    `;
+    
+    item.generated_mcqs.forEach((mcq, index) => {
+      html += `
+        <div style="margin-bottom: 25px; border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; background-color: #f9fafb;">
+          <h3 style="color: #1f2937; font-size: 18px; font-weight: 600; margin: 0 0 15px 0;">Question ${index + 1}</h3>
+          <p style="color: #374151; font-size: 16px; margin: 0 0 15px 0; font-weight: 500;">${mcq.question}</p>
+          <div style="margin-left: 20px;">
+      `;
+      
+      mcq.options.forEach((option, optionIndex) => {
+        const isCorrect = optionIndex === mcq.correctAnswer;
+        const optionLetter = String.fromCharCode(65 + optionIndex);
+        
+        html += `
+          <div style="margin-bottom: 8px; display: flex; align-items: center;">
+            <span style="
+              display: inline-block; 
+              width: 24px; 
+              height: 24px; 
+              border-radius: 50%; 
+              text-align: center; 
+              line-height: 24px; 
+              font-size: 12px; 
+              font-weight: bold; 
+              margin-right: 10px;
+              ${isCorrect ? 
+                'background-color: #10b981; color: white;' : 
+                'background-color: #e5e7eb; color: #6b7280;'
+              }
+            ">${isCorrect ? '✓' : optionLetter}</span>
+            <span style="color: ${isCorrect ? '#059669' : '#374151'}; font-weight: ${isCorrect ? '600' : '400'};">${option}</span>
+          </div>
+        `;
+      });
+      
+      html += `
+          </div>
+        </div>
+      `;
+    });
+    
+    html += `</div>`;
+  }
+
+  // Add Social Media Post Section
+  if (item.generated_social_media_post && item.generated_social_media_post.trim()) {
+    html += `
+      <div style="margin-bottom: 30px;">
+        <h2 style="color: #374151; font-size: 20px; font-weight: 600; margin: 0 0 15px 0; border-left: 4px solid #f59e0b; padding-left: 12px;">Social Media Post</h2>
+        <div style="border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; background-color: #fffbeb; border-left: 4px solid #f59e0b;">
+          <div style="color: #92400e; font-size: 16px; line-height: 1.6; white-space: pre-wrap;">${item.generated_social_media_post}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+export function generateHtmlForAllSavedContent(savedContent: SavedContentItem[]): string {
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  let html = `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px 20px;">
+      <!-- Main Header -->
+      <div style="text-align: center; margin-bottom: 50px; border-bottom: 4px solid #8b5cf6; padding-bottom: 30px;">
+        <h1 style="color: #1f2937; font-size: 36px; font-weight: bold; margin: 0 0 10px 0; background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+          My Saved Content Collection
+        </h1>
+        <p style="color: #6b7280; font-size: 18px; margin: 0; font-style: italic;">Generated on ${currentDate}</p>
+        <p style="color: #9ca3af; font-size: 14px; margin: 10px 0 0 0;">Total Items: ${savedContent.length}</p>
+      </div>
+
+      <!-- Content Items -->
+      <div>
+  `;
+
+  savedContent.forEach((item, index) => {
+    html += generateHtmlForSavedContentItem(item);
+    
+    // Add page break after each item except the last one
+    if (index < savedContent.length - 1) {
+      html += `<div style="page-break-before: always;"></div>`;
+    }
+  });
+
+  html += `
+      </div>
+      
+      <!-- Footer -->
+      <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e5e7eb;">
+        <p style="color: #9ca3af; font-size: 12px; margin: 0;">Generated by Explorer AI Content Generator</p>
+        <p style="color: #9ca3af; font-size: 12px; margin: 5px 0 0 0;">© ${new Date().getFullYear()} - All rights reserved</p>
+      </div>
+    </div>
+  `;
+
+  return html;
 }
