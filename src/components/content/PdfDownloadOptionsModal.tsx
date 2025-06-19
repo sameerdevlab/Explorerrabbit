@@ -178,11 +178,14 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       element.style.overflow = 'visible';
       element.style.visibility = 'visible';
 
-      // Wait for the DOM to update and styles to apply
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // INCREASED DELAY: Wait longer for the DOM to update and styles to apply
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Wait for all images to load
       await waitForImagesToLoad(element);
+
+      // ADDITIONAL DELAY: Give extra time for complex text layouts and social media posts
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
       // Get the actual rendered dimensions
       const elementWidth = Math.max(element.scrollWidth, 800);
@@ -222,7 +225,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
           mode: ['avoid-all', 'css', 'legacy'],
           before: '.page-break-before',
           after: '.page-break-after',
-          avoid: ['img', '.page-break-avoid', '.avoid-break']
+          avoid: ['img', '.page-break-avoid', '.avoid-break', '.social-media-post']
         }
       };
 

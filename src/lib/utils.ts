@@ -206,13 +206,13 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
     html += `</div>`;
   }
 
-  // Add Social Media Post Section - Fixed to ensure it appears in PDF
+  // Add Social Media Post Section - Enhanced with avoid-break class and improved styling
   if (item.generated_social_media_post && item.generated_social_media_post.trim()) {
     html += `
-      <div style="margin-bottom: 30px; page-break-inside: avoid;">
+      <div class="avoid-break social-media-post" style="margin-bottom: 30px; page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid;">
         <h2 style="color: #374151; font-size: 20px; font-weight: 600; margin: 0 0 15px 0; border-left: 4px solid #f59e0b; padding-left: 12px; page-break-after: avoid;">Social Media Post</h2>
-        <div style="border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; background-color: #fffbeb; border-left: 4px solid #f59e0b; page-break-inside: avoid;">
-          <div style="color: #92400e; font-size: 16px; line-height: 1.6; white-space: pre-wrap; page-break-inside: avoid;">${item.generated_social_media_post}</div>
+        <div class="avoid-break" style="border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; background-color: #fffbeb; border-left: 4px solid #f59e0b; page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid;">
+          <div style="color: #92400e; font-size: 16px; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-line; page-break-inside: avoid;">${item.generated_social_media_post}</div>
         </div>
       </div>
     `;
