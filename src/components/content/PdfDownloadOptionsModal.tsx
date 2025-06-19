@@ -200,7 +200,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
           quality: 0.95 
         },
         html2canvas: { 
-          scale: 1.5,
+          scale: 2,
           useCORS: true,
           allowTaint: true,
           backgroundColor: '#ffffff',
@@ -222,10 +222,10 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
           compress: true,
         },
         pagebreak: { 
-          mode: ['avoid-all', 'css', 'legacy'],
+          mode: ['css', 'legacy'],
           before: '.page-break-before',
           after: '.page-break-after',
-          avoid: ['img', '.page-break-avoid', '.avoid-break', '.social-media-post']
+          avoid: ['img', '.avoid-break', '.social-media-post', '.mcq-question-block']
         }
       };
 
@@ -374,7 +374,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
                           transition={{ delay: index * 0.1 }}
                         >
                           <label
-                            className={`flex flex-wrap gap-2 p-2 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md ${
+                            className={`flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md ${
                               selectedOption === option.value
                                 ? 'border-red-500 bg-red-50 dark:bg-red-900/20 shadow-md'
                                 : option.disabled
@@ -382,31 +382,33 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
                                 : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-red-300 dark:hover:border-red-600'
                             }`}
                           >
-                            <input
-                              type="radio"
-                              name="downloadOption"
-                              value={option.value}
-                              checked={selectedOption === option.value}
-                              onChange={(e) => setSelectedOption(e.target.value as DownloadOption)}
-                              disabled={option.disabled}
-                              className="mt-1 w-4 h-4 text-red-600 border-gray-300 focus:ring-red-500 focus:ring-2"
-                            />
-                            <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-2">
-                                <span className="text-2xl">{option.icon}</span>
-                                <h4 className="font-semibold text-gray-800 dark:text-gray-200 text-lg">
-                                  {option.label}
-                                </h4>
-                                {option.count !== null && (
-                                  <span className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 px-2 py-1 rounded-full text-sm font-medium">
-                                    {option.count} items
-                                  </span>
-                                )}
+                            <div className="flex items-start gap-3 mb-2">
+                              <input
+                                type="radio"
+                                name="downloadOption"
+                                value={option.value}
+                                checked={selectedOption === option.value}
+                                onChange={(e) => setSelectedOption(e.target.value as DownloadOption)}
+                                disabled={option.disabled}
+                                className="mt-1 w-4 h-4 text-red-600 border-gray-300 focus:ring-red-500 focus:ring-2"
+                              />
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-1">
+                                  <span className="text-2xl">{option.icon}</span>
+                                  <h4 className="font-semibold text-gray-800 dark:text-gray-200 text-lg">
+                                    {option.label}
+                                  </h4>
+                                  {option.count !== null && (
+                                    <span className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 px-2 py-1 rounded-full text-sm font-medium">
+                                      {option.count} items
+                                    </span>
+                                  )}
+                                </div>
                               </div>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                                {option.description}
-                              </p>
                             </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed ml-7">
+                              {option.description}
+                            </p>
                           </label>
                         </motion.div>
                       ))}
