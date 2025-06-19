@@ -179,11 +179,13 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
           zIndex: '9999',
           opacity: '1',
           visibility: 'visible',
-          overflow: 'visible',
+          overflow: 'auto', // Changed from 'visible' to 'auto' to enable scrolling
           border: '3px solid red',
           maxHeight: '80vh',
           overflowY: 'auto',
           boxShadow: '0 0 20px rgba(0,0,0,0.5)',
+          pointerEvents: 'auto', // Enable mouse events for interaction
+          padding: '20px', // Add padding for better readability
         });
         
         toast.success('Debug mode: Content is now visible on screen. Check if it looks correct!', { 
@@ -393,7 +395,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
                     </div>
                     <p className="text-yellow-700 dark:text-yellow-300 text-sm mt-1">
                       The content will be displayed on screen for 10 seconds before PDF generation. 
-                      Use this to verify the content looks correct before generating the PDF.
+                      You can scroll and inspect the content. Use this to verify everything looks correct.
                     </p>
                   </motion.div>
                 )}
