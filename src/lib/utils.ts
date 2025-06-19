@@ -253,7 +253,7 @@ export function generateHtmlForAllSavedContent(savedContent: SavedContentItem[])
     html += generateHtmlForSavedContentItem(item); // Your existing item rendering function
 
     if (index < savedContent.length - 1) {
-      html += `<div style="height: 4px;"></div>`;
+      html += `<div style="height: 10px;"></div>`;
     }
   });
 
