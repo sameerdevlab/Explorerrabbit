@@ -120,149 +120,141 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   };
 
   const handleDownloadPdf = async () => {
-    if (!isValidSelection()) {
-      toast.error('Please select a valid download option');
-      return;
-    }
-  
-    const filteredContent = getFilteredContent();
-  
-    if (filteredContent.length === 0) {
-      toast.error('No content to download');
-      return;
-    }
-  
-    if (!hiddenDivRef.current) {
-      toast.error('PDF generation element not found');
-      return;
-    }
-  
-    setIsGeneratingPdf(true);
-    const loadingToastId = toast.loading(`Generating PDF with ${filteredContent.length} items...`);
-  
-    try {
-      const element = hiddenDivRef.current;
-  
-      // Generate the final HTML content
-      const htmlContent = generateHtmlForAllSavedContent(filteredContent);
-      element.innerHTML = htmlContent;
-  
-      // Save original styles to restore later
-      const originalStyle = {
-        position: element.style.position,
-        left: element.style.left,
-        top: element.style.top,
-        width: element.style.width,
-        height: element.style.height,
-        opacity: element.style.opacity,
-        zIndex: element.style.zIndex,
-        display: element.style.display,
-        pointerEvents: element.style.pointerEvents,
-        backgroundColor: element.style.backgroundColor,
-        overflow: element.style.overflow,
-        visibility: element.style.visibility,
-      };
-  
-      // Make element visible for rendering
-      element.style.position = 'absolute';
-      element.style.left = '0';
-      element.style.top = '0';
-      element.style.width = '800px';
-      element.style.opacity = '1';
-      element.style.zIndex = '9999';
-      element.style.display = 'block';
-      element.style.pointerEvents = 'auto';
-      element.style.backgroundColor = '#ffffff';
-      element.style.overflow = 'visible';
-      element.style.visibility = 'visible';
-  
-      // Allow DOM and fonts/images to settle
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      await waitForImagesToLoad(element);
-      await new Promise(resolve => setTimeout(resolve, 1500));
-  
-      // Scroll to top and capture full height
-      element.scrollTop = 0;
-      element.scrollLeft = 0;
-      element.style.minHeight = `${element.scrollHeight}px`;
-  
-      const elementWidth = Math.max(element.scrollWidth, 800);
-      const elementHeight = Math.max(element.scrollHeight, 1000);
-  
-      const options = {
-        margin: [0.5, 0.5, 0.5, 0.5],
-        filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
-        image: {
-          type: 'jpeg',
-          quality: 0.95,
-        },
-        html2canvas: {
+  if (!isValidSelection()) {
+    toast.error('Please select a valid download option');
+    return;
+  }
+
+  const filteredContent = getFilteredContent();
+
+  if (filteredContent.length === 0) {
+    toast.error('No content to download');
+    return;
+  }
+
+  if (!hiddenDivRef.current) {
+    toast.error('PDF generation element not found');
+    return;
+  }
+
+  setIsGeneratingPdf(true);
+  const loadingToastId = toast.loading(`Generating PDF with ${filteredContent.length} items...`);
+
+  try {
+    const element = hiddenDivRef.current;
+
+    // Generate the HTML
+    const htmlContent = generateHtmlForAllSavedContent(filteredContent);
+    element.innerHTML = htmlContent;
+
+    // Save original styles
+    const originalStyle = {
+      position: element.style.position,
+      left: element.style.left,
+      top: element.style.top,
+      width: element.style.width,
+      height: element.style.height,
+      opacity: element.style.opacity,
+      zIndex: element.style.zIndex,
+      display: element.style.display,
+      pointerEvents: element.style.pointerEvents,
+      backgroundColor: element.style.backgroundColor,
+      overflow: element.style.overflow,
+      visibility: element.style.visibility,
+    };
+
+    // Make element visible for capture
+    element.style.position = 'absolute';
+    element.style.left = '0';
+    element.style.top = '0';
+    element.style.width = '800px';
+    element.style.opacity = '1';
+    element.style.zIndex = '9999';
+    element.style.display = 'block';
+    element.style.pointerEvents = 'auto';
+    element.style.backgroundColor = '#ffffff';
+    element.style.overflow = 'visible';
+    element.style.visibility = 'visible';
+    element.style.height = 'auto'; // ✅ KEY LINE
+
+    // Wait for layout and image loads
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    await waitForImagesToLoad(element);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // ✅ Let html2canvas auto-calculate dimensions
+    const options = {
+      margin: [0.5, 0.5, 0.5, 0.5],
+      filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
+      image: {
+        type: 'jpeg',
+        quality: 0.95,
+      },
+      html2canvas: {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         scrollX: 0,
         scrollY: 0,
-        windowWidth: document.body.scrollWidth,
-        windowHeight: document.body.scrollHeight,
-        },
-        jsPDF: {
-          unit: 'in',
-          format: 'a4',
-          orientation: 'portrait',
-          compress: true,
-        },
-        pagebreak: {
-          mode: ['css', 'legacy'],
-          before: '.page-break-before',
-          after: '.page-break-after',
-          avoid: ['img', '.avoid-break', '.social-media-post', '.mcq-question-block'],
-        }
-      };
-  
-      // Trigger PDF generation inside requestAnimationFrame
-      await new Promise(resolve => {
-        requestAnimationFrame(() => {
-          html2pdf().from(element).set(options).save().then(resolve);
-        });
-      });
-  
-      // Restore original styles
-      Object.assign(element.style, originalStyle);
-  
-      toast.success(`PDF downloaded successfully with ${filteredContent.length} items!`, {
-        id: loadingToastId,
-      });
-  
-      onClose();
-  
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast.error('Failed to generate PDF. Please try again.', {
-        id: loadingToastId,
-      });
-  
-      // Ensure element is hidden in case of error
-      const element = hiddenDivRef.current;
-      if (element) {
-        element.style.position = 'fixed';
-        element.style.left = '-9999px';
-        element.style.top = '-9999px';
-        element.style.width = '800px';
-        element.style.backgroundColor = '#ffffff';
-        element.style.opacity = '0';
-        element.style.zIndex = '-1';
-        element.style.pointerEvents = 'none';
-        element.style.display = 'none';
-        element.style.visibility = 'hidden';
+        logging: false,
+        removeContainer: true,
+        // ❌ DO NOT set width/height manually
+        // ✅ Let html2canvas auto-resolve full scroll height
+      },
+      jsPDF: {
+        unit: 'in',
+        format: 'a4',
+        orientation: 'portrait',
+        compress: true,
+      },
+      pagebreak: {
+        mode: ['css', 'legacy'],
+        avoid: ['img', '.avoid-break', '.social-media-post', '.mcq-question-block']
       }
-    } finally {
-      setIsGeneratingPdf(false);
-      if (hiddenDivRef.current) {
-        hiddenDivRef.current.innerHTML = '';
-      }
+    };
+
+    await new Promise(resolve => {
+      requestAnimationFrame(() => {
+        html2pdf().from(element).set(options).save().then(resolve);
+      });
+    });
+
+    Object.assign(element.style, originalStyle);
+
+    toast.success(`PDF downloaded successfully with ${filteredContent.length} items!`, {
+      id: loadingToastId,
+    });
+
+    onClose();
+
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    toast.error('Failed to generate PDF. Please try again.', {
+      id: loadingToastId,
+    });
+
+    // Ensure element is hidden again
+    const element = hiddenDivRef.current;
+    if (element) {
+      element.style.position = 'fixed';
+      element.style.left = '-9999px';
+      element.style.top = '-9999px';
+      element.style.width = '800px';
+      element.style.backgroundColor = '#ffffff';
+      element.style.opacity = '0';
+      element.style.zIndex = '-1';
+      element.style.pointerEvents = 'none';
+      element.style.display = 'none';
+      element.style.visibility = 'hidden';
     }
-  };
+  } finally {
+    setIsGeneratingPdf(false);
+    if (hiddenDivRef.current) {
+      hiddenDivRef.current.innerHTML = '';
+    }
+  }
+};
 
   const handleCloseModal = () => {
     if (!isGeneratingPdf) {
