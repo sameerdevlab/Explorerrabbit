@@ -370,16 +370,18 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
         </motion.div>
       )}
       
-      {/* Hidden div for PDF generation */}
+      {/* Hidden div for PDF generation - Fixed positioning for proper rendering */}
       <div
         ref={hiddenDivRef}
         style={{
-          position: 'absolute',
-          left: '-9999px',
-          top: '-9999px',
+          position: 'fixed',
+          left: '0',
+          top: '0',
           width: '800px',
           backgroundColor: '#ffffff',
-          visibility: 'hidden',
+          opacity: 0,
+          zIndex: -1,
+          pointerEvents: 'none',
         }}
       />
     </AnimatePresence>
