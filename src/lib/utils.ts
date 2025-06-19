@@ -257,7 +257,7 @@ export function generateHtmlForAllSavedContent(savedContent: SavedContentItem[])
     }
   });
 
-  html += `</div>`;
+  // html += `</div>`;
   return html;
 }
 
