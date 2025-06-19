@@ -137,155 +137,149 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       toast.error('Please select a valid download option');
       return;
     }
-
+  
     const filteredContent = getFilteredContent();
+  
     if (filteredContent.length === 0) {
       toast.error('No content to download');
       return;
     }
-
-    const element = hiddenDivRef.current;
-    if (!element) {
-      toast.error('PDF generation container not found');
+  
+    if (!hiddenDivRef.current) {
+      toast.error('PDF generation element not found');
       return;
     }
-
-    console.log('🚀 Starting PDF generation process');
-    console.log('📄 Content items to include:', filteredContent.length);
-
+  
     setIsGeneratingPdf(true);
-    const loadingToastId = toast.loading('Preparing your PDF...');
-
+    const loadingToastId = toast.loading(Generating PDF with ${filteredContent.length} items...);
+  
     try {
-      // Step 1: Inject content
-      console.log('📝 Step 1: Generating HTML content');
+      const element = hiddenDivRef.current;
+  
+      // Generate the final HTML content
       const htmlContent = generateHtmlForAllSavedContent(filteredContent);
       element.innerHTML = htmlContent;
-      console.log('✅ HTML content injected, length:', htmlContent.length);
-
-      // Step 2: Style for visibility (with debugging option)
-      console.log('👁️ Step 2: Making element visible for rendering');
-      
-      if (debugMode) {
-        // DEBUG MODE: Make visible on screen for inspection
-        Object.assign(element.style, {
-          display: 'block',
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '800px',
-          backgroundColor: '#ffffff',
-          zIndex: '9999',
-          opacity: '1',
-          visibility: 'visible',
-          overflow: 'auto', // Changed from 'visible' to 'auto' to enable scrolling
-          border: '3px solid red',
-          maxHeight: '80vh',
-          overflowY: 'auto',
-          boxShadow: '0 0 20px rgba(0,0,0,0.5)',
-          pointerEvents: 'auto', // Enable mouse events for interaction
-          padding: '20px', // Add padding for better readability
-        });
-        
-        toast.success('Debug mode: Content is now visible on screen. Check if it looks correct!', { 
-          id: loadingToastId,
-          duration: 5000 
-        });
-        
-        // Wait longer in debug mode for manual inspection
-        console.log('🐛 DEBUG MODE: Element is now visible on screen for 10 seconds');
-        await new Promise(resolve => setTimeout(resolve, 10000));
-        
-      } else {
-        // NORMAL MODE: Off-screen but visible to renderer
-        Object.assign(element.style, {
-          display: 'block',
-          position: 'absolute',
-          top: '0',
-          left: '0',
-          width: '800px',
-          backgroundColor: '#ffffff',
-          zIndex: '9999',
-          opacity: '1',
-          visibility: 'visible',
-          pointerEvents: 'none',
-          overflow: 'visible',
-        });
-      }
-
-      // Step 3: Wait for DOM & Images (increased delays)
-      console.log('⏳ Step 3: Waiting for DOM to settle (2000ms)');
+  
+      // Save original styles to restore later
+      const originalStyle = {
+        position: element.style.position,
+        left: element.style.left,
+        top: element.style.top,
+        width: element.style.width,
+        height: element.style.height,
+        opacity: element.style.opacity,
+        zIndex: element.style.zIndex,
+        display: element.style.display,
+        pointerEvents: element.style.pointerEvents,
+        backgroundColor: element.style.backgroundColor,
+        overflow: element.style.overflow,
+        visibility: element.style.visibility,
+      };
+  
+      // Make element visible for rendering
+      element.style.position = 'absolute';
+      element.style.left = '0';
+      element.style.top = '0';
+      element.style.width = '800px';
+      element.style.opacity = '1';
+      element.style.zIndex = '9999';
+      element.style.display = 'block';
+      element.style.pointerEvents = 'auto';
+      element.style.backgroundColor = '#ffffff';
+      element.style.overflow = 'visible';
+      element.style.visibility = 'visible';
+  
+      // Allow DOM and fonts/images to settle
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      console.log('🖼️ Step 4: Waiting for images to load');
       await waitForImagesToLoad(element);
-      
-      console.log('⏳ Step 5: Final wait before PDF generation (1000ms)');
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Step 4: Generate PDF
-      console.log('📄 Step 6: Starting PDF generation');
-      toast.loading('Generating PDF...', { id: loadingToastId });
-      
-      await html2pdf()
-        .set({
-          margin: [0.5, 0.5, 0.5, 0.5],
-          filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: '#fff',
-            logging: true, // Enable logging for debugging
-            allowTaint: false,
-            foreignObjectRendering: true,
-          },
-          jsPDF: {
-            unit: 'in',
-            format: 'a4',
-            orientation: 'portrait',
-          },
-          pagebreak: {
-            mode: ['css', 'legacy'],
-            avoid: ['.avoid-break', 'img'],
-          }
-        })
-        .from(element)
-        .save();
-
-      console.log('✅ PDF generation completed successfully');
-      toast.success('PDF downloaded successfully!', { id: loadingToastId });
-      
-      if (!debugMode) {
-        onClose();
-      }
-
-    } catch (err) {
-      console.error('❌ PDF generation error:', err);
-      toast.error(`PDF generation failed: ${err instanceof Error ? err.message : 'Unknown error'}`, { 
-        id: loadingToastId 
-      });
-    } finally {
-      // Step 5: Reset (unless in debug mode)
-      if (!debugMode) {
-        console.log('🧹 Step 7: Cleaning up');
-        setIsGeneratingPdf(false);
-        element.innerHTML = '';
-        Object.assign(element.style, {
-          display: 'none',
-          position: 'fixed',
-          left: '-9999px',
-          top: '-9999px',
-          opacity: '0',
-          zIndex: '-1',
-          visibility: 'hidden',
+      await new Promise(resolve => setTimeout(resolve, 1500));
+  
+      // Scroll to top and capture full height
+      element.scrollTop = 0;
+      element.scrollLeft = 0;
+      element.style.minHeight = ${element.scrollHeight}px;
+  
+      const elementWidth = Math.max(element.scrollWidth, 800);
+      const elementHeight = Math.max(element.scrollHeight, 1000);
+  
+      const options = {
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: saved-content-${new Date().toISOString().split('T')[0]}.pdf,
+        image: {
+          type: 'jpeg',
+          quality: 0.95,
+        },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          width: elementWidth,
+          height: elementHeight,
+          scrollX: 0,
+          scrollY: 0,
+          x: 0,
+          y: 0,
+          logging: false,
+          removeContainer: true,
+        },
+        jsPDF: {
+          unit: 'in',
+          format: 'a4',
+          orientation: 'portrait',
+          compress: true,
+        },
+        pagebreak: {
+          mode: ['css', 'legacy'],
+          before: '.page-break-before',
+          after: '.page-break-after',
+          avoid: ['img', '.avoid-break', '.social-media-post', '.mcq-question-block'],
+        }
+      };
+  
+      // Trigger PDF generation inside requestAnimationFrame
+      await new Promise(resolve => {
+        requestAnimationFrame(() => {
+          html2pdf().from(element).set(options).save().then(resolve);
         });
-      } else {
-        console.log('🐛 DEBUG MODE: Leaving element visible for inspection');
-        setIsGeneratingPdf(false);
+      });
+  
+      // Restore original styles
+      Object.assign(element.style, originalStyle);
+  
+      toast.success(PDF downloaded successfully with ${filteredContent.length} items!, {
+        id: loadingToastId,
+      });
+  
+      onClose();
+  
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Failed to generate PDF. Please try again.', {
+        id: loadingToastId,
+      });
+  
+      // Ensure element is hidden in case of error
+      const element = hiddenDivRef.current;
+      if (element) {
+        element.style.position = 'fixed';
+        element.style.left = '-9999px';
+        element.style.top = '-9999px';
+        element.style.width = '800px';
+        element.style.backgroundColor = '#ffffff';
+        element.style.opacity = '0';
+        element.style.zIndex = '-1';
+        element.style.pointerEvents = 'none';
+        element.style.display = 'none';
+        element.style.visibility = 'hidden';
+      }
+    } finally {
+      setIsGeneratingPdf(false);
+      if (hiddenDivRef.current) {
+        hiddenDivRef.current.innerHTML = '';
       }
     }
-  };
+  }; 
 
   const handleCloseModal = () => {
     if (!isGeneratingPdf) {
