@@ -88,6 +88,37 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     return true;
   };
 
+  // Function to wait for all images to load
+  const waitForImagesToLoad = (element: HTMLElement): Promise<void> => {
+    return new Promise((resolve) => {
+      const images = element.querySelectorAll('img');
+      if (images.length === 0) {
+        resolve();
+        return;
+      }
+
+      let loadedCount = 0;
+      const totalImages = images.length;
+
+      const checkAllLoaded = () => {
+        loadedCount++;
+        if (loadedCount === totalImages) {
+          // Add a small delay after all images are loaded
+          setTimeout(resolve, 200);
+        }
+      };
+
+      images.forEach((img) => {
+        if (img.complete) {
+          checkAllLoaded();
+        } else {
+          img.onload = checkAllLoaded;
+          img.onerror = checkAllLoaded; // Count failed images as "loaded" to avoid hanging
+        }
+      });
+    });
+  };
+
   const handleDownloadPdf = async () => {
     if (!isValidSelection()) {
       toast.error('Please select a valid download option');
@@ -101,6 +132,11 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       return;
     }
 
+    if (!hiddenDivRef.current) {
+      toast.error('PDF generation element not found');
+      return;
+    }
+
     setIsGeneratingPdf(true);
     const loadingToastId = toast.loading(`Generating PDF with ${filteredContent.length} items...`);
 
@@ -108,24 +144,67 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       // Generate HTML content
       const htmlContent = generateHtmlForAllSavedContent(filteredContent);
       
-      // Set the HTML content in the hidden div
-      if (hiddenDivRef.current) {
-        hiddenDivRef.current.innerHTML = htmlContent;
-      }
+      // Store original styles to restore later
+      const element = hiddenDivRef.current;
+      const originalStyle = {
+        position: element.style.position,
+        left: element.style.left,
+        top: element.style.top,
+        width: element.style.width,
+        height: element.style.height,
+        opacity: element.style.opacity,
+        zIndex: element.style.zIndex,
+        display: element.style.display,
+        pointerEvents: element.style.pointerEvents,
+        backgroundColor: element.style.backgroundColor,
+      };
 
-      // Wait a bit for the DOM to update
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Set the HTML content
+      element.innerHTML = htmlContent;
 
-      // Configure html2pdf options
+      // Apply temporary styles to make the element visible and properly positioned for capture
+      element.style.position = 'absolute';
+      element.style.left = '0';
+      element.style.top = '0';
+      element.style.width = '800px';
+      element.style.height = 'auto';
+      element.style.opacity = '1';
+      element.style.zIndex = '9999';
+      element.style.display = 'block';
+      element.style.pointerEvents = 'auto';
+      element.style.backgroundColor = '#ffffff';
+
+      // Wait for the DOM to update and styles to apply
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Wait for all images to load
+      await waitForImagesToLoad(element);
+
+      // Get the actual rendered dimensions
+      const elementWidth = element.scrollWidth || 800;
+      const elementHeight = element.scrollHeight || 1000;
+
+      // Configure html2pdf options with proper dimensions
       const options = {
         margin: [0.5, 0.5, 0.5, 0.5],
         filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
+        image: { 
+          type: 'jpeg', 
+          quality: 0.98 
+        },
         html2canvas: { 
           scale: 2,
           useCORS: true,
           allowTaint: true,
           backgroundColor: '#ffffff',
+          width: elementWidth,
+          height: elementHeight,
+          windowWidth: elementWidth,
+          windowHeight: elementHeight,
+          scrollX: 0,
+          scrollY: 0,
+          x: 0,
+          y: 0,
         },
         jsPDF: { 
           unit: 'in', 
@@ -133,14 +212,22 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
           orientation: 'portrait',
           compress: true,
         },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        pagebreak: { 
+          mode: ['avoid-all', 'css', 'legacy'],
+          before: '.page-break-before',
+          after: '.page-break-after',
+          avoid: '.page-break-avoid'
+        }
       };
 
       // Generate and download the PDF
       await html2pdf()
-        .from(hiddenDivRef.current)
+        .from(element)
         .set(options)
         .save();
+
+      // Restore original styles
+      Object.assign(element.style, originalStyle);
 
       toast.success(`PDF downloaded successfully with ${filteredContent.length} items!`, { 
         id: loadingToastId 
@@ -152,6 +239,20 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       toast.error('Failed to generate PDF. Please try again.', { 
         id: loadingToastId 
       });
+      
+      // Restore original styles in case of error
+      if (hiddenDivRef.current) {
+        const element = hiddenDivRef.current;
+        element.style.position = 'fixed';
+        element.style.left = '0';
+        element.style.top = '0';
+        element.style.width = '800px';
+        element.style.backgroundColor = '#ffffff';
+        element.style.opacity = '0';
+        element.style.zIndex = '-1';
+        element.style.pointerEvents = 'none';
+        element.style.display = 'none';
+      }
     } finally {
       setIsGeneratingPdf(false);
       
@@ -370,18 +471,11 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
         </motion.div>
       )}
       
-      {/* Hidden div for PDF generation - Fixed positioning for proper rendering */}
+      {/* Hidden div for PDF generation - Initially hidden with display: none */}
       <div
         ref={hiddenDivRef}
         style={{
-          position: 'fixed',
-          left: '0',
-          top: '0',
-          width: '800px',
-          backgroundColor: '#ffffff',
-          opacity: 0,
-          zIndex: -1,
-          pointerEvents: 'none',
+          display: 'none',
         }}
       />
     </AnimatePresence>
