@@ -131,116 +131,80 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     return;
   }
 
-  if (!hiddenDivRef.current) {
-    toast.error('PDF generation element not found');
+  const element = hiddenDivRef.current;
+  if (!element) {
+    toast.error('PDF generation container not found');
     return;
   }
 
   setIsGeneratingPdf(true);
-  const loadingToastId = toast.loading(`Generating PDF with ${filteredContent.length} items...`);
+  const loadingToastId = toast.loading('Preparing your PDF...');
 
   try {
-    const element = hiddenDivRef.current;
-
-    // ✅ Generate HTML with proper breaks (only before next item, not after last one)
-    const htmlContent = generateHtmlForAllSavedContent(filteredContent); // You must apply break only on non-last items in this function
+    // Step 1: Inject content
+    const htmlContent = generateHtmlForAllSavedContent(filteredContent);
     element.innerHTML = htmlContent;
 
-    // ✅ Save original styles
-    const originalStyle = { ...element.style };
-
-    // ✅ Apply temporary visible styles for accurate rendering
+    // Step 2: Style for visibility
     Object.assign(element.style, {
       position: 'absolute',
-      left: '0',
       top: '0',
+      left: '0',
       width: '800px',
+      backgroundColor: '#fff',
       opacity: '1',
       zIndex: '9999',
       display: 'block',
-      pointerEvents: 'auto',
-      backgroundColor: '#ffffff',
-      overflow: 'visible',
       visibility: 'visible',
+      pointerEvents: 'none',
+      overflow: 'visible',
       height: 'auto',
     });
 
-    // ✅ Wait for DOM + images to settle
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    await waitForImagesToLoad(element);
+    // Step 3: Wait for DOM & Images
     await new Promise(resolve => setTimeout(resolve, 1000));
+    await waitForImagesToLoad(element);
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-    // ✅ PDF config (let html2canvas handle full height — do NOT set height manually)
-    const options = {
-      margin: [0.5, 0.5, 0.5, 0.5],
-      filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
-      image: {
-        type: 'jpeg',
-        quality: 0.95,
-      },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        removeContainer: true,
-      },
-      jsPDF: {
-        unit: 'in',
-        format: 'a4',
-        orientation: 'portrait',
-        compress: true,
-      },
-      pagebreak: {
-        mode: ['css', 'legacy'],
-        avoid: ['img', '.avoid-break', '.social-media-post', '.mcq-question-block'],
-      },
-    };
+    // Step 4: Generate PDF
+    await html2pdf()
+      .set({
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#fff',
+        },
+        jsPDF: {
+          unit: 'in',
+          format: 'a4',
+          orientation: 'portrait',
+        },
+        pagebreak: {
+          mode: ['css', 'legacy'],
+          avoid: ['.avoid-break', 'img'],
+        }
+      })
+      .from(element)
+      .save();
 
-    // ✅ Generate PDF in animation frame
-    await new Promise(resolve => {
-      requestAnimationFrame(() => {
-        html2pdf().from(element).set(options).save().then(resolve);
-      });
-    });
-
-    // ✅ Restore original style
-    Object.assign(element.style, originalStyle);
-
-    toast.success(`PDF downloaded successfully with ${filteredContent.length} items!`, {
-      id: loadingToastId,
-    });
-
+    toast.success('PDF downloaded successfully!', { id: loadingToastId });
     onClose();
 
-  } catch (error) {
-    console.error('Error generating PDF:', error);
-    toast.error('Failed to generate PDF. Please try again.', { id: loadingToastId });
-
-    // Re-hide the element if something fails
-    const element = hiddenDivRef.current;
-    if (element) {
-      Object.assign(element.style, {
-        position: 'fixed',
-        left: '-9999px',
-        top: '-9999px',
-        width: '800px',
-        backgroundColor: '#ffffff',
-        opacity: '0',
-        zIndex: '-1',
-        pointerEvents: 'none',
-        display: 'none',
-        visibility: 'hidden',
-      });
-    }
+  } catch (err) {
+    console.error('PDF generation error:', err);
+    toast.error('PDF generation failed', { id: loadingToastId });
   } finally {
+    // Step 5: Reset
     setIsGeneratingPdf(false);
-    if (hiddenDivRef.current) {
-      hiddenDivRef.current.innerHTML = '';
+    if (element) {
+      element.innerHTML = '';
+      element.style.display = 'none';
     }
   }
 };
+
 
 
   const handleCloseModal = () => {
