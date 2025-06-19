@@ -896,6 +896,7 @@ const MCQDisplay: React.FC = () => {
         title="Share Quiz Results"
         textToShare={shareTextContent}
         imageUrlToShare={shareImageUrl}
+        showSocialPlatforms={false}
       />
     </>
   );

@@ -11,6 +11,7 @@ interface ShareModalProps {
   title: string;
   textToShare: string;
   imageUrlToShare?: string | null;
+  showSocialPlatforms?: boolean;
 }
 
 const ShareModal: React.FC<ShareModalProps> = ({
@@ -19,6 +20,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
   title,
   textToShare,
   imageUrlToShare,
+  showSocialPlatforms = true,
 }) => {
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
@@ -145,31 +147,54 @@ const ShareModal: React.FC<ShareModalProps> = ({
                   </Button>
                 </div>
                 
-                {/* Social Media Platforms */}
-                <div className="space-y-3 mb-6">
-                  <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                    Share on Social Media
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    {socialPlatforms.map((platform, index) => {
-                      const IconComponent = platform.icon;
-                      
-                      return (
-                        <motion.button
-                          key={platform.name}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          onClick={platform.onClick}
-                          className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg ${platform.color}`}
-                        >
-                          <IconComponent className="h-5 w-5" />
-                          <span className="font-medium text-sm">{platform.name}</span>
-                        </motion.button>
-                      );
-                    })}
+                {/* Generated Image Display - Show prominently when available and social platforms are hidden */}
+                {imageUrlToShare && !showSocialPlatforms && (
+                  <div className="space-y-3 mb-6">
+                    <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                      Generated Result
+                    </h3>
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="relative rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-lg"
+                    >
+                      <img
+                        src={imageUrlToShare}
+                        alt="Generated quiz result"
+                        className="w-full h-auto object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                    </motion.div>
                   </div>
-                </div>
+                )}
+                
+                {/* Social Media Platforms - Only show when showSocialPlatforms is true */}
+                {showSocialPlatforms && (
+                  <div className="space-y-3 mb-6">
+                    <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                      Share on Social Media
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      {socialPlatforms.map((platform, index) => {
+                        const IconComponent = platform.icon;
+                        
+                        return (
+                          <motion.button
+                            key={platform.name}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            onClick={platform.onClick}
+                            className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg ${platform.color}`}
+                          >
+                            <IconComponent className="h-5 w-5" />
+                            <span className="font-medium text-sm">{platform.name}</span>
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
                 
                 {/* Additional Actions */}
                 <div className="space-y-3">
@@ -202,7 +227,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
                 {/* Footer */}
                 <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                    Share your content and inspire others! 🚀
+                    {showSocialPlatforms ? 'Share your content and inspire others! 🚀' : 'Save and share your quiz results! 📊'}
                   </p>
                 </div>
               </CardContent>
