@@ -199,7 +199,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     element.scrollLeft = 0;
     element.style.minHeight = `${element.scrollHeight}px`;
 
-    const elementWidth = Math.max(element.scrollWidth, 800);
+    // const elementWidth = Math.max(element.scrollWidth, 800);
     // const elementHeight = Math.max(element.scrollHeight, 1000);
 
     const options = {
@@ -209,20 +209,25 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
         type: 'jpeg',
         quality: 0.95,
       },
+      // html2canvas: {
+      //   scale: 2,
+      //   useCORS: true,
+      //   allowTaint: true,
+      //   backgroundColor: '#ffffff',
+      //   width: elementWidth,
+      //   height: elementHeight,
+      //   scrollX: 0,
+      //   scrollY: 0,
+      //   x: 0,
+      //   y: 0,
+      //   logging: false,
+      //   removeContainer: true,
+      // },
       html2canvas: {
         scale: 2,
         useCORS: true,
-        allowTaint: true,
         backgroundColor: '#ffffff',
-        width: elementWidth,
-        height: elementHeight,
-        scrollX: 0,
-        scrollY: 0,
-        x: 0,
-        y: 0,
-        logging: false,
-        removeContainer: true,
-      },
+      }
       jsPDF: {
         unit: 'in',
         format: 'a4',
