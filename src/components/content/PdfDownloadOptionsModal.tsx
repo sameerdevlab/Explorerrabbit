@@ -137,6 +137,20 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     return;
   }
 
+  Object.assign(hiddenDivRef.current.style, {
+  display: 'block',
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  width: '800px',
+  backgroundColor: '#ffffff',
+  zIndex: '9999',
+  opacity: '1',
+  visibility: 'visible',
+  pointerEvents: 'none',
+  overflow: 'visible',
+  });
+
   setIsGeneratingPdf(true);
   const loadingToastId = toast.loading('Preparing your PDF...');
 
@@ -146,20 +160,20 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     element.innerHTML = htmlContent;
 
     // Step 2: Style for visibility
-    Object.assign(element.style, {
-      position: 'absolute',
-      top: '0',
-      left: '0',
-      width: '800px',
-      backgroundColor: '#fff',
-      opacity: '1',
-      zIndex: '9999',
-      display: 'block',
-      visibility: 'visible',
-      pointerEvents: 'none',
-      overflow: 'visible',
-      height: 'auto',
-    });
+    // Object.assign(element.style, {
+    //   position: 'absolute',
+    //   top: '0',
+    //   left: '0',
+    //   width: '800px',
+    //   backgroundColor: '#fff',
+    //   opacity: '1',
+    //   zIndex: '9999',
+    //   display: 'block',
+    //   visibility: 'visible',
+    //   pointerEvents: 'none',
+    //   overflow: 'visible',
+    //   height: 'auto',
+    // });
 
     // Step 3: Wait for DOM & Images
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -198,6 +212,17 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   } finally {
     // Step 5: Reset
     setIsGeneratingPdf(false);
+    hiddenDivRef.current.innerHTML = '';
+    Object.assign(hiddenDivRef.current.style, {
+      display: 'none',
+      position: 'fixed',
+      left: '-9999px',
+      top: '-9999px',
+      opacity: '0',
+      zIndex: '-1',
+      visibility: 'hidden',
+    });
+
     if (element) {
       element.innerHTML = '';
       element.style.display = 'none';
