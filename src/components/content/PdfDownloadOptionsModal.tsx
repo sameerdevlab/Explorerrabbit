@@ -175,6 +175,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       element.style.backgroundColor = '#ffffff';
       element.style.overflow = 'visible';
       element.style.visibility = 'visible';
+      element.style.height = 'auto';
   
       // Allow DOM and fonts/images to settle
       await new Promise(resolve => setTimeout(resolve, 2000));
