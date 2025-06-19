@@ -120,158 +120,153 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   };
 
   const handleDownloadPdf = async () => {
-    if (!isValidSelection()) {
-      toast.error('Please select a valid download option');
-      return;
-    }
+  if (!isValidSelection()) {
+    toast.error('Please select a valid download option');
+    return;
+  }
 
-    const filteredContent = getFilteredContent();
-    
-    if (filteredContent.length === 0) {
-      toast.error('No content to download');
-      return;
-    }
+  const filteredContent = getFilteredContent();
 
-    if (!hiddenDivRef.current) {
-      toast.error('PDF generation element not found');
-      return;
-    }
+  if (filteredContent.length === 0) {
+    toast.error('No content to download');
+    return;
+  }
 
-    setIsGeneratingPdf(true);
-    const loadingToastId = toast.loading(`Generating PDF with ${filteredContent.length} items...`);
+  if (!hiddenDivRef.current) {
+    toast.error('PDF generation element not found');
+    return;
+  }
 
-    try {
-      // Generate HTML content
-      const htmlContent = generateHtmlForAllSavedContent(filteredContent);
-      
-      // Store original styles to restore later
-      const element = hiddenDivRef.current;
-      const originalStyle = {
-        position: element.style.position,
-        left: element.style.left,
-        top: element.style.top,
-        width: element.style.width,
-        height: element.style.height,
-        opacity: element.style.opacity,
-        zIndex: element.style.zIndex,
-        display: element.style.display,
-        pointerEvents: element.style.pointerEvents,
-        backgroundColor: element.style.backgroundColor,
-        overflow: element.style.overflow,
-        visibility: element.style.visibility,
-      };
+  setIsGeneratingPdf(true);
+  const loadingToastId = toast.loading(`Generating PDF with ${filteredContent.length} items...`);
 
-      // Set the HTML content
-      element.innerHTML = htmlContent;
+  try {
+    const element = hiddenDivRef.current;
 
-      // Apply temporary styles to make the element visible and properly positioned for capture
-      element.style.position = 'absolute';
-      element.style.left = '0';
-      element.style.top = '0';
+    // Generate the final HTML content
+    const htmlContent = generateHtmlForAllSavedContent(filteredContent);
+    element.innerHTML = htmlContent;
+
+    // Save original styles to restore later
+    const originalStyle = {
+      position: element.style.position,
+      left: element.style.left,
+      top: element.style.top,
+      width: element.style.width,
+      height: element.style.height,
+      opacity: element.style.opacity,
+      zIndex: element.style.zIndex,
+      display: element.style.display,
+      pointerEvents: element.style.pointerEvents,
+      backgroundColor: element.style.backgroundColor,
+      overflow: element.style.overflow,
+      visibility: element.style.visibility,
+    };
+
+    // Make element visible for rendering
+    element.style.position = 'absolute';
+    element.style.left = '0';
+    element.style.top = '0';
+    element.style.width = '800px';
+    element.style.opacity = '1';
+    element.style.zIndex = '9999';
+    element.style.display = 'block';
+    element.style.pointerEvents = 'auto';
+    element.style.backgroundColor = '#ffffff';
+    element.style.overflow = 'visible';
+    element.style.visibility = 'visible';
+
+    // Allow DOM and fonts/images to settle
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    await waitForImagesToLoad(element);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // Scroll to top and capture full height
+    element.scrollTop = 0;
+    element.scrollLeft = 0;
+    element.style.minHeight = `${element.scrollHeight}px`;
+
+    const elementWidth = Math.max(element.scrollWidth, 800);
+    const elementHeight = Math.max(element.scrollHeight, 1000);
+
+    const options = {
+      margin: [0.5, 0.5, 0.5, 0.5],
+      filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
+      image: {
+        type: 'jpeg',
+        quality: 0.95,
+      },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: elementWidth,
+        height: elementHeight,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
+        logging: false,
+        removeContainer: true,
+      },
+      jsPDF: {
+        unit: 'in',
+        format: 'a4',
+        orientation: 'portrait',
+        compress: true,
+      },
+      pagebreak: {
+        mode: ['css', 'legacy'],
+        before: '.page-break-before',
+        after: '.page-break-after',
+        avoid: ['img', '.avoid-break', '.social-media-post', '.mcq-question-block'],
+      }
+    };
+
+    // Trigger PDF generation inside requestAnimationFrame
+    await new Promise(resolve => {
+      requestAnimationFrame(() => {
+        html2pdf().from(element).set(options).save().then(resolve);
+      });
+    });
+
+    // Restore original styles
+    Object.assign(element.style, originalStyle);
+
+    toast.success(`PDF downloaded successfully with ${filteredContent.length} items!`, {
+      id: loadingToastId,
+    });
+
+    onClose();
+
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    toast.error('Failed to generate PDF. Please try again.', {
+      id: loadingToastId,
+    });
+
+    // Ensure element is hidden in case of error
+    const element = hiddenDivRef.current;
+    if (element) {
+      element.style.position = 'fixed';
+      element.style.left = '-9999px';
+      element.style.top = '-9999px';
       element.style.width = '800px';
-      element.style.height = 'auto';
-      element.style.opacity = '1';
-      element.style.zIndex = '9999';
-      element.style.display = 'block';
-      element.style.pointerEvents = 'auto';
       element.style.backgroundColor = '#ffffff';
-      element.style.overflow = 'visible';
-      element.style.visibility = 'visible';
-
-      // INCREASED DELAY: Wait longer for the DOM to update and styles to apply
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Wait for all images to load
-      await waitForImagesToLoad(element);
-
-      // ADDITIONAL DELAY: Give extra time for complex text layouts and social media posts
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Get the actual rendered dimensions
-      const elementWidth = Math.max(element.scrollWidth, 800);
-      const elementHeight = Math.max(element.scrollHeight, 1000);
-
-      // Configure html2pdf options with improved page break handling
-      const options = {
-        margin: [0.5, 0.5, 0.5, 0.5],
-        filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { 
-          type: 'jpeg', 
-          quality: 0.95 
-        },
-        html2canvas: { 
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          width: elementWidth,
-          height: elementHeight,
-          windowWidth: elementWidth,
-          windowHeight: elementHeight,
-          scrollX: 0,
-          scrollY: 0,
-          x: 0,
-          y: 0,
-          logging: false,
-          removeContainer: true,
-        },
-        jsPDF: { 
-          unit: 'in', 
-          format: 'a4', 
-          orientation: 'portrait',
-          compress: true,
-        },
-        pagebreak: { 
-          mode: ['css', 'legacy'],
-          before: '.page-break-before',
-          after: '.page-break-after',
-          avoid: ['img', '.avoid-break', '.social-media-post', '.mcq-question-block']
-        }
-      };
-
-      // Generate and download the PDF
-      await html2pdf()
-        .from(element)
-        .set(options)
-        .save();
-
-      // Restore original styles
-      Object.assign(element.style, originalStyle);
-
-      toast.success(`PDF downloaded successfully with ${filteredContent.length} items!`, { 
-        id: loadingToastId 
-      });
-      
-      onClose();
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast.error('Failed to generate PDF. Please try again.', { 
-        id: loadingToastId 
-      });
-      
-      // Restore original styles in case of error
-      if (hiddenDivRef.current) {
-        const element = hiddenDivRef.current;
-        element.style.position = 'fixed';
-        element.style.left = '-9999px';
-        element.style.top = '-9999px';
-        element.style.width = '800px';
-        element.style.backgroundColor = '#ffffff';
-        element.style.opacity = '0';
-        element.style.zIndex = '-1';
-        element.style.pointerEvents = 'none';
-        element.style.display = 'none';
-        element.style.visibility = 'hidden';
-      }
-    } finally {
-      setIsGeneratingPdf(false);
-      
-      // Clear the hidden div content
-      if (hiddenDivRef.current) {
-        hiddenDivRef.current.innerHTML = '';
-      }
+      element.style.opacity = '0';
+      element.style.zIndex = '-1';
+      element.style.pointerEvents = 'none';
+      element.style.display = 'none';
+      element.style.visibility = 'hidden';
     }
-  };
+  } finally {
+    setIsGeneratingPdf(false);
+    if (hiddenDivRef.current) {
+      hiddenDivRef.current.innerHTML = '';
+    }
+  }
+};
 
   const handleCloseModal = () => {
     if (!isGeneratingPdf) {
