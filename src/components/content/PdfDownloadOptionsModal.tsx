@@ -227,7 +227,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
         scale: 2,
         useCORS: true,
         backgroundColor: '#ffffff',
-      }
+      },
       jsPDF: {
         unit: 'in',
         format: 'a4',
