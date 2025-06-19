@@ -361,10 +361,9 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
                 ) : (
                   <>
                     {/* Download Options */}
-                    
-                      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
-                        Select Download Option
-                      </h3>
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                      Select Download Option
+                    </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                       
                       {downloadOptions.map((option, index) => (
