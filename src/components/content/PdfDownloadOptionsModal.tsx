@@ -391,7 +391,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
                               disabled={option.disabled}
                               className="mt-1 w-4 h-4 text-red-600 border-gray-300 focus:ring-red-500 focus:ring-2"
                             />
-                            <div className="flex-1">
+                            <div className="flex">
                               <div className="flex items-center gap-3 mb-2">
                                 <span className="text-2xl">{option.icon}</span>
                                 <h4 className="font-semibold text-gray-800 dark:text-gray-200 text-lg">
