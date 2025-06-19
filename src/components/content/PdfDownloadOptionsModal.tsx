@@ -151,7 +151,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     }
   
     setIsGeneratingPdf(true);
-    const loadingToastId = toast.loading(Generating PDF with ${filteredContent.length} items...);
+    const loadingToastId = toast.loading(`Generating PDF with ${filteredContent.length} items...``);
   
     try {
       const element = hiddenDivRef.current;
