@@ -30,18 +30,6 @@ const Header: React.FC = () => {
           <h1 className="text-2xl font-bold tracking-wide">EXPLORER</h1>
         </div>
 
-        <div>
-          <Button
-            variant="sketchy"
-            size="md"
-            onClick={handleOpenSavedContent}
-            className="bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30 p-2 shadow-md"
-          >
-          <Bookmark size={18} className="mr-2" />
-            Saved Content
-         </Button>
-        </div>
-        
         <div className="flex items-center gap-4">
           {/* Theme Toggle */}
           <Button
