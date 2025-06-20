@@ -113,7 +113,7 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
   };
 
   let html = `
-    <div style="margin-bottom: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; page-break-inside: avoid; break-inside: avoid;">
+    <div style="margin-bottom: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
       <!-- Title Section -->
       <div style="border-bottom: 3px solid #8b5cf6; padding-bottom: 12px; margin-bottom: 16px;">
         <h1 style="color: #1f2937; font-size: 26px; font-weight: bold; margin: 0 0 6px 0; line-height: 1.2;">
@@ -129,7 +129,7 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
         <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #ec4899; padding-left: 10px;">
           Content
         </h2>
-        <div style="line-height: 1.5; color: #374151; font-size: 15px; text-align: justify; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-line;">
+        <div style="line-height: 1.5; color: #374151; font-size: 15px; text-align: justify;">
           ${item.generated_text.split('\n').map(paragraph =>
             paragraph.trim() ? `<p style="margin: 0 0 10px 0;">${paragraph}</p>` : ''
           ).join('')}
@@ -140,7 +140,7 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
   // Add Images Section
   if (item.generated_images && item.generated_images.length > 0) {
     html += `
-      <div style="margin-bottom: 18px; page-break-inside: avoid; break-inside: avoid;">
+      <div style="margin-bottom: 18px;">
         <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #3b82f6; padding-left: 10px;">
           Generated Images
         </h2>
@@ -150,7 +150,7 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
     item.generated_images.forEach((image) => {
       html += `
         <div class="mcq-question-block" style="border: 2px solid #e5e7eb; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1); margin-bottom: 12px;">
-          <img src="${image.url}" alt="${image.alt}" style="width: 100%; height: 180px; object-fit: cover; display: block; page-break-inside: avoid; break-inside: avoid;" />
+          <img src="${image.url}" alt="${image.alt}" style="width: 100%; height: 180px; object-fit: cover; display: block;" />
           <div style="padding: 10px; background-color: #f9fafb;">
             <p style="margin: 0; font-size: 13px; color: #6b7280; font-style: italic;">${image.alt}</p>
           </div>
@@ -164,7 +164,7 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
   // Add MCQs Section
   if (item.generated_mcqs && item.generated_mcqs.length > 0) {
     html += `
-      <div style="margin-bottom: 18px; page-break-inside: avoid; break-inside: avoid;">
+      <div style="margin-bottom: 18px;">
         <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #10b981; padding-left: 10px;">
           Quiz Questions
         </h2>
@@ -215,7 +215,7 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
 
   // Add Social Media Post Section
   if (item.generated_social_media_post && item.generated_social_media_post.trim()) {
-    html += `<div class="social-media-post" style="margin-bottom: 18px; page-break-inside: avoid; break-inside: avoid;">
+    html += `<div class="social-media-post" style="margin-bottom: 18px;">
         <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #f59e0b; padding-left: 10px;">
           Social Media Post
         </h2>
