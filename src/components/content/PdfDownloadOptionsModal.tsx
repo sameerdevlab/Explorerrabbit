@@ -15,7 +15,7 @@ interface PdfDownloadOptionsModalProps {
   savedContent: SavedContentItem[];
 }
 
-type DownloadOption = 'all' | 'top10' | 'top20' | 'custom';
+type DownloadOption = 'top 1' | 'top 3' | 'top5' | 'custom'';
 
 const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   isOpen,
@@ -29,32 +29,33 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
 
   const downloadOptions = [
     {
-      value: 'all' as DownloadOption,
-      label: 'All Content',
-      description: `Download all ${savedContent.length} saved items`,
-      icon: '📚',
-      count: savedContent.length,
-    },
-    {
       value: 'top 1' as DownloadOption,
       label: 'Top 1',
-      description: 'Download the 10 most recent items',
+      description: 'Download the 1 most recent items',
       icon: '🔟',
-      count: Math.min(10, savedContent.length),
+      count: Math.min(1, savedContent.length),
       disabled: savedContent.length === 0,
     },
     {
       value: 'top 3' as DownloadOption,
       label: 'Top 3',
-      description: 'Download the 20 most recent items',
+      description: 'Download the 3 most recent items',
       icon: '📊',
-      count: Math.min(20, savedContent.length),
+      count: Math.min(3, savedContent.length),
+      disabled: savedContent.length === 0,
+    },
+    {
+      value: 'top 5' as DownloadOption,
+      label: 'Top 5',
+      description: 'Download the 5 most recent items',
+      icon: '⭐',
+      count: Math.min(5, savedContent.length),
       disabled: savedContent.length === 0,
     },
     {
       value: 'custom' as DownloadOption,
       label: 'Custom Amount',
-      description: 'Specify how many items to download',
+      description: 'Specify how many items to download max(5)',
       icon: '⚙️',
       count: null,
     },
