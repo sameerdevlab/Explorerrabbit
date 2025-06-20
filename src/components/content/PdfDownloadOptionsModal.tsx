@@ -70,11 +70,11 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       case 'top5':
         return savedContent.slice(0, 5);
       case 'custom':
-        const count = Math.min(parseInt(customCount),5);
+        const count = Math.min(parseInt(customCount), 5);
         if (isNaN(count) || count <= 0) return [];
         return savedContent.slice(0, count);
       default:
-        return savedContent;
+        return savedContent.slice(0, 5);
     }
   };
 
