@@ -156,23 +156,46 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   try {
     const element = hiddenDivRef.current;
 
-    // Generate the final HTML content
+    // Generate the HTML
     const htmlContent = generateHtmlForAllSavedContent(filteredContent);
     element.innerHTML = htmlContent;
 
-    // Allow DOM and fonts/images to settle
+    // Save original styles
+    const originalStyle = {
+      position: element.style.position,
+      left: element.style.left,
+      top: element.style.top,
+      width: element.style.width,
+      height: element.style.height,
+      opacity: element.style.opacity,
+      zIndex: element.style.zIndex,
+      display: element.style.display,
+      pointerEvents: element.style.pointerEvents,
+      backgroundColor: element.style.backgroundColor,
+      overflow: element.style.overflow,
+      visibility: element.style.visibility,
+    };
+
+    // Make element visible for capture
+    element.style.position = 'absolute';
+    element.style.left = '0';
+    element.style.top = '0';
+    element.style.width = '800px';
+    element.style.opacity = '1';
+    element.style.zIndex = '9999';
+    element.style.display = 'block';
+    element.style.pointerEvents = 'auto';
+    element.style.backgroundColor = '#ffffff';
+    element.style.overflow = 'visible';
+    element.style.visibility = 'visible';
+    element.style.height = 'auto'; // ✅ KEY LINE
+
+    // Wait for layout and image loads
     await new Promise(resolve => setTimeout(resolve, 2000));
     await waitForImagesToLoad(element);
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // Scroll to top and capture full height
-    element.scrollTop = 0;
-    element.scrollLeft = 0;
-    element.style.minHeight = `${element.scrollHeight}px`;
-
-    const elementWidth = Math.max(element.scrollWidth, 800);
-    const elementHeight = Math.max(element.scrollHeight, 1000);
-
+    // ✅ Let html2canvas auto-calculate dimensions
     const options = {
       margin: [0.5, 0.5, 0.5, 0.5],
       filename: `saved-content-${new Date().toISOString().split('T')[0]}.pdf`,
@@ -185,14 +208,12 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        width: elementWidth,
-        height: elementHeight,
         scrollX: 0,
         scrollY: 0,
-        x: 0,
-        y: 0,
         logging: false,
         removeContainer: true,
+        // ❌ DO NOT set width/height manually
+        // ✅ Let html2canvas auto-resolve full scroll height
       },
       jsPDF: {
         unit: 'in',
@@ -202,18 +223,17 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       },
       pagebreak: {
         mode: ['css', 'legacy'],
-        before: '.page-break-before',
-        after: '.page-break-after',
-        avoid: ['img', '.avoid-break', '.social-media-post', '.mcq-question-block'],
+        avoid: ['img', '.avoid-break', '.social-media-post', '.mcq-question-block']
       }
     };
 
-    // Trigger PDF generation inside requestAnimationFrame
     await new Promise(resolve => {
       requestAnimationFrame(() => {
         html2pdf().from(element).set(options).save().then(resolve);
       });
     });
+
+    Object.assign(element.style, originalStyle);
 
     toast.success(`PDF downloaded successfully with ${filteredContent.length} items!`, {
       id: loadingToastId,
@@ -226,6 +246,21 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     toast.error('Failed to generate PDF. Please try again.', {
       id: loadingToastId,
     });
+
+    // Ensure element is hidden again
+    const element = hiddenDivRef.current;
+    if (element) {
+      element.style.position = 'fixed';
+      element.style.left = '-9999px';
+      element.style.top = '-9999px';
+      element.style.width = '800px';
+      element.style.backgroundColor = '#ffffff';
+      element.style.opacity = '0';
+      element.style.zIndex = '-1';
+      element.style.pointerEvents = 'none';
+      element.style.display = 'none';
+      element.style.visibility = 'hidden';
+    }
   } finally {
     setIsGeneratingPdf(false);
     if (hiddenDivRef.current) {
@@ -233,6 +268,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     }
   }
 };
+
 
 
   const handleCloseModal = () => {
