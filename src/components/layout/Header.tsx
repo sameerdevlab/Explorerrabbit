@@ -32,7 +32,6 @@ const Header: React.FC = () => {
 
         <div>
           <Button
-            variant="ghost"
             size="md"
             onClick={handleOpenSavedContent}
             className="w-full justify-start text-white dark:text-white hover:text-purple-900 dark:hover:text-purple-900/30"
