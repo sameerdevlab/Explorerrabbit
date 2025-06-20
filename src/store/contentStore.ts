@@ -2,10 +2,9 @@ import { create } from 'zustand';
 import toast from 'react-hot-toast';
 import { ContentState, ContentGenerationResult, SocialMediaPostType, UserLevel, SavedContentItem } from '../types';
 import { callEdgeFunction } from '../lib/supabase';
-import { generatePlaceholderImages, generateInitialPlaceholderImages } from '../lib/utils';
+import { generatePlaceholderImages, generateInitialPlaceholderImages, delay } from '../lib/utils';
 import useAuthStore from './authStore';
 import { DifficultyLevel } from '../components/content/MCQDifficultyModal';
-import delay from '../../lib/utils'
 
 // Social Media Post Type Prompts
 const SOCIAL_MEDIA_PROMPTS = {
