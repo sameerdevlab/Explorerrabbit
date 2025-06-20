@@ -385,7 +385,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
                           transition={{ delay: index * 0.1 }}
                         >
                           <label
-                            className={`flex flex-col p-4 rounded-xl border-2 ${postType.borderColor} ${postType.bgColor} cursor-pointer transition-all duration-200 hover:shadow-md ${
+                            className={`flex flex-col p-4 rounded-xl border-2 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 cursor-pointer transition-all duration-200 hover:shadow-md ${
                               selectedOption === option.value
                                 ? 'border-red-500 bg-red-50 dark:bg-red-900/20 shadow-md'
                                 : option.disabled
