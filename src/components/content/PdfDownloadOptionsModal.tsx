@@ -63,14 +63,14 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
 
   const getFilteredContent = (): SavedContentItem[] => {
     switch (selectedOption) {
-      case 'all':
-        return savedContent;
-      case 'top10':
-        return savedContent.slice(0, 10);
-      case 'top20':
-        return savedContent.slice(0, 20);
+      case 'top1':
+        return savedContent.slice(0, 1);
+      case 'top3':
+        return savedContent.slice(0, 3);
+      case 'top5':
+        return savedContent.slice(0, 5);
       case 'custom':
-        const count = parseInt(customCount);
+        const count = Math.min(parseInt(customCount),5);
         if (isNaN(count) || count <= 0) return [];
         return savedContent.slice(0, count);
       default:
