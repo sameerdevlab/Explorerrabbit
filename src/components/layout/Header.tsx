@@ -3,12 +3,21 @@ import { Sparkles, LogOut, Sun, Moon, Bookmark } from 'lucide-react';
 import Button from '../ui/Button';
 import SavedContentModal from '../content/SavedContentModal';
 import useAuthStore from '../../store/authStore';
+import useContentStore from '../../store/contentStore';
 import useThemeStore from '../../store/themeStore';
 
 const Header: React.FC = () => {
   const { user, signOut, loading } = useAuthStore();
+  const { loadSavedContent } = useContentStore();
   const { theme, toggleTheme } = useThemeStore();
   const [isSavedContentModalOpen, setIsSavedContentModalOpen] = React.useState(false);
+  
+  const handleOpenSavedContent = () => {
+    // First initiate the loading state and data fetch
+    loadSavedContent();
+    // Then immediately open the modal
+    setIsSavedContentModalOpen(true);
+  };
   
   return (
     <>
@@ -52,7 +61,7 @@ const Header: React.FC = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setIsSavedContentModalOpen(true)}
+                        onClick={handleOpenSavedContent}
                         className="w-full justify-start text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30"
                       >
                         <Bookmark size={16} className="mr-2" />

@@ -28,12 +28,6 @@ const SavedContentModal: React.FC<SavedContentModalProps> = ({
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
   const [isPdfOptionsModalOpen, setIsPdfOptionsModalOpen] = useState(false);
 
-  React.useEffect(() => {
-    if (isOpen) {
-      loadSavedContent();
-    }
-  }, [isOpen, loadSavedContent]);
-
   const handleLoadContent = (item: SavedContentItem) => {
     loadSavedContentItem(item);
     onClose();
