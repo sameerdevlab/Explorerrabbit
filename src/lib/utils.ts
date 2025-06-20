@@ -261,6 +261,9 @@ export function generateHtmlForAllSavedContent(savedContent: SavedContentItem[])
     <li>Share insights with friends, classmates, or on social media</li>
     <li>Keep a personal motivation journal or learning tracker</li>
     <li>Revisit key moments and concepts anytime you want</li>
+    <li>Print your favorite content for study notes or inspiration boards</li>
+    <li>Use quizzes for quick self-assessment before interviews or exams</li>
+    <li>Create your own knowledge library with AI-curated topics</li>
   </ul>
   <p>If you enjoyed this experience, consider exploring more prompts, sharing your journey, or saving your next AI-powered discovery. We’re constantly improving, and your feedback helps us grow.</p>
   <p style="margin-top: 10px;">— With gratitude,<br><strong>The Explorer AI Team</strong></p>
