@@ -61,15 +61,6 @@ const Header: React.FC = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={handleOpenSavedContent}
-                        className="w-full justify-start text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30"
-                      >
-                        <Bookmark size={16} className="mr-2" />
-                        Saved Content
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
                         onClick={() => signOut()}
                         disabled={loading}
                         className="w-full justify-start text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30"
