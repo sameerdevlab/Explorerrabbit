@@ -32,11 +32,12 @@ const Header: React.FC = () => {
 
         <div>
           <Button
+            variant="sketchy"
             size="md"
             onClick={handleOpenSavedContent}
-            className="w-full justify-start text-white dark:text-white hover:text-purple-900 dark:hover:text-purple-900/30"
+            className="bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30 p-2 shadow-md"
           >
-          <Bookmark size={16} className="mr-2" />
+          <Bookmark size={18} className="mr-2" />
             Saved Content
          </Button>
         </div>
