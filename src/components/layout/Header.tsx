@@ -33,9 +33,9 @@ const Header: React.FC = () => {
         <div>
           <Button
             variant="ghost"
-            size="sm"
+            size="md"
             onClick={handleOpenSavedContent}
-            className="w-full justify-start text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30"
+            className="w-full justify-start text-purple-700 dark:text-purple-300 hover:text-purple-900 dark:hover:text-purple-900/30"
           >
           <Bookmark size={16} className="mr-2" />
             Saved Content
