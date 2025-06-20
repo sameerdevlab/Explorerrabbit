@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Download, FileText, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { X, Download, FileText, Loader2, AlertCircle } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
@@ -25,7 +25,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   const [selectedOption, setSelectedOption] = useState<DownloadOption>('all');
   const [customCount, setCustomCount] = useState<string>('');
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
-  const [debugMode, setDebugMode] = useState(false);
   const hiddenDivRef = useRef<HTMLDivElement>(null);
 
   const downloadOptions = [
@@ -161,35 +160,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     const htmlContent = generateHtmlForAllSavedContent(filteredContent);
     element.innerHTML = htmlContent;
 
-    // Save original styles to restore later
-    const originalStyle = {
-      position: element.style.position,
-      left: element.style.left,
-      top: element.style.top,
-      width: element.style.width,
-      height: element.style.height,
-      opacity: element.style.opacity,
-      zIndex: element.style.zIndex,
-      display: element.style.display,
-      pointerEvents: element.style.pointerEvents,
-      backgroundColor: element.style.backgroundColor,
-      overflow: element.style.overflow,
-      visibility: element.style.visibility,
-    };
-
-    // Make element visible for rendering
-    element.style.position = 'absolute';
-    element.style.left = '0';
-    element.style.top = '0';
-    element.style.width = '800px';
-    element.style.opacity = '1';
-    element.style.zIndex = '9999';
-    element.style.display = 'block';
-    element.style.pointerEvents = 'auto';
-    element.style.backgroundColor = '#ffffff';
-    element.style.overflow = 'visible';
-    element.style.visibility = 'visible';
-
     // Allow DOM and fonts/images to settle
     await new Promise(resolve => setTimeout(resolve, 2000));
     await waitForImagesToLoad(element);
@@ -245,9 +215,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       });
     });
 
-    // Restore original styles
-    Object.assign(element.style, originalStyle);
-
     toast.success(`PDF downloaded successfully with ${filteredContent.length} items!`, {
       id: loadingToastId,
     });
@@ -259,21 +226,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     toast.error('Failed to generate PDF. Please try again.', {
       id: loadingToastId,
     });
-
-    // Ensure element is hidden in case of error
-    const element = hiddenDivRef.current;
-    if (element) {
-      element.style.position = 'fixed';
-      element.style.left = '-9999px';
-      element.style.top = '-9999px';
-      element.style.width = '800px';
-      element.style.backgroundColor = '#ffffff';
-      element.style.opacity = '0';
-      element.style.zIndex = '-1';
-      element.style.pointerEvents = 'none';
-      element.style.display = 'none';
-      element.style.visibility = 'hidden';
-    }
   } finally {
     setIsGeneratingPdf(false);
     if (hiddenDivRef.current) {
@@ -285,25 +237,10 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
 
   const handleCloseModal = () => {
     if (!isGeneratingPdf) {
-      // Clean up debug mode if active
-      if (debugMode && hiddenDivRef.current) {
-        hiddenDivRef.current.innerHTML = '';
-        Object.assign(hiddenDivRef.current.style, {
-          display: 'none',
-          position: 'fixed',
-          left: '-9999px',
-          top: '-9999px',
-          opacity: '0',
-          zIndex: '-1',
-          visibility: 'hidden',
-        });
-      }
-      
       onClose();
       // Reset state when modal is closed
       setSelectedOption('all');
       setCustomCount('');
-      setDebugMode(false);
     }
   };
 
@@ -350,22 +287,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {/* Debug Mode Toggle */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDebugMode(!debugMode)}
-                      disabled={isGeneratingPdf}
-                      className={`p-2 rounded-lg transition-colors ${
-                        debugMode 
-                          ? 'bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50 text-yellow-700 dark:text-yellow-400' 
-                          : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                      }`}
-                      title={debugMode ? 'Disable debug mode' : 'Enable debug mode (shows content on screen)'}
-                    >
-                      {debugMode ? <Eye size={16} /> : <EyeOff size={16} />}
-                    </Button>
-                    
                     <Button
                       variant="ghost"
                       size="sm"
@@ -378,24 +299,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
                   </div>
                 </div>
 
-                {/* Debug Mode Notice */}
-                {debugMode && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-700 rounded-xl"
-                  >
-                    <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
-                      <Eye className="h-5 w-5" />
-                      <span className="font-semibold">Debug Mode Enabled</span>
-                    </div>
-                    <p className="text-yellow-700 dark:text-yellow-300 text-sm mt-1">
-                      The content will be displayed on screen for 10 seconds before PDF generation. 
-                      You can scroll and inspect the content. Use this to verify everything looks correct.
-                    </p>
-                  </motion.div>
-                )}
-                
                 {savedContent.length === 0 ? (
                   <motion.div 
                     className="text-center py-12 bg-gradient-to-br from-gray-100 to-red-100 dark:from-gray-900/30 dark:to-red-900/30 rounded-2xl border-2 border-gray-200 dark:border-gray-700"
@@ -533,7 +436,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
                         <FileText className="h-4 w-4" />
                         <p>
                           The PDF will include all content, images, quiz questions, and social media posts for the selected items.
-                          {debugMode && ' Debug mode will show content on screen first.'}
                         </p>
                       </div>
                     </div>
