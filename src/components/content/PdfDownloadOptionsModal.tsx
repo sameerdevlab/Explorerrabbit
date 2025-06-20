@@ -83,7 +83,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     
     if (selectedOption === 'custom') {
       const count = parseInt(customCount);
-      return !isNaN(count) && count > 0 && count <= savedContent.length;
+      return !isNaN(count) && count <= 5 && count <= savedContent.length;
     }
     
     return true;
