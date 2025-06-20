@@ -178,8 +178,8 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
 
     // Make element visible for rendering
     element.style.position = 'absolute';
-    element.style.left = '0';
-    element.style.top = '0';
+    element.style.left = '10';
+    element.style.top = '10';
     element.style.width = '800px';
     element.style.opacity = '1';
     element.style.zIndex = '9999';
