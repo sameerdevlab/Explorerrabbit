@@ -32,7 +32,7 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       value: 'top 1' as DownloadOption,
       label: 'Top 1',
       description: 'Download the 1 most recent items',
-      icon: '🔟',
+      icon: '1️⃣',
       count: Math.min(1, savedContent.length),
       disabled: savedContent.length === 0,
     },
