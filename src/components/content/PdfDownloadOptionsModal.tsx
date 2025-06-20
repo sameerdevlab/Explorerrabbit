@@ -15,7 +15,7 @@ interface PdfDownloadOptionsModalProps {
   savedContent: SavedContentItem[];
 }
 
-type DownloadOption = 'top 1' | 'top 3' | 'top 5' | 'custom'';
+type DownloadOption = 'top 1' | 'top 3' | 'top 5' | 'custom';
 
 const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   isOpen,
