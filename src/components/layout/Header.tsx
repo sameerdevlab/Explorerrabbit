@@ -46,6 +46,15 @@ const Header: React.FC = () => {
           {/* Theme Toggle */}
           <Button
             variant="sketchy"
+            size="md"
+            onClick={handleOpenSavedContent}
+            className="bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30 p-2 shadow-md"
+          >
+          <Bookmark size={18} className="mr-2" />
+            Saved Content
+         </Button>
+          <Button
+            variant="sketchy"
             size="sm"
             onClick={toggleTheme}
             className="bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30 p-2 shadow-md"
