@@ -5,6 +5,7 @@ import { callEdgeFunction } from '../lib/supabase';
 import { generatePlaceholderImages, generateInitialPlaceholderImages } from '../lib/utils';
 import useAuthStore from './authStore';
 import { DifficultyLevel } from '../components/content/MCQDifficultyModal';
+import delay from '../../lib/utils'
 
 // Social Media Post Type Prompts
 const SOCIAL_MEDIA_PROMPTS = {
@@ -520,6 +521,7 @@ const useContentStore = create<ContentState & {
     
     try {
       set({ isLoadingSavedContent: true, savedContent: [] });
+      await delay(300);
       
       // Call the get-saved-content edge function
       const data = await callEdgeFunction('get-saved-content', {});
