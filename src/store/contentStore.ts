@@ -519,8 +519,7 @@ const useContentStore = create<ContentState & {
     }
     
     try {
-      set({ savedContent: [], isLoadingSavedContent: true });
-      await delay(1000);
+      set({ isLoadingSavedContent: true, savedContent: [] });
       
       // Call the get-saved-content edge function
       const data = await callEdgeFunction('get-saved-content', {});
