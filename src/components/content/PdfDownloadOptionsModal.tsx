@@ -26,7 +26,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   const [customCount, setCustomCount] = useState<string>('');
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const hiddenDivRef = useRef<HTMLDivElement>(null);
-  const [showGeneratingOverlay, setShowGeneratingOverlay] = useState(false);
 
   const downloadOptions = [
     {
@@ -152,7 +151,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   }
 
   setIsGeneratingPdf(true);
-  setShowGeneratingOverlay(true);
   const loadingToastId = toast.loading(`Generating PDF with ${filteredContent.length} items...`);
 
   try {
@@ -230,7 +228,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
     });
   } finally {
     setIsGeneratingPdf(false);
-    setShowGeneratingOverlay(false);
     if (hiddenDivRef.current) {
       hiddenDivRef.current.innerHTML = '';
     }
@@ -274,10 +271,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
           >
             <Card className="bg-white dark:bg-gray-800 shadow-2xl">
               <CardContent className="p-6">
-                {/* pdf generating message */}
-                {showGeneratingOverlay && <div className="max-w-md mx-auto rounded text-center">
-                  Please wait, generating PDF...
-                </div>}
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
