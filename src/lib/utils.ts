@@ -249,7 +249,20 @@ export function generateHtmlForAllSavedContent(savedContent: SavedContentItem[])
 
   savedContent.forEach((item, index) => {
     html += generateHtmlForSavedContentItem(item); // Your existing item rendering function
-    html += `<div>Thank you for using the pdf service</div>`
+            html += `<div style="margin-top: 40px; padding: 20px; border-top: 2px dashed #d1d5db; font-size: 14px; color: #374151; line-height: 1.6; font-family: 'Segoe UI', sans-serif;">
+          <p><strong>Thank you for using Explorer AI!</strong></p>
+          <p>This PDF was generated just for you, summarizing all the content you've explored — including educational insights, personalized answers, quizzes to test your understanding, and shareable social media posts to inspire others.</p>
+          <p>You can use this PDF to:</p>
+          <ul style="padding-left: 18px; margin-top: 5px;">
+            <li>Revise your learnings offline or on the go</li>
+            <li>Share insights with friends, classmates, or on social media</li>
+            <li>Keep a personal motivation journal or learning tracker</li>
+            <li>Revisit key moments and concepts anytime you want</li>
+          </ul>
+          <p>If you enjoyed this experience, consider exploring more prompts, sharing your journey, or saving your next AI-powered discovery. We’re constantly improving, and your feedback helps us grow.</p>
+          <p style="margin-top: 10px;">— With gratitude,<br><strong>The Explorer AI Team</strong></p>
+        </div>
+`
     html += `<div style="height: 10px;"></div>`;
   });
 
