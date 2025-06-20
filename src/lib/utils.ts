@@ -215,8 +215,7 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
 
   // Add Social Media Post Section
   if (item.generated_social_media_post && item.generated_social_media_post.trim()) {
-    html += `
-      <div class="social-media-post" style="margin-bottom: 18px;">
+    html += `<div class="social-media-post" style="margin-bottom: 18px;">
         <h2 style="color: #374151; font-size: 18px; font-weight: 600; margin: 0 0 12px 0; border-left: 4px solid #f59e0b; padding-left: 10px;">
           Social Media Post
         </h2>
@@ -225,8 +224,7 @@ export function generateHtmlForSavedContentItem(item: SavedContentItem): string 
             ${item.generated_social_media_post}
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
   }
 
   html += `</div>`;
