@@ -15,14 +15,14 @@ interface PdfDownloadOptionsModalProps {
   savedContent: SavedContentItem[];
 }
 
-type DownloadOption = 'top 1' | 'top 3' | 'top5' | 'custom'';
+type DownloadOption = 'top 1' | 'top 3' | 'top 5' | 'custom'';
 
 const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
   isOpen,
   onClose,
   savedContent,
 }) => {
-  const [selectedOption, setSelectedOption] = useState<DownloadOption>('all');
+  const [selectedOption, setSelectedOption] = useState<DownloadOption>('top 5');
   const [customCount, setCustomCount] = useState<string>('');
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const hiddenDivRef = useRef<HTMLDivElement>(null);
