@@ -29,6 +29,18 @@ const Header: React.FC = () => {
           </div>
           <h1 className="text-2xl font-bold tracking-wide">EXPLORER</h1>
         </div>
+
+        <div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleOpenSavedContent}
+            className="w-full justify-start text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30"
+          >
+          <Bookmark size={16} className="mr-2" />
+            Saved Content
+         </Button>
+        </div>
         
         <div className="flex items-center gap-4">
           {/* Theme Toggle */}
