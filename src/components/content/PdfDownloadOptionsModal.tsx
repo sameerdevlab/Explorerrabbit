@@ -52,14 +52,6 @@ const PdfDownloadOptionsModal: React.FC<PdfDownloadOptionsModalProps> = ({
       disabled: savedContent.length === 0,
     },
     {
-      value: 'top 5' as DownloadOption,
-      label: 'Top 5',
-      description: 'Download the 20 most recent items',
-      icon: '📊',
-      count: Math.min(20, savedContent.length),
-      disabled: savedContent.length === 0,
-    },
-    {
       value: 'custom' as DownloadOption,
       label: 'Custom Amount',
       description: 'Specify how many items to download',
