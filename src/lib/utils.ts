@@ -249,6 +249,7 @@ export function generateHtmlForAllSavedContent(savedContent: SavedContentItem[])
 
   savedContent.forEach((item, index) => {
     html += generateHtmlForSavedContentItem(item); // Your existing item rendering function
+    html += `<div>Thank you for using the pdf service</div>`
     html += `<div style="height: 10px;"></div>`;
   });
 
