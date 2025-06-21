@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html {
-  font-size: 15px;
+  font-size: 10px;
 }
 
 /* Glowing wrapper effect for cards */
