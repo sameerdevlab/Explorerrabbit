@@ -58,11 +58,6 @@ const HomePage: React.FC = () => {
     };
   }, [loadCurrentContentFromLocalStorage, clearCurrentContentFromLocalStorage]);
   
-  // Redirect to auth page if not logged in
-  if (!authLoading && !user) {
-    return <Navigate to="/auth" replace />;
-  }
-  
   useEffect(() => {
     // Show results if we have any current content, any generation is in progress, or content is loading
     const hasContent = currentText.length > 0 || currentImages.length > 0 || currentMcqs.length > 0;
