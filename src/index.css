@@ -131,7 +131,7 @@
 
 /* Custom scrollbar for better aesthetics */
 html::-webkit-scrollbar {
-  width: 8px;
+  width: 15px;
 }
 
 html::-webkit-scrollbar-track {
