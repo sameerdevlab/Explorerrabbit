@@ -64,7 +64,7 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-300 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       <Header />
       
-      <main className="container max-w-screen-xl mx-auto py-8 px-4 flex-grow flex flex-col">
+      <main className="max-w-screen-xl mx-auto py-8 px-4 flex-grow flex flex-col">
         {!showResults && <div className="mb-6 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 dark:from-purple-400 dark:via-pink-400 dark:to-purple-400">
             AI Content Generator
