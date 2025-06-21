@@ -28,12 +28,9 @@ const Header: React.FC = () => {
             <Sparkles size={24} className="text-white" />
           </div>
           <h1 className="text-2xl font-bold tracking-wide">EXPLORER</h1>
-          <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M40 12C41 7 37 4 34 4C31 4 30 9 30 12C30 15 32 16 34 16C36 16 39 15 40 12Z" fill="#000"/>
-  <path d="M42 20C48 20 52 28 52 36C52 44 48 48 44 48C40 48 38 44 34 44C30 44 28 48 24 48C20 48 16 44 16 38C16 34 18 30 20 28C22 26 26 24 28 22C30 20 32 20 34 20H42Z" fill="#000"/>
-  <circle cx="46" cy="16" r="2" fill="#000"/>
-</svg>
-
+          <div className="p-2 bg-white/20 rounded-full backdrop-blur-sm">
+            <img className="w-6 h-6" src="/rabbit_smiling_transparent_refined.png" alt="rabbit logo"/>
+          </div>
         </div>
 
         <div className="flex items-center gap-4">
