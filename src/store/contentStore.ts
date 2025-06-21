@@ -5,6 +5,7 @@ import { callEdgeFunction } from '../lib/supabase';
 import { generatePlaceholderImages, generateInitialPlaceholderImages, delay } from '../lib/utils';
 import useAuthStore from './authStore';
 import { DifficultyLevel } from '../components/content/MCQDifficultyModal';
+import { Navigete } from 'react-router-dom'
 
 // Local storage key for temporary content persistence
 const LOCAL_STORAGE_KEY = 'explorer_current_content';
@@ -195,7 +196,7 @@ const useContentStore = create<ContentState & {
     if (!user) {
       set({ error: 'Please sign in to generate content' });
       toast.error('Please sign in to generate content');
-      return;
+      return <Navigate to="/auth" replace />;
     }
     
     if (!prompt.trim()) {
@@ -270,7 +271,7 @@ const useContentStore = create<ContentState & {
     if (!user) {
       set({ error: 'Please sign in to process text' });
       toast.error('Please sign in to process text');
-      return;
+      return <Navigate to="/auth" replace />;
     }
     
     if (!pastedText.trim()) {
