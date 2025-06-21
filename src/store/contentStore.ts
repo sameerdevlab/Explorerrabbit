@@ -165,22 +165,27 @@ const useContentStore = create<ContentState & {
     set({ pastedText: text });
   },
   
-  clearContent: () => set({
-    result: null,
-    error: null,
-    isGeneratingText: false,
-    isGeneratingImages: false,
-    isGeneratingMcqs: false,
-    isProcessingPastedText: false,
-    isGeneratingSocialMediaPost: false,
-    currentText: '',
-    currentImages: [],
-    currentMcqs: [],
-    socialMediaPost: null,
-    mcqGenerationStatus: 'idle',
-    mcqErrorMessage: null,
-    isSaving: false,
-  }),
+  clearContent: () => {
+    set({
+      result: null,
+      error: null,
+      isGeneratingText: false,
+      isGeneratingImages: false,
+      isGeneratingMcqs: false,
+      isProcessingPastedText: false,
+      isGeneratingSocialMediaPost: false,
+      currentText: '',
+      currentImages: [],
+      currentMcqs: [],
+      socialMediaPost: null,
+      mcqGenerationStatus: 'idle',
+      mcqErrorMessage: null,
+      isSaving: false,
+    });
+    
+    // Clear localStorage when content is cleared
+    get().clearCurrentContentFromLocalStorage();
+  },
   
   generateContent: async () => {
     const { prompt } = get();
@@ -232,47 +237,6 @@ const useContentStore = create<ContentState & {
         isGeneratingImages: false,
         isGeneratingMcqs: false,
         isProcessingPastedText: false,
-        mcqGenerationStatus: 'idle',
-        mcqErrorMessage: null,
-      });
-      
-      // Clear localStorage when content is cleared
-      get().clearCurrentContentFromLocalStorage();
-      
-      // Save to localStorage after loading saved content
-      get().saveCurrentContentToLocalStorage();
-    },
-    
-    clearContent: () => set({
-      result: null,
-      error: null,
-      isGeneratingText: false,
-      isGeneratingImages: false,
-      isGeneratingMcqs: false,
-      isProcessingPastedText: false,
-      isGeneratingSocialMediaPost: false,
-      currentText: '',
-      currentImages: [],
-      currentMcqs: [],
-      socialMediaPost: null,
-      mcqGenerationStatus: 'idle',
-      mcqErrorMessage: null,
-      isSaving: false,
-    }),
-    
-    clearContent: () => {
-      set({
-        result: null,
-        error: null,
-        isGeneratingText: false,
-        isGeneratingImages: false,
-        isGeneratingMcqs: false,
-        isProcessingPastedText: false,
-        isGeneratingSocialMediaPost: false,
-        currentText: '',
-        currentImages: [],
-        currentMcqs: [],
-        socialMediaPost: null,
         mcqGenerationStatus: 'idle',
         mcqErrorMessage: null,
         prompt: '', // Clear the prompt field after successful generation
@@ -443,6 +407,9 @@ const useContentStore = create<ContentState & {
           isGeneratingMcqs: false,
         });
         
+        // Save to localStorage after MCQ generation
+        get().saveCurrentContentToLocalStorage();
+        
         toast.success(`Generated ${data.mcqs.length} ${difficulty} questions successfully!`);
       } else {
         // Generation failed - first attempt
@@ -512,6 +479,9 @@ const useContentStore = create<ContentState & {
           mcqErrorMessage: null,
           isGeneratingMcqs: false,
         });
+        
+        // Save to localStorage after MCQ retry
+        get().saveCurrentContentToLocalStorage();
         
         toast.success(`Generated ${data.mcqs.length} questions successfully!`);
       } else {
@@ -584,6 +554,9 @@ const useContentStore = create<ContentState & {
         isGeneratingSocialMediaPost: false,
       });
       
+      // Save to localStorage after social media post generation
+      get().saveCurrentContentToLocalStorage();
+      
       toast.success('Social media post generated successfully!');
     } catch (error) {
       console.error('Error generating social media post:', error);
@@ -632,9 +605,6 @@ const useContentStore = create<ContentState & {
         savedContent: [data.savedContent, ...currentSavedContent],
         isSaving: false,
       });
-      
-      // Clear localStorage when content is cleared
-      get().clearCurrentContentFromLocalStorage();
       
       toast.success('Content saved successfully!');
     } catch (error) {
@@ -691,6 +661,9 @@ const useContentStore = create<ContentState & {
       mcqGenerationStatus: 'success',
       mcqErrorMessage: null,
     });
+    
+    // Save to localStorage after loading saved content
+    get().saveCurrentContentToLocalStorage();
     
     toast.success(`Loaded: ${item.title}`);
   },
