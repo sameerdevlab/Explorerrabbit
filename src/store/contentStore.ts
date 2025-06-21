@@ -5,7 +5,7 @@ import { callEdgeFunction } from '../lib/supabase';
 import { generatePlaceholderImages, generateInitialPlaceholderImages, delay } from '../lib/utils';
 import useAuthStore from './authStore';
 import { DifficultyLevel } from '../components/content/MCQDifficultyModal';
-import { Navigete } from 'react-router-dom'
+import { Navigate } from 'react-router-dom';
 
 // Local storage key for temporary content persistence
 const LOCAL_STORAGE_KEY = 'explorer_current_content';
