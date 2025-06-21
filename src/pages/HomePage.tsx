@@ -38,28 +38,8 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     // Check if this is a new session (not a refresh)
     const isReloading = sessionStorage.getItem('is_reloading');
-    
-    // if (!isReloading) {
-    //   // New session - clear any old temporary content
-    //   clearCurrentContentFromLocalStorage();
-    //   console.log('🆕 New session detected - cleared old temporary content');
-    // } else {
-    //   // This is a refresh - load temporary content
-    //   loadCurrentContentFromLocalStorage();
-    //   console.log('🔄 Page refresh detected - loading temporary content');
-    // }
     loadCurrentContentFromLocalStorage();
     console.log('🔄 Page refresh detected - loading temporary content');
-    
-    // Mark this session as active
-    sessionStorage.setItem('is_reloading', 'true');
-    
-    // Clear localStorage when the tab/window is closed
-    const handleBeforeUnload = () => {
-      // This will only run when the tab/window is actually closing
-      // Not when refreshing (because sessionStorage persists across refreshes)
-      sessionStorage.removeItem('is_reloading');
-    };
     
     window.addEventListener('beforeunload', handleBeforeUnload);
     
