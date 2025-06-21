@@ -196,8 +196,7 @@ const useContentStore = create<ContentState & {
     if (!user) {
       set({ error: 'Please sign in to generate content' });
       toast.error('Please sign in to generate content');
-      <Navigate to="/auth" replace />
-      return;
+      return <Navigate to="/auth" replace />;
     }
     
     if (!prompt.trim()) {
