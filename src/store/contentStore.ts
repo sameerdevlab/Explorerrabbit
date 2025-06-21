@@ -241,7 +241,7 @@ const useContentStore = create<ContentState & {
       
       // Save to localStorage after loading saved content
       get().saveCurrentContentToLocalStorage();
-    },
+    }
     
     clearContent: () => set({
       result: null,
