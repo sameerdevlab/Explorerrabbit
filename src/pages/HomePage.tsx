@@ -41,6 +41,13 @@ const HomePage: React.FC = () => {
     loadCurrentContentFromLocalStorage();
     console.log('🔄 Page refresh detected - loading temporary content');
     
+    // Clear localStorage when the tab/window is closed
+    const handleBeforeUnload = () => {
+      // This will only run when the tab/window is actually closing
+      // Not when refreshing (because sessionStorage persists across refreshes)
+      sessionStorage.removeItem('is_reloading');
+    };
+    
     window.addEventListener('beforeunload', handleBeforeUnload);
     
     return () => {
