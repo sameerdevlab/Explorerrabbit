@@ -61,7 +61,7 @@ const HomePage: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-300 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div className="max-w-screen-xl min-h-screen flex flex-col bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-300 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       <Header />
       
       <main className="container mx-auto py-8 px-4 flex-grow flex flex-col">
