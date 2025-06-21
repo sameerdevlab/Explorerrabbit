@@ -38,8 +38,16 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     // Check if this is a new session (not a refresh)
     const isReloading = sessionStorage.getItem('is_reloading');
-    loadCurrentContentFromLocalStorage();
-    console.log('🔄 Page refresh detected - loading temporary content');
+    
+    if (!isReloading) {
+      // New session - clear any old temporary content
+      clearCurrentContentFromLocalStorage();
+      console.log('🆕 New session detected - cleared old temporary content');
+    } else {
+      // This is a refresh - load temporary content
+      loadCurrentContentFromLocalStorage();
+      console.log('🔄 Page refresh detected - loading temporary content');
+    }
     
     // Mark this session as active
     sessionStorage.setItem('is_reloading', 'true');
@@ -75,7 +83,7 @@ const HomePage: React.FC = () => {
   
   if (authLoading) {
     return (
-      <div className=" in-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-300 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-300 dark:from-gray-900 dark:to-gray-800">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600 dark:border-purple-400"></div>
       </div>
     );
