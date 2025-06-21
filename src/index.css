@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  font-size: 15px;
+}
+
 /* Glowing wrapper effect for cards */
 .glowing-wrapper {
   position: relative;
