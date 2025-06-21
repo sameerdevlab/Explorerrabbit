@@ -28,8 +28,8 @@ const Header: React.FC = () => {
             <Sparkles size={24} className="text-white" />
           </div>
           <h1 className="text-2xl font-bold tracking-wide">EXPLORER</h1>
-          <div className="p-2 bg-white/20 rounded-full backdrop-blur-sm">
-            <img className="w-6 h-6" src="/rabbit_smiling_transparent_refined.png" alt="rabbit logo"/>
+          <div>
+            <img className="w-8 h-8" src="/rabbit_smiling_transparent_refined.png" alt="rabbit logo"/>
           </div>
         </div>
 
