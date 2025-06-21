@@ -39,15 +39,17 @@ const HomePage: React.FC = () => {
     // Check if this is a new session (not a refresh)
     const isReloading = sessionStorage.getItem('is_reloading');
     
-    if (!isReloading) {
-      // New session - clear any old temporary content
-      clearCurrentContentFromLocalStorage();
-      console.log('🆕 New session detected - cleared old temporary content');
-    } else {
-      // This is a refresh - load temporary content
-      loadCurrentContentFromLocalStorage();
-      console.log('🔄 Page refresh detected - loading temporary content');
-    }
+    // if (!isReloading) {
+    //   // New session - clear any old temporary content
+    //   clearCurrentContentFromLocalStorage();
+    //   console.log('🆕 New session detected - cleared old temporary content');
+    // } else {
+    //   // This is a refresh - load temporary content
+    //   loadCurrentContentFromLocalStorage();
+    //   console.log('🔄 Page refresh detected - loading temporary content');
+    // }
+    loadCurrentContentFromLocalStorage();
+    console.log('🔄 Page refresh detected - loading temporary content');
     
     // Mark this session as active
     sessionStorage.setItem('is_reloading', 'true');
