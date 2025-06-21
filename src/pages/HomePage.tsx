@@ -64,7 +64,7 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-300 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       <Header />
       
-      <main className="container mx-auto py-8 md:px-10 lg:px-18 px-4 flex-grow flex flex-col">
+      <main className="container mx-auto py-8 md:px-15 px-4 flex-grow flex flex-col">
         {!showResults && <div className="mb-6 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 dark:from-purple-400 dark:via-pink-400 dark:to-purple-400">
             AI Content Generator
@@ -101,7 +101,7 @@ const HomePage: React.FC = () => {
               
               {/* MCQ and Social Media Post - Right side with sticky positioning */}
               <div className="sticky top-[104px] w-full md:w-1/2 flex flex-col h-[calc(100vh-136px)] z-10">
-                <div className="flex-grow overflow-y-auto space-y-6 pb-18">
+                <div className="flex-grow overflow-y-auto space-y-6 pb-20">
                   <MCQDisplay />
                   <SocialMediaPostGenerator />
                 </div>
