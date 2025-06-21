@@ -36,34 +36,21 @@ const HomePage: React.FC = () => {
   
   // Initialize localStorage persistence on component mount
   useEffect(() => {
-    // Check if this is a new session (not a refresh)
-    const isReloading = sessionStorage.getItem('is_reloading');
+    // Use sessionStorage to track if this is a new browser session
+    const isNewSession = !sessionStorage.getItem('session_active');
     
-    if (!isReloading) {
-      // New session - clear any old temporary content
+    if (isNewSession) {
+      // New browser session - clear any old temporary content
       clearCurrentContentFromLocalStorage();
-      console.log('🆕 New session detected - cleared old temporary content');
+      console.log('🆕 New browser session detected - cleared old temporary content');
+      
+      // Mark this session as active
+      sessionStorage.setItem('session_active', 'true');
     } else {
-      // This is a refresh - load temporary content
+      // Existing session (refresh) - load temporary content
       loadCurrentContentFromLocalStorage();
       console.log('🔄 Page refresh detected - loading temporary content');
     }
-    
-    // Mark this session as active
-    sessionStorage.setItem('is_reloading', 'true');
-    
-    // Clear localStorage when the tab/window is closed
-    const handleBeforeUnload = () => {
-      // This will only run when the tab/window is actually closing
-      // Not when refreshing (because sessionStorage persists across refreshes)
-      sessionStorage.removeItem('is_reloading');
-    };
-    
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
   }, [loadCurrentContentFromLocalStorage, clearCurrentContentFromLocalStorage]);
   
   useEffect(() => {
@@ -139,15 +126,17 @@ const HomePage: React.FC = () => {
             
             <div className="mt-6 text-center">
               <div className="flex items-center justify-center gap-4 mb-4">
-                <Button
-                  onClick={saveContent}
-                  isLoading={isSaving}
-                  variant="sketchy"
-                  className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white border-none shadow-lg"
-                >
-                  <Save className="h-4 w-4 mr-2" />
-                  {isSaving ? 'Saving...' : 'Save Content'}
-                </Button>
+                {user && (
+                  <Button
+                    onClick={saveContent}
+                    isLoading={isSaving}
+                    variant="sketchy"
+                    className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white border-none shadow-lg"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    {isSaving ? 'Saving...' : 'Save Content'}
+                  </Button>
+                )}
                 
                 <Button
                   onClick={handleNewContent}
