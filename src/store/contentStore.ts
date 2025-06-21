@@ -6,6 +6,9 @@ import { generatePlaceholderImages, generateInitialPlaceholderImages, delay } fr
 import useAuthStore from './authStore';
 import { DifficultyLevel } from '../components/content/MCQDifficultyModal';
 
+// Local storage key for temporary content persistence
+const LOCAL_STORAGE_KEY = 'explorer_current_content';
+
 // Social Media Post Type Prompts
 const SOCIAL_MEDIA_PROMPTS = {
   'informative-summary': 'Summarize the following content into a short, informative social media post. Use clear, professional language and include 1–2 relevant emojis. Highlight key facts or takeaways in 2–3 sentences. Avoid fluff, and format it for LinkedIn or Instagram, At the end of the post, include 3–5 relevant and topic-specific hashtags in lowercase with no spaces. Avoid generic hashtags like #foryou or #viral. Format hashtags naturally on a new line or after the main content. Content: {{USER_CONTENT}}',
@@ -44,6 +47,9 @@ const useContentStore = create<ContentState & {
   loadSavedContent: () => Promise<void>;
   loadSavedContentItem: (item: SavedContentItem) => void;
   deleteSavedContent: (id: string) => Promise<void>;
+  saveCurrentContentToLocalStorage: () => void;
+  loadCurrentContentFromLocalStorage: () => void;
+  clearCurrentContentFromLocalStorage: () => void;
 }>((set, get) => ({
   mode: 'generate',
   prompt: '',
@@ -74,6 +80,84 @@ const useContentStore = create<ContentState & {
   savedContent: [],
   isLoadingSavedContent: false,
   isDeletingContent: false,
+  
+  saveCurrentContentToLocalStorage: () => {
+    const { currentText, currentImages, currentMcqs, socialMediaPost, result } = get();
+    
+    // Only save if there's actual content
+    if (!currentText.trim() && currentImages.length === 0 && currentMcqs.length === 0 && !socialMediaPost) {
+      return;
+    }
+    
+    const contentToSave = {
+      currentText,
+      currentImages,
+      currentMcqs,
+      socialMediaPost,
+      result,
+      timestamp: Date.now(),
+    };
+    
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contentToSave));
+      console.log('✅ Content saved to localStorage');
+    } catch (error) {
+      console.error('❌ Failed to save content to localStorage:', error);
+    }
+  },
+  
+  loadCurrentContentFromLocalStorage: () => {
+    try {
+      const savedContent = localStorage.getItem(LOCAL_STORAGE_KEY);
+      
+      if (!savedContent) {
+        console.log('📭 No content found in localStorage');
+        return;
+      }
+      
+      const parsedContent = JSON.parse(savedContent);
+      
+      // Validate the content structure
+      if (!parsedContent.currentText && !parsedContent.currentImages && !parsedContent.currentMcqs && !parsedContent.socialMediaPost) {
+        console.log('📭 No valid content found in localStorage');
+        return;
+      }
+      
+      // Load the content into the store
+      set({
+        currentText: parsedContent.currentText || '',
+        currentImages: parsedContent.currentImages || [],
+        currentMcqs: parsedContent.currentMcqs || [],
+        socialMediaPost: parsedContent.socialMediaPost || null,
+        result: parsedContent.result || null,
+        // Reset loading states
+        loading: false,
+        isGeneratingText: false,
+        isGeneratingImages: false,
+        isGeneratingMcqs: false,
+        isProcessingPastedText: false,
+        isGeneratingSocialMediaPost: false,
+        mcqGenerationStatus: parsedContent.currentMcqs && parsedContent.currentMcqs.length > 0 ? 'success' : 'idle',
+        mcqErrorMessage: null,
+        error: null,
+      });
+      
+      console.log('✅ Content loaded from localStorage');
+    } catch (error) {
+      console.error('❌ Failed to load content from localStorage:', error);
+      // Clear corrupted data
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
+  },
+  
+  clearCurrentContentFromLocalStorage: () => {
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      console.log('✅ Content cleared from localStorage');
+    } catch (error) {
+      console.error('❌ Failed to clear content from localStorage:', error);
+    }
+  },
   
   setMode: (mode) => set({ mode }),
   setPrompt: (prompt) => set({ prompt }),
@@ -150,8 +234,52 @@ const useContentStore = create<ContentState & {
         isProcessingPastedText: false,
         mcqGenerationStatus: 'idle',
         mcqErrorMessage: null,
+      });
+      
+      // Clear localStorage when content is cleared
+      get().clearCurrentContentFromLocalStorage();
+      
+      // Save to localStorage after loading saved content
+      get().saveCurrentContentToLocalStorage();
+    },
+    
+    clearContent: () => set({
+      result: null,
+      error: null,
+      isGeneratingText: false,
+      isGeneratingImages: false,
+      isGeneratingMcqs: false,
+      isProcessingPastedText: false,
+      isGeneratingSocialMediaPost: false,
+      currentText: '',
+      currentImages: [],
+      currentMcqs: [],
+      socialMediaPost: null,
+      mcqGenerationStatus: 'idle',
+      mcqErrorMessage: null,
+      isSaving: false,
+    }),
+    
+    clearContent: () => {
+      set({
+        result: null,
+        error: null,
+        isGeneratingText: false,
+        isGeneratingImages: false,
+        isGeneratingMcqs: false,
+        isProcessingPastedText: false,
+        isGeneratingSocialMediaPost: false,
+        currentText: '',
+        currentImages: [],
+        currentMcqs: [],
+        socialMediaPost: null,
+        mcqGenerationStatus: 'idle',
+        mcqErrorMessage: null,
         prompt: '', // Clear the prompt field after successful generation
       });
+      
+      // Save to localStorage after successful generation
+      get().saveCurrentContentToLocalStorage();
     } catch (error) {
       console.error('Error generating content:', error);
       const errorMessage = error instanceof Error ? error.message : 'An error occurred while generating content';
@@ -243,6 +371,9 @@ const useContentStore = create<ContentState & {
         mcqErrorMessage: null,
         pastedText: '', // Clear the pasted text field after successful processing
       });
+      
+      // Save to localStorage after successful processing
+      get().saveCurrentContentToLocalStorage();
       
       // Show success message
       toast.success('Content processed successfully!');
@@ -501,6 +632,9 @@ const useContentStore = create<ContentState & {
         savedContent: [data.savedContent, ...currentSavedContent],
         isSaving: false,
       });
+      
+      // Clear localStorage when content is cleared
+      get().clearCurrentContentFromLocalStorage();
       
       toast.success('Content saved successfully!');
     } catch (error) {
