@@ -253,7 +253,7 @@ export function generateHtmlForAllSavedContent(savedContent: SavedContentItem[])
   });
 
   html += `<div style="margin-top: 40px; padding: 20px; border-top: 2px dashed #d1d5db; font-size: 14px; color: #374151; line-height: 1.6; font-family: 'Segoe UI', sans-serif;">
-  <p><strong>Thank you for using Explorer.!</strong></p>
+  <p><strong>Thank you for using EXPLORERrabbit.!</strong></p>
   <p>This PDF was generated just for you, summarizing all the content you've explored — including educational insights, personalized answers, quizzes to test your understanding, and shareable social media posts to inspire others.</p>
   <p>You can use this PDF to:</p>
   <ul style="padding-left: 18px; margin-top: 5px;">
