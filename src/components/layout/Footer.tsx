@@ -11,7 +11,7 @@ const Footer: React.FC<FooterProps> = ({ onAboutClick, onTermsClick, onSupportCl
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-r from-gray-900 via-purple-900 to-gray-900 dark:from-gray-950 dark:via-purple-950 dark:to-gray-950 text-white py-12 px-6">
+    <footer className="bg-gradient-to-top from-gray-900 via-purple-900 to-gray-900 dark:from-gray-950 dark:via-purple-950 dark:to-gray-950 text-white py-12 px-6">
       <div className="container mx-auto max-w-6xl">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
