@@ -19,7 +19,7 @@ const Footer: React.FC<FooterProps> = ({ onAboutClick, onTermsClick, onSupportCl
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
               <img 
-                className="w-10 h-12 rounded-xl bg-gradient-to-r from-white via-gray-100 to-white" 
+                className="w-10 h-14 rounded-xl bg-gradient-to-r from-gray-900 to-white-600/20" 
                 src="/rabbitLogoTr.png" 
                 alt="EXPLORERrabbit Logo"
               />
