@@ -44,7 +44,7 @@ const Header: React.FC = () => {
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div>
-              <img className="w-12 h-16 bg-gradient-to-r from-orange-500 via-yellow-500 to-yellow-1000 dark:from-slate-900 dark:via-gray-600 dark:to-white rounded-xl" src="/rabbitLogoTr.png" alt="Explorer Logo"/>
+              <img className="w-12 h-16 bg-gradient-to-r from-orange-500 via-yellow-500 to-yellow-900 dark:from-slate-900 dark:via-gray-600 dark:to-white rounded-xl" src="/rabbitLogoTr.png" alt="Explorer Logo"/>
             </div>
             <h1 className="text-xl md:text-2xl font-bold tracking-wide">EXPLORERrabbit</h1>
           </div>
