@@ -192,10 +192,10 @@ const SupportModal: React.FC<SupportModalProps> = ({ isOpen, onClose }) => {
                         <h4 className="font-semibold text-gray-800 dark:text-gray-200">Email Support</h4>
                       </div>
                       <a
-                        href="mailto:support@explorerrabbit.com"
+                        href="mailto:smartteam034@gmail.com"
                         className="text-green-600 dark:text-green-400 text-sm hover:underline"
                       >
-                        support@explorerrabbit.com
+                        smartteam034@gmail.com
                       </a>
                     </motion.div>
                   </div>
