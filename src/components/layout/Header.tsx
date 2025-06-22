@@ -25,7 +25,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div>
-            <img className="w-10 h-14" src="/rabbitLogoTr.png" atl="rabbit logo"/>
+            <img className="w-11 h-14" src="/rabbitLogoTr.png" atl="rabbit logo"/>
           </div>
           <h1 className="text-2xl font-bold tracking-wide">EXPLORERrabbit</h1>
         </div>
