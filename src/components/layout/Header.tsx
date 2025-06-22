@@ -25,9 +25,9 @@ const Header: React.FC = () => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-white/20 rounded-full backdrop-blur-sm">
-            <Sparkles size={24} className="text-white" />
+            <img className="w-8 h-10" src="/rabbitLogo.png" atl="rabbit logo"/>
           </div>
-          <h1 className="text-2xl font-bold tracking-wide">EXPLORER</h1>
+          <h1 className="text-2xl font-bold tracking-wide">EXPLORERrabbit</h1>
         </div>
 
         <div className="flex items-center gap-4">
