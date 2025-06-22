@@ -1,14 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
+import Footer from './components/layout/Footer';
+import AboutModal from './components/modals/AboutModal';
+import TermsModal from './components/modals/TermsModal';
+import SupportModal from './components/modals/SupportModal';
 import useAuthStore from './store/authStore';
 import useThemeStore from './store/themeStore';
 
 function App() {
   const { initialize, loading, user } = useAuthStore();
   const { theme } = useThemeStore();
+  
+  // Modal states
+  const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
   
   useEffect(() => {
     initialize();
@@ -34,12 +43,39 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <div className="min-h-screen flex flex-col">
+          <div className="flex-grow">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
+          
+          {/* Footer */}
+          <Footer
+            onAboutClick={() => setIsAboutModalOpen(true)}
+            onTermsClick={() => setIsTermsModalOpen(true)}
+            onSupportClick={() => setIsSupportModalOpen(true)}
+          />
+        </div>
       </BrowserRouter>
+      
+      {/* Modals */}
+      <AboutModal
+        isOpen={isAboutModalOpen}
+        onClose={() => setIsAboutModalOpen(false)}
+      />
+      
+      <TermsModal
+        isOpen={isTermsModalOpen}
+        onClose={() => setIsTermsModalOpen(false)}
+      />
+      
+      <SupportModal
+        isOpen={isSupportModalOpen}
+        onClose={() => setIsSupportModalOpen(false)}
+      />
       
       <Toaster 
         position="top-center"
