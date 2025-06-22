@@ -43,7 +43,7 @@ const Header: React.FC = () => {
       <header className="w-full sticky top-0 z-50 px-6 py-1 bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 text-white shadow-lg border-b-2 border-white/20">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div cassName="dark:bg-white-600/10">
+            <div cassName="dark:bg-white">
               <img className="w-12 h-16" src="/rabbitLogoTr.png" alt="Explorer Logo"/>
             </div>
             <h1 className="text-xl md:text-2xl font-bold tracking-wide">EXPLORERrabbit</h1>
