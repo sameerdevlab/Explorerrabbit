@@ -42,6 +42,12 @@ const Header: React.FC = () => {
     <>
       <header className="w-full sticky top-0 z-50 px-6 py-1 bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 text-white shadow-lg border-b-2 border-white/20">
         <div className="container mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div>
+              <img className="w-12 h-16 bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 dark:from-slate-900 dark:via-yellow-300 dark:to-slate-900 rounded-xl" src="/rabbitLogoTr.png" alt="Explorer Logo"/>
+            </div>
+            <h1 className="text-xl md:text-2xl font-bold tracking-wide">EXPLORERrabbit</h1>
+          </div>
 
           <div className="flex items-center gap-2 md:gap-4">
             {/* Theme-dependent circular image */}
@@ -49,16 +55,9 @@ const Header: React.FC = () => {
               <img 
                 src={theme === 'dark' ? "/white_circle_360x360.png" : "/black_circle_360x360.png"}
                 alt="Bolt.new"
-                className="absolute top-2 right-1 w-10 h-10 md:w-14 md:h-14 rounded-full"
+                className="absolute top-2 right-1 w-10 h-10 md:w-14 md:h-14 rounded-full object-contain"
               />
             </div>
-          
-          <div className="flex items-center gap-3">
-            <div>
-              <img className="w-12 h-16 bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 dark:from-slate-900 dark:via-yellow-300 dark:to-slate-900 rounded-xl" src="/rabbitLogoTr.png" alt="Explorer Logo"/>
-            </div>
-            <h1 className="text-xl md:text-2xl font-bold tracking-wide">EXPLORERrabbit</h1>
-          </div>
 
             {/* Desktop Navigation - Hidden on mobile */}
             <div className="hidden md:flex items-center gap-4 mr-8 md:mr-11">
