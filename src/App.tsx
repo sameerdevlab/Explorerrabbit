@@ -48,7 +48,7 @@ function App() {
           <img 
             src={theme === 'dark' ? "/white_circle_360x360.png" : "/black_circle_360x360.png"}
             alt="Bolt.new"
-            className="fixed top-2 right-2 w-14 h-14 md:w-18 md:h-18 rounded-full object-contain z-[60]"
+            className="fixed top-2 right-2 w-14 h-14 md:w-20 md:h-20 lg:w-22 lg:h-22 rounded-full object-contain z-[60]"
           />
           
           <div className="flex-grow">
