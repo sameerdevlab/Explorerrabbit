@@ -311,6 +311,7 @@ const useContentStore = create<ContentState & {
         finalImages = imageResponse.value.images;
         console.log('✅ Images generated successfully:', finalImages);
       } else {
+        finalImages = [];
         console.log('❌ Image generation failed or returned empty:', imageResponse);
       }
       
