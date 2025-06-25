@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
 
     // Get API keys
     const groqApiKey = Deno.env.get("GROQ_API_KEY");
-    const deepAiApiKey = Deno.env.get("DEEPAI_API_KEY");
+    const pexelsApiKey = Deno.env.get("PEXELS_API_KEY");
     
     if (!groqApiKey) {
       return new Response(
