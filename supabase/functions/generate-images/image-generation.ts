@@ -5,7 +5,6 @@ const pexelsUnfriendlyKeywords = [
   "deep learning", "quantum", "simulation", "biotech", "genetics", "spaceship"
 ];
 
-
 interface ImageData {
   url: string;
   alt: string;
