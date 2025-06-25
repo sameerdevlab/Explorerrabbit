@@ -1,12 +1,10 @@
 // Shared utility for image generation with keyword filtering
 const pexelsUnfriendlyKeywords = [
-  "ai", "artificial intelligence", "neural", "neural network", "digital", "brain",
-  "abstract", "robot", "cyber", "cyberpunk", "futuristic", "hologram", "prompt",
-  "matrix", "virtual", "metaverse", "code", "developer", "programming", "software",
-  "machine learning", "deep learning", "data", "big data", "cloud", "server",
-  "technology", "algorithm", "interface", "dashboard", "network", "internet",
-  "quantum", "simulation", "biotech", "genetics", "nano", "spacecraft", "spaceship"
+  "ai", "artificial intelligence", "neural", "robot", "cyber", "cyberpunk",
+  "futuristic", "hologram", "matrix", "virtual", "metaverse", "machine learning",
+  "deep learning", "quantum", "simulation", "biotech", "genetics", "spaceship"
 ];
+
 
 interface ImageData {
   url: string;
