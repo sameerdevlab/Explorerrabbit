@@ -49,13 +49,13 @@ const Header: React.FC = () => {
             <h1 className="text-xl md:text-2xl font-bold tracking-wide">EXPLORERrabbit</h1>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4 absolute top-2 right-1">
+          <div className="flex items-center gap-2 md:gap-4">
             {/* Theme-dependent circular image */}
             <div className="flex items-center">
               <img 
                 src={theme === 'dark' ? "/white_circle_360x360.png" : "/black_circle_360x360.png"}
                 alt="Bolt.new"
-                className="w-12 h-12 md:w-10 md:h-10 rounded-full object-contain"
+                className="absolute top-2 right-1 w-12 h-12 md:w-10 md:h-10 rounded-full object-contain"
               />
             </div>
 
