@@ -93,9 +93,6 @@ const HomePage: React.FC = () => {
         
         <ModeToggle />
         
-        {/* Feature Highlights - Only show when not displaying results */}
-        {!showResults && <FeatureHighlights />}
-        
         {!showResults ? (
           <motion.div
             initial={{ opacity: 0 }}
@@ -127,6 +124,9 @@ const HomePage: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Feature Highlights - Only show when not displaying results */}
+            {!showResults && <FeatureHighlights />}
             
             <div className="mt-6 text-center">
               <div className="flex items-center justify-center gap-4 mb-4">
