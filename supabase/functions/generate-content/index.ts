@@ -159,7 +159,7 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "Create 3 detailed image prompts for fantasy or realistic visuals based on this text. Return only a JSON array of 3 strings."
+            content: "Based on the given text, generate 3 simple and realistic photography-style prompts suitable for stock image websites like Pexels. Avoid fantasy, AI, digital art, or abstract visuals. Each prompt should describe real-world scenes, people, objects, nature, or places. Return only a JSON array of 3 strings."
           },
           {
             role: "user",
