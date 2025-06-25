@@ -84,9 +84,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (!deepAiApiKey) {
+    if (!pexelsApiKey) {
       return new Response(
-        JSON.stringify({ error: "DeepAI API key is not configured" }),
+        JSON.stringify({ error: "Pexels API key is not configured" }),
         {
           status: 500,
           headers: {
