@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { Save, RotateCcw } from 'lucide-react';
 import Header from '../components/layout/Header';
 import ModeToggle from '../components/layout/ModeToggle';
+import FeatureHighlights from '../components/layout/FeatureHighlights';
 import PromptInput from '../components/content/PromptInput';
 import TextInput from '../components/content/TextInput';
 import ContentDisplay from '../components/content/ContentDisplay';
@@ -91,6 +92,9 @@ const HomePage: React.FC = () => {
         </div>}
         
         <ModeToggle />
+        
+        {/* Feature Highlights - Only show when not displaying results */}
+        {!showResults && <FeatureHighlights />}
         
         {!showResults ? (
           <motion.div
