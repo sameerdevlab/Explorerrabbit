@@ -21,6 +21,14 @@ interface ImageData {
   position: number;
 }
 
+// Helper function to check if a prompt contains unfriendly keywords
+function containsUnfriendlyKeywords(prompt: string): boolean {
+  const lowerPrompt = prompt.toLowerCase();
+  return pexelsUnfriendlyKeywords.some(keyword => 
+    lowerPrompt.includes(keyword.toLowerCase())
+  );
+}
+
 export async function generateImagesFromText(
   text: string,
   groqApiKey: string,
@@ -30,24 +38,24 @@ export async function generateImagesFromText(
   const lowerText = text.toLowerCase();
   
   // Check if text contains any unfriendly keywords
-  const containsUnfriendlyKeywords = pexelsUnfriendlyKeywords.some(keyword => 
+  const textContainsUnfriendlyKeywords = pexelsUnfriendlyKeywords.some(keyword => 
     lowerText.includes(keyword.toLowerCase())
   );
   
   // Check if text contains any friendly keywords
-  const containsFriendlyKeywords = pexelsFriendlyKeywords.some(keyword => 
+  const textContainsFriendlyKeywords = pexelsFriendlyKeywords.some(keyword => 
     lowerText.includes(keyword.toLowerCase())
   );
   
   // Generate images if:
   // 1. Text doesn't contain unfriendly keywords, OR
   // 2. Text contains at least one friendly keyword (even if it also has unfriendly ones)
-  if (containsUnfriendlyKeywords && !containsFriendlyKeywords) {
+  if (textContainsUnfriendlyKeywords && !textContainsFriendlyKeywords) {
     console.log('🚫 Text contains Pexels-unfriendly keywords and no friendly keywords. Skipping image generation.');
     return [];
   }
   
-  if (containsFriendlyKeywords) {
+  if (textContainsFriendlyKeywords) {
     console.log('✅ Text contains Pexels-friendly keywords. Proceeding with image generation...');
   } else {
     console.log('✅ Text is suitable for Pexels image generation. Proceeding...');
@@ -89,16 +97,39 @@ export async function generateImagesFromText(
       imagePrompts = ["A visual representation related to the provided text"];
     }
 
-    // Generate images with Pexels
+    console.log('🔍 Generated image prompts:', imagePrompts);
+
+    // Filter out prompts that contain unfriendly keywords
+    const filteredPrompts = imagePrompts.filter((prompt, index) => {
+      const hasUnfriendlyKeywords = containsUnfriendlyKeywords(prompt);
+      if (hasUnfriendlyKeywords) {
+        console.log(`🚫 Skipping prompt ${index + 1} due to unfriendly keywords: "${prompt}"`);
+        return false;
+      }
+      console.log(`✅ Prompt ${index + 1} is suitable: "${prompt}"`);
+      return true;
+    });
+
+    console.log(`📊 Filtered prompts: ${filteredPrompts.length}/${imagePrompts.length} prompts passed the filter`);
+
+    // If no prompts pass the filter, return empty array
+    if (filteredPrompts.length === 0) {
+      console.log('🚫 No suitable prompts found after filtering. Skipping image generation.');
+      return [];
+    }
+
+    // Generate images with Pexels using filtered prompts
     const images: ImageData[] = [];
     const textLines = text.split('\n').filter(line => line.trim().length > 0);
     
     // Calculate positions to place images (roughly every 5-6 lines)
-    const interval = Math.max(Math.floor(textLines.length / (imagePrompts.length + 1)), 5);
+    const interval = Math.max(Math.floor(textLines.length / (filteredPrompts.length + 1)), 5);
 
-    for (let i = 0; i < imagePrompts.length && i < 3; i++) {
+    for (let i = 0; i < filteredPrompts.length && i < 3; i++) {
       try {
-        const imageResponse = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(imagePrompts[i])}&per_page=1`, {
+        console.log(`🖼️ Fetching image for prompt: "${filteredPrompts[i]}"`);
+        
+        const imageResponse = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(filteredPrompts[i])}&per_page=1`, {
           method: "GET",
           headers: {
             Authorization: pexelsApiKey,
@@ -108,21 +139,24 @@ export async function generateImagesFromText(
         const imageData = await imageResponse.json();
     
         if (!imageResponse.ok || !imageData.photos || imageData.photos.length === 0) {
-          console.error("Pexels API error:", imageData);
+          console.error(`❌ Pexels API error for prompt "${filteredPrompts[i]}":`, imageData);
           continue;
         }
     
         images.push({
           url: imageData.photos[0].src.large,
-          alt: imagePrompts[i].substring(0, 100),
+          alt: filteredPrompts[i].substring(0, 100),
           position: (i + 1) * interval
         });
+
+        console.log(`✅ Successfully fetched image ${i + 1} for prompt: "${filteredPrompts[i]}"`);
     
       } catch (error) {
-        console.error("Error fetching from Pexels:", error);
+        console.error(`❌ Error fetching from Pexels for prompt "${filteredPrompts[i]}":`, error);
       }
     }
 
+    console.log(`🎉 Image generation completed: ${images.length} images generated`);
     return images;
   } catch (error) {
     console.error("Error in generateImagesFromText:", error);
