@@ -82,8 +82,8 @@ const HomePage: React.FC = () => {
       
       <main className="container mx-auto py-8 px-5 lg:px-16 flex-grow flex flex-col">
         {!showResults && <div className="mb-6 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 dark:from-purple-400 dark:via-pink-400 dark:to-purple-400">
-            Turn Any Text Into a Complete Learning Experience — Instantly.
+          <h1 className="text-4xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 dark:from-purple-400 dark:via-pink-400 dark:to-purple-400">
+            Turn Any Text Into a Complete Learning Experience
           </h1>
           <p className="mt-2 text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
             Ask, paste, or learn — and let AI transform your prompt or paragraph into smart visuals, interactive MCQs, and shareable insights.
