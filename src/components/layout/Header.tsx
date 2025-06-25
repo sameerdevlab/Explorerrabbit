@@ -49,7 +49,7 @@ const Header: React.FC = () => {
             <h1 className="text-xl md:text-2xl font-bold tracking-wide">EXPLORERrabbit</h1>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4 mr-10 md:mr-11 lg:mr-14">
+          <div className="flex items-center gap-2 md:gap-4 mr-10 md:mr-11 lg:mr-16">
             {/* Desktop Navigation - Hidden on mobile */}
             <div className="hidden md:flex items-center gap-4">
               {/* Saved Content Button */}
