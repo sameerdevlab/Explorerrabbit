@@ -5,6 +5,16 @@ const pexelsUnfriendlyKeywords = [
   "deep learning", "quantum", "simulation", "biotech", "genetics", "spaceship"
 ];
 
+const pexelsFriendlyKeywords = [
+  "nature", "flower", "forest", "tree", "sunset", "mountain", "animal",
+  "horse", "cat", "dog", "bird", "person", "people", "man", "woman", "child", "kids",
+  "travel", "beach", "car", "road", "building", "city", "landscape", "food",
+  "sky", "river", "street", "garden", "park", "bridge", "boat", "bicycle", "field",
+  "lake", "snow", "rain", "umbrella", "coffee", "desk", "laptop", "phone", "books",
+  "writing", "reading", "studying", "shopping", "cooking", "walking", "running",
+  "friends", "family", "vacation", "countryside", "market", "cafe", "sunrise", "sunlight"
+];
+
 interface ImageData {
   url: string;
   alt: string;
@@ -24,12 +34,24 @@ export async function generateImagesFromText(
     lowerText.includes(keyword.toLowerCase())
   );
   
-  if (containsUnfriendlyKeywords) {
-    console.log('🚫 Text contains Pexels-unfriendly keywords. Skipping image generation.');
+  // Check if text contains any friendly keywords
+  const containsFriendlyKeywords = pexelsFriendlyKeywords.some(keyword => 
+    lowerText.includes(keyword.toLowerCase())
+  );
+  
+  // Generate images if:
+  // 1. Text doesn't contain unfriendly keywords, OR
+  // 2. Text contains at least one friendly keyword (even if it also has unfriendly ones)
+  if (containsUnfriendlyKeywords && !containsFriendlyKeywords) {
+    console.log('🚫 Text contains Pexels-unfriendly keywords and no friendly keywords. Skipping image generation.');
     return [];
   }
   
-  console.log('✅ Text is suitable for Pexels image generation. Proceeding...');
+  if (containsFriendlyKeywords) {
+    console.log('✅ Text contains Pexels-friendly keywords. Proceeding with image generation...');
+  } else {
+    console.log('✅ Text is suitable for Pexels image generation. Proceeding...');
+  }
   
   try {
     // Generate image prompts using Groq
