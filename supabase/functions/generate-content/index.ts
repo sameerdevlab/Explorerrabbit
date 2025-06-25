@@ -182,36 +182,37 @@ Deno.serve(async (req) => {
       imagePrompts = ["A visual representation related to " + prompt];
     }
 
-    // Generate images with DeepAI
+    // Generate images with Pexels
     const images = [];
     const textLines = generatedText.split('\n').filter(line => line.trim().length > 0);
+    
+    // Calculate positions to place images (roughly every 5-6 lines)
     const interval = Math.max(Math.floor(textLines.length / (imagePrompts.length + 1)), 5);
 
     for (let i = 0; i < imagePrompts.length && i < 3; i++) {
       try {
-        const imageResponse = await fetch("https://api.deepai.org/api/text2img", {
-          method: "POST",
+        const imageResponse = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(imagePrompts[i])}&per_page=1`, {
+          method: "GET",
           headers: {
-            "Api-Key": deepAiApiKey,
-            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: pexelsApiKey, // define this earlier
           },
-          body: new URLSearchParams({ text: imagePrompts[i] }),
         });
-
+    
         const imageData = await imageResponse.json();
-
-        if (!imageResponse.ok || !imageData.output_url) {
-          console.error("DeepAI API error:", imageData);
+    
+        if (!imageResponse.ok || !imageData.photos || imageData.photos.length === 0) {
+          console.error("Pexels API error:", imageData);
           continue;
         }
-
+    
         images.push({
-          url: imageData.output_url,
+          url: imageData.photos[0].src.large,
           alt: imagePrompts[i].substring(0, 100),
-          position: (i + 1) * interval,
+          position: (i + 1) * interval
         });
+    
       } catch (error) {
-        console.error("Error generating image:", error);
+        console.error("Error fetching from Pexels:", error);
       }
     }
 
