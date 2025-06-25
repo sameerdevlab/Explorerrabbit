@@ -43,7 +43,14 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col relative">
+          {/* Fixed theme-dependent circular image */}
+          <img 
+            src={theme === 'dark' ? "/white_circle_360x360.png" : "/black_circle_360x360.png"}
+            alt="Bolt.new"
+            className="fixed top-4 right-4 w-12 h-12 md:w-16 md:h-16 rounded-full object-contain z-[60]"
+          />
+          
           <div className="flex-grow">
             <Routes>
               <Route path="/" element={<HomePage />} />
