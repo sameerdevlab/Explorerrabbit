@@ -68,16 +68,8 @@ const FeatureHighlights: React.FC = () => {
           transition={{ delay: 0.4 }}
           className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-3"
         >
-          Everything You Need for Content Creation
+          Everything You Need for Smarter Learning, Self-Testing, and Social Sharing.
         </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="text-gray-600 dark:text-gray-400"
-        >
-          Powerful AI tools to transform your ideas into engaging, shareable content
-        </motion.p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
