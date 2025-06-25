@@ -86,7 +86,7 @@ const HomePage: React.FC = () => {
             Turn Any Text Into a Complete Learning Experience
           </h1>
           <p className="mt-2 text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Ask, paste, or learn — and let AI transform your prompt or paragraph into smart visuals, interactive MCQs, and shareable insights.
+            Learn, test, and share — from any prompt or paragraph.
           </p>
         </div>}
         
