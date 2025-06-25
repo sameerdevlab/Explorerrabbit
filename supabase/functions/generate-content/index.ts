@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.39.8';
-import { generateImagesFromText } from '../utils/image-generation.ts';
+import { generateImagesFromText } from './image-generation.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
