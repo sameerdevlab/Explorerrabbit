@@ -1,7 +1,7 @@
 // Shared utility for image generation with keyword filtering
 const pexelsUnfriendlyKeywords = [
   "ai", "artificial intelligence", "neural", "robot", "cyber", "cyberpunk",
-  "futuristic", "hologram", "matrix", "virtual", "metaverse", "machine learning",
+  "hologram", "matrix", "metaverse", "machine learning",
   "deep learning", "quantum", "simulation", "biotech", "genetics", "spaceship"
 ];
 
