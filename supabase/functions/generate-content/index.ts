@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.39.8';
+import { generateImagesFromText } from '../utils/image-generation.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -147,74 +148,8 @@ Deno.serve(async (req) => {
 
     const generatedText = textData.choices[0].message.content;
 
-    // Generate image prompts using Groq
-    const imagePromptResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${groqApiKey}`,
-      },
-      body: JSON.stringify({
-        model: "llama-3.1-70b-versatile",
-        messages: [
-          {
-            role: "system",
-            content: "Based on the given text, generate 3 simple and realistic photography-style prompts suitable for stock image websites like Pexels. Avoid fantasy, AI, digital art, or abstract visuals. Each prompt should describe real-world scenes, people, objects, nature, or places. Return only a JSON array of 3 strings."
-          },
-          {
-            role: "user",
-            content: generatedText
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 500,
-      }),
-    });
-
-    const imagePromptData = await imagePromptResponse.json();
-
-    let imagePrompts;
-    try {
-      imagePrompts = JSON.parse(imagePromptData.choices[0].message.content);
-      if (!Array.isArray(imagePrompts)) throw new Error("Invalid prompt format");
-    } catch (error) {
-      console.error("Error parsing image prompts:", error);
-      imagePrompts = ["A visual representation related to " + prompt];
-    }
-
-    // Generate images with Pexels
-    const images = [];
-    const textLines = generatedText.split('\n').filter(line => line.trim().length > 0);
-    
-    // Calculate positions to place images (roughly every 5-6 lines)
-    const interval = Math.max(Math.floor(textLines.length / (imagePrompts.length + 1)), 5);
-
-    for (let i = 0; i < imagePrompts.length && i < 3; i++) {
-      try {
-        const imageResponse = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(imagePrompts[i])}&per_page=1`, {
-          method: "GET",
-          headers: {
-            Authorization: pexelsApiKey, // define this earlier
-          },
-        });
-    
-        const imageData = await imageResponse.json();
-    
-        if (!imageResponse.ok || !imageData.photos || imageData.photos.length === 0) {
-          console.error("Pexels API error:", imageData);
-          continue;
-        }
-    
-        images.push({
-          url: imageData.photos[0].src.large,
-          alt: imagePrompts[i].substring(0, 100),
-          position: (i + 1) * interval
-        });
-    
-      } catch (error) {
-        console.error("Error fetching from Pexels:", error);
-      }
-    }
+    // Generate images using the shared utility function
+    const images = await generateImagesFromText(generatedText, groqApiKey, pexelsApiKey);
 
     // Combine everything into a response (no MCQs generated automatically)
     const result = {
