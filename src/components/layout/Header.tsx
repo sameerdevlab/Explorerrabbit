@@ -50,6 +50,15 @@ const Header: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 md:gap-4">
+            {/* Theme-dependent circular image */}
+            <div className="flex items-center">
+              <img 
+                src={theme === 'dark' ? "/white_circle_360x360.png" : "/black_circle_360x360.png"}
+                alt="Bolt.new"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-full object-contain"
+              />
+            </div>
+
             {/* Desktop Navigation - Hidden on mobile */}
             <div className="hidden md:flex items-center gap-4">
               {/* Saved Content Button */}
