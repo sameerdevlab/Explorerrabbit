@@ -83,7 +83,7 @@ const HomePage: React.FC = () => {
       
       <main className="container mx-auto py-8 px-5 lg:px-16 flex-grow flex flex-col">
         {!showResults && <div className="mb-8 text-center">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-purple-600 via-pink-500 to-purple-600 dark:from-purple-400 dark:via-pink-400 dark:to-purple-400 p-2 text-shadow-xl">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-purple-600 via-pink-500 to-purple-600 dark:from-purple-400 dark:via-pink-400 dark:to-purple-400 p-3 text-shadow-xl">
             Turn Any Text Into a Complete Learning Experience
           </h1>
           <p className="text-3xl mt-4 text-slate-600 font-bold dark:text-slate-300 max-w-4xl mx-auto">
