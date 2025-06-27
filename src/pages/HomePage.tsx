@@ -159,7 +159,7 @@ const HomePage: React.FC = () => {
           </motion.div>
         )}
 
-        <div className={`${mode === 'generate' ? "mt-16" : "mt-16"}`}>
+        <div className="mt-16">
           {/* Feature Highlights - Only show when not displaying results */}
           {!showResults && <FeatureHighlights />}
         </div>
