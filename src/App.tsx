@@ -45,11 +45,13 @@ function App() {
       <BrowserRouter>
         <div className="min-h-screen flex flex-col relative">
           {/* Fixed theme-dependent circular image */}
-          <img 
-            src={theme === 'dark' ? "/white_circle_360x360.png" : "/black_circle_360x360.png"}
-            alt="Bolt.new"
-            className="fixed top-2 right-1 w-14 h-14 md:w-20 md:h-20 lg:w-22 lg:h-22 rounded-full object-contain z-[60]"
-          />
+          <a href="https://bolt.new/" target="_blank" rel="noopener noreferrer">
+            <img 
+              src={theme === 'dark' ? "/white_circle_360x360.png" : "/black_circle_360x360.png"}
+              alt="Bolt.new"
+              className="fixed top-2 right-1 w-14 h-14 md:w-20 md:h-20 lg:w-22 lg:h-22 rounded-full object-contain z-[60]"
+            />
+          </a>
           
           <div className="flex-grow">
             <Routes>
