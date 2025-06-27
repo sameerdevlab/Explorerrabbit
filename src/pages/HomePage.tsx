@@ -72,11 +72,7 @@ const HomePage: React.FC = () => {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-300 dark:from-gray-900 dark:to-gray-800">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="rounded-full h-16 w-16 border-4 border-t-purple-600 border-r-pink-500 border-b-blue-500 border-l-green-500 dark:border-t-purple-400 dark:border-r-pink-400 dark:border-b-blue-400 dark:border-l-green-400"
-        />
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600 dark:border-purple-400"></div>
       </div>
     );
   }
@@ -86,39 +82,21 @@ const HomePage: React.FC = () => {
       <Header />
       
       <main className="container mx-auto py-8 px-5 lg:px-16 flex-grow flex flex-col">
-        {!showResults && (
-          <motion.div 
-            className="mb-12 text-center"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <motion.h1 
-              className="text-4xl md:text-6xl lg:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-purple-600 via-pink-500 to-purple-600 dark:from-purple-400 dark:via-pink-400 dark:to-purple-400 p-2 text-shadow-xl typography-enhanced"
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              Turn Any Text Into a Complete Learning Experience
-            </motion.h1>
-            <motion.p 
-              className="text-lg md:text-xl mt-6 text-slate-700 font-semibold dark:text-slate-200 max-w-3xl mx-auto leading-relaxed typography-enhanced"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              Learn, test, and share — from any prompt or paragraph. Transform your ideas into comprehensive educational content with AI-powered insights.
-            </motion.p>
-          </motion.div>
-        )}
+        {!showResults && <div className="mb-8 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-purple-600 via-pink-500 to-purple-600 dark:from-purple-400 dark:via-pink-400 dark:to-purple-400 p-2">
+            Turn Any Text Into a Complete Learning Experience
+          </h1>
+          <p className="text-lg mt-4 text-slate-600 font-bold dark:text-slate-300 max-w-2xl mx-auto">
+            Learn, test, and share — from any prompt or paragraph.
+          </p>
+        </div>}
         
         <ModeToggle />
         
         {!showResults ? (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
           >
             {mode === 'generate' ? (
               <PromptInput />
@@ -130,10 +108,9 @@ const HomePage: React.FC = () => {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
             className="flex-grow flex flex-col"
           >
-            <div className="flex flex-col md:flex-row gap-8 flex-grow">
+            <div className="flex flex-col md:flex-row gap-6 flex-grow">
               {/* Content Display - Left side with independent scrolling */}
               <div className="w-full md:w-1/2 flex flex-col">
                   <ContentDisplay />
@@ -141,28 +118,23 @@ const HomePage: React.FC = () => {
               
               {/* MCQ and Social Media Post - Right side with sticky positioning */}
               <div className="sticky top-[104px] w-full md:w-1/2 flex flex-col h-[calc(100vh-136px)] z-10">
-                <div className="flex-grow overflow-y-auto space-y-8 pb-20">
+                <div className="flex-grow overflow-y-auto space-y-6 pb-20">
                   <MCQDisplay />
                   <SocialMediaPostGenerator />
                 </div>
               </div>
             </div>
             
-            <motion.div 
-              className="mt-8 text-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <div className="flex items-center justify-center gap-6 mb-6">
+            <div className="mt-6 text-center">
+              <div className="flex items-center justify-center gap-4 mb-4">
                 {user && (
                   <Button
                     onClick={saveContent}
                     isLoading={isSaving}
                     variant="sketchy"
-                    className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white border-none shadow-lg transform hover:scale-105 transition-all duration-200"
+                    className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white border-none shadow-lg"
                   >
-                    <Save className="h-5 w-5 mr-2" />
+                    <Save className="h-4 w-4 mr-2" />
                     {isSaving ? 'Saving...' : 'Save Content'}
                   </Button>
                 )}
@@ -170,13 +142,13 @@ const HomePage: React.FC = () => {
                 <Button
                   onClick={handleNewContent}
                   variant="sketchy"
-                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-none shadow-lg transform hover:scale-105 transition-all duration-200"
+                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-none shadow-lg"
                 >
-                  <RotateCcw className="h-5 w-5 mr-2" />
+                  <RotateCcw className="h-4 w-4 mr-2" />
                   Start Over
                 </Button>
               </div>
-            </motion.div>
+            </div>
             
             {/* Minimized input at the bottom */}
             {mode === 'generate' ? (

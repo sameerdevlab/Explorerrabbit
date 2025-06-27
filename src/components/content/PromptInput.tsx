@@ -28,22 +28,18 @@ const PromptInput: React.FC<PromptInputProps> = ({ minimized = false }) => {
         className="w-full sticky bottom-4 px-4 z-50"
       >
         <div className="glowing-wrapper max-w-2xl mx-auto">
-          <Card variant="professional" className="p-3 shadow-2xl">
-            <form onSubmit={handleSubmit} className="flex gap-3">
+          <Card variant="glass" className="p-2">
+            <form onSubmit={handleSubmit} className="flex gap-2">
               <Input
                 ref={inputRef}
-                className="flex-grow input-professional"
+                variant="glass"
                 placeholder="Try another prompt..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 icon={<Search size={16} />}
+                className="flex-grow"
               />
-              <Button 
-                type="submit" 
-                variant="sketchy" 
-                isLoading={loading}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-none shadow-lg transform hover:scale-105 transition-all duration-200"
-              >
+              <Button type="submit" variant="sketchy" isLoading={loading}>
                 Generate
               </Button>
             </form>
@@ -58,56 +54,37 @@ const PromptInput: React.FC<PromptInputProps> = ({ minimized = false }) => {
       layout
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-4xl mx-auto px-4"
+      className="w-full max-w-3xl mx-auto px-4"
     >
       <div className="glowing-wrapper">
-        <Card variant="professional" className="overflow-hidden shadow-2xl">
-          <div className="p-8">
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center mb-8"
-            >
-              <h2 className="text-3xl font-bold mb-3 bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 dark:from-purple-400 dark:via-pink-400 dark:to-purple-400 bg-clip-text text-transparent typography-enhanced">
-                Generate AI Content
-              </h2>
-              <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed typography-enhanced">
-                Enter a prompt, and we'll generate comprehensive content with images and interactive elements
-              </p>
-            </motion.div>
+        <Card variant="glass" className="overflow-hidden shadow-lg">
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-2 text-slate-800 dark:text-slate-200">Generate AI Content</h2>
+            <p className="text-slate-600 dark:text-slate-400 mb-6">
+              Enter a prompt, and we'll generate content with images and questions
+            </p>
             
             <form onSubmit={handleSubmit}>
-              <div className="space-y-6">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <Input
-                    ref={inputRef}
-                    className="w-full p-4 text-lg input-professional"
-                    placeholder="Enter a topic or question..."
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    icon={<Search size={20} />}
-                  />
-                </motion.div>
+              <div className="space-y-4">
+                <Input
+                  ref={inputRef}
+                  variant="glass"
+                  placeholder="Enter a topic or question..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  icon={<Search size={18} />}
+                  className="w-full p-3 text-lg"
+                />
                 
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
+                <Button
+                  type="submit"
+                  variant="sketchy"
+                  size="lg"
+                  className="w-full"
+                  isLoading={loading}
                 >
-                  <Button
-                    type="submit"
-                    variant="sketchy"
-                    size="lg"
-                    className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-none shadow-lg transform hover:scale-105 transition-all duration-200"
-                    isLoading={loading}
-                  >
-                    {loading ? 'Generating...' : 'Generate Content'}
-                  </Button>
-                </motion.div>
+                  {loading ? 'Generating...' : 'Generate Content'}
+                </Button>
               </div>
             </form>
           </div>

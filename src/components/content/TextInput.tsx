@@ -33,22 +33,18 @@ const TextInput: React.FC<TextInputProps> = ({ minimized = false }) => {
         className="w-full sticky bottom-4 px-4 z-50"
       >
         <div className="glowing-wrapper max-w-2xl mx-auto">
-          <Card variant="professional" className="p-3 shadow-2xl">
-            <form onSubmit={handleSubmit} className="flex gap-3">
+          <Card variant="glass" className="p-2">
+            <form onSubmit={handleSubmit} className="flex gap-2">
               <TextArea
                 ref={textareaRef}
-                className="flex-grow h-12 min-h-0 resize-none py-3 input-professional"
+                variant="glass"
                 placeholder="Paste different text..."
                 value={pastedText}
                 onChange={(e) => setPastedText(e.target.value)}
+                className="flex-grow h-10 min-h-0 resize-none py-2"
                 rows={1}
               />
-              <Button 
-                type="submit" 
-                variant="sketchy" 
-                isLoading={loading}
-                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-none shadow-lg transform hover:scale-105 transition-all duration-200"
-              >
+              <Button type="submit" variant="sketchy" isLoading={loading}>
                 Process
               </Button>
             </form>
@@ -63,56 +59,37 @@ const TextInput: React.FC<TextInputProps> = ({ minimized = false }) => {
       layout
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-4xl mx-auto px-4"
+      className="w-full max-w-3xl mx-auto px-4"
     >
       <div className="glowing-wrapper">
-        <Card variant="professional" className="overflow-hidden shadow-2xl">
-          <div className="p-8">
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center mb-8"
-            >
-              <h2 className="text-3xl font-bold mb-3 bg-gradient-to-r from-blue-600 via-purple-500 to-blue-600 dark:from-blue-400 dark:via-purple-400 dark:to-blue-400 bg-clip-text text-transparent typography-enhanced">
-                Process Your Text
-              </h2>
-              <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed typography-enhanced">
-                Paste your own text and we'll enhance it with relevant images and interactive quiz questions
-              </p>
-            </motion.div>
+        <Card variant="glass" className="overflow-hidden shadow-lg">
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-2 text-slate-800 dark:text-slate-200">Process Your Text</h2>
+            <p className="text-slate-600 dark:text-slate-400 mb-6">
+              Paste your own text and we'll generate images and questions from it
+            </p>
             
             <form onSubmit={handleSubmit}>
-              <div className="space-y-6">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <TextArea
-                    ref={textareaRef}
-                    className="w-full p-4 text-lg min-h-[240px] input-professional"
-                    placeholder="Paste your text here..."
-                    value={pastedText}
-                    onChange={(e) => setPastedText(e.target.value)}
-                    rows={10}
-                  />
-                </motion.div>
+              <div className="space-y-4">
+                <TextArea
+                  ref={textareaRef}
+                  variant="glass"
+                  placeholder="Paste your text here..."
+                  value={pastedText}
+                  onChange={(e) => setPastedText(e.target.value)}
+                  className="w-full p-3 text-lg min-h-[200px]"
+                  rows={8}
+                />
                 
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
+                <Button
+                  type="submit"
+                  variant="sketchy"
+                  size="lg"
+                  className="w-full"
+                  isLoading={loading}
                 >
-                  <Button
-                    type="submit"
-                    variant="sketchy"
-                    size="lg"
-                    className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-none shadow-lg transform hover:scale-105 transition-all duration-200"
-                    isLoading={loading}
-                  >
-                    {loading ? 'Processing...' : 'Process Text'}
-                  </Button>
-                </motion.div>
+                  {loading ? 'Processing...' : 'Process Text'}
+                </Button>
               </div>
             </form>
           </div>
