@@ -7,7 +7,7 @@ html {
 }
 
 .text-shadow-xl {
-  text-shadow: 0px 3px 6px rgba(180, 211, 191, 0.9);
+  text-shadow: 0px 3px 6px rgba(170, 211, 181, 0.9);
 }
 .dark .text-shadow-xl {
   text-shadow: none; /* Override the shadow when in dark mode */
