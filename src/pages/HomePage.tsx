@@ -159,7 +159,7 @@ const HomePage: React.FC = () => {
           </motion.div>
         )}
 
-        <div className="mt-26">
+        <div className="mt-28 mb-10">
           {/* Feature Highlights - Only show when not displaying results */}
           {!showResults && <FeatureHighlights />}
         </div>
