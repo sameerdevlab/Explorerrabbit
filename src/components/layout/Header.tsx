@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LogOut, Sun, Moon, Bookmark, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import Button from '../ui/Button';
 import SavedContentModal from '../content/SavedContentModal';
 import useAuthStore from '../../store/authStore';
@@ -9,7 +10,7 @@ import useThemeStore from '../../store/themeStore';
 
 const Header: React.FC = () => {
   const { user, signOut, loading } = useAuthStore();
-  const { loadSavedContent } = useContentStore();
+  const { loadSavedContent, clearContent } = useContentStore();
   const { theme, toggleTheme } = useThemeStore();
   const [isSavedContentModalOpen, setIsSavedContentModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -37,17 +38,28 @@ const Header: React.FC = () => {
     window.location.href = '/auth';
     setIsMobileMenuOpen(false);
   };
+
+  const handleLogoClick = () => {
+    // Clear all content and reset the application state
+    clearContent();
+    // Close mobile menu if open
+    setIsMobileMenuOpen(false);
+  };
   
   return (
     <>
       <header className="w-full sticky top-0 z-50 px-6 py-1 bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 text-white shadow-lg border-b-2 border-white/20">
         <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3">
+          <Link 
+            to="/" 
+            onClick={handleLogoClick}
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-200"
+          >
             <div>
               <img className="w-12 h-16 bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 dark:from-slate-900 dark:via-yellow-300 dark:to-slate-900 rounded-xl" src="/rabbitLogoTr.png" alt="Explorer Logo"/>
             </div>
             <h1 className="text-xl md:text-2xl font-bold tracking-wide">EXPLORERrabbit</h1>
-          </div>
+          </Link>
 
           <div className="flex items-center gap-2 md:gap-4 mr-10 md:mr-11 lg:mr-16">
             {/* Desktop Navigation - Hidden on mobile */}
