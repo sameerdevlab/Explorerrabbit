@@ -10,10 +10,8 @@ html {
   text-shadow: 0px 3px 6px rgba(150, 231, 181, 0.9);
 }
 
-@media (prefers-color-scheme: dark) {
-  .text-shadow-xl {
-    text-shadow: 0px 3px 6px rgba(255, 255, 255, 0.3); /* Dark mode */
-  }
+.dark-text-shadow {
+  text-shadow: 0px 0px 0px rgba(0,0,0,0)
 }
 
 /* Glowing wrapper effect for cards */
