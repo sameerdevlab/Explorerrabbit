@@ -108,21 +108,6 @@ const FeatureHighlights: React.FC = () => {
           );
         })}
       </div>
-
-      {/* Bottom decorative element */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1.2 }}
-        className="flex justify-center mt-8"
-      >
-        <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full border border-purple-200 dark:border-purple-700">
-          <Sparkles className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-          <span className="text-sm font-medium text-purple-700 dark:text-purple-300">
-            Powered by Advanced AI
-          </span>
-        </div>
-      </motion.div>
     </motion.div>
   );
 };
