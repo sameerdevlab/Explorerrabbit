@@ -7,7 +7,7 @@ html {
 }
 
 .text-shadow-xl {
-  text-shadow: 0px 3px 4px rgba(211, 211, 211, 0.8);
+  text-shadow: 0px 3px 6px rgba(211, 211, 211, 0.8);
 }
 /* Glowing wrapper effect for cards */
 .glowing-wrapper {
