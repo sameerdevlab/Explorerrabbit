@@ -208,7 +208,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
                       className="w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white border-none shadow-lg"
                     >
                       <Copy className="h-4 w-4 mr-2" />
-                      Copy Text
+                      Copy Caption
                     </Button>
                     
                     {imageUrlToShare && (
