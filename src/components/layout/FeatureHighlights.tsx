@@ -66,7 +66,7 @@ const FeatureHighlights: React.FC = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-3 text-shadow-xl"
+          className="text-3xl font-bold text-gray-600 dark:text-gray-200 mb-3 text-shadow-xl"
         >
           Everything You Need for Smarter Learning, Self-Testing, and Social Sharing.
         </motion.h2>
