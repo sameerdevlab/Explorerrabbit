@@ -7,7 +7,7 @@
 ## 📺 Demo Video
 
 ▶️ Watch the full walkthrough on YouTube:  
-[![Explorer Rabbit Demo]([https://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE](https://youtu.be/uqjX_mTLotU?si=TZUV_DaVCzzos8pL))
+https://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE](https://youtu.be/uqjX_mTLotU?si=TZUV_DaVCzzos8pL
 
 > EXPLORERrabbit – AI-Powered Learning + Quiz + Content Generator | Built with Bolt.new.
 
@@ -38,9 +38,6 @@
 - **Deployment**: Vercel
 
 ---
-
-## 🌐 Live Demo
-
 💻 [GitHub Repository]([https://github.com/sameerdevlab/explorer-rabbit](https://github.com/sameerdevlab/Explorerrabbit.git))
 
 ---
