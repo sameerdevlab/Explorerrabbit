@@ -4,11 +4,11 @@
 
 ---
 
-## 📺 Demo Video
+## 📽️ Demo Video
 
-▶️ Watch the full walkthrough on YouTube:  
-https://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE](https://youtu.be/uqjX_mTLotU?si=TZUV_DaVCzzos8pL
+![Dashboard Preview](.https://youtu.be/uqjX_mTLotU?si=j92rF7pu1gGYYimM)
 
+Watch the demo - [https://youtu.be/FoZGHE38gnY](https://youtu.be/uqjX_mTLotU?si=j92rF7pu1gGYYimM)
 > EXPLORERrabbit – AI-Powered Learning + Quiz + Content Generator | Built with Bolt.new.
 
 ---
@@ -36,9 +36,6 @@ https://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/wa
 - **AI Generation**: Groq API (for text, MCQs, and social media post creation)
 - **PDF/Image Tools**: HTML2Canvas, HTML2PDF
 - **Deployment**: Vercel
-
----
-💻 [GitHub Repository]([https://github.com/sameerdevlab/explorer-rabbit](https://github.com/sameerdevlab/Explorerrabbit.git))
 
 ---
 
